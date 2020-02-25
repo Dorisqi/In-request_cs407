@@ -20,8 +20,9 @@ import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar'
 import { Switch, Route, Link, BrowserRouter } from "react-router-dom";
-import Profile from '../Home/profile'
-import Posts from '../Home/posts'
+import Profile from '../Home/profile';
+import Posts from '../Home/posts';
+import NewRequest from '../Home/NewRequest';
 
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 
@@ -140,6 +141,9 @@ function SideBar(props) {
             </Route>
             <Route path="/profile">
               <Profile />
+            </Route>
+            <Route path="/NewRequest">
+              <NewRequest />
             </Route>
           </Switch>
         </main>
