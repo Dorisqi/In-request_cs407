@@ -18,6 +18,10 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import Grid from '@material-ui/core/Grid';
+import Avatar from '@material-ui/core/Avatar'
+import { Switch, Route, Link, BrowserRouter } from "react-router-dom";
+import Profile from '../Home/profile'
+import Posts from '../Home/posts'
 
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 
@@ -77,6 +81,7 @@ function SideBar(props) {
         <label htmlFor="icon-button-file">
           <IconButton color="primary" aria-label="upload picture" component="span">
             {/* --- TODO: display user's profile picture -- */}
+            <Avatar>F</Avatar>
           </IconButton>
         </label>
         {/* --- TODO: display user's rating -- */}
@@ -85,18 +90,22 @@ function SideBar(props) {
       <br />
       <Divider />
       <List>
-        {['Posts', 'New request', 'Active Transaction', 'Archived'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+        {['Posts', 'New Request', 'Active Transaction', 'Archived'].map((text, index) => (
+          <ListItem button key={text} component={Link} to={"/" + text.replace(/\s/g,'')}>
+            <ListItemIcon>
+              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+            </ListItemIcon>
             <ListItemText primary={text} />
           </ListItem>
         ))}
       </List>
       <Divider />
       <List>
-        {['Manage Account', 'Log Out'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+        {['Profile', 'Log Out'].map((text, index) => (
+          <ListItem button key={text} component={Link} to={"/" + text.replace(/\s/g,'')}>
+            <ListItemIcon>
+              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+            </ListItemIcon>
             <ListItemText primary={text} />
           </ListItem>
         ))}
@@ -107,20 +116,34 @@ function SideBar(props) {
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <nav className={classes.drawer} aria-label="mailbox folders">
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-        <Hidden xsDown implementation="css">
-          <Drawer
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            variant="permanent"
-            open
-          >
-            {drawer}
-          </Drawer>
-        </Hidden>
-      </nav>
+      <BrowserRouter>
+        <nav className={classes.drawer} aria-label="mailbox folders">
+          {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+          <Hidden xsDown implementation="css">
+            <Drawer
+              classes={{
+                paper: classes.drawerPaper,
+              }}
+              variant="permanent"
+              open
+            >
+              {drawer}
+            </Drawer>
+          </Hidden>
+        </nav>
+        {/*--- Add remaing components to each Route  ---*/}
+        <main className={classes.content}>
+          <div className={classes.toolbar} />
+          <Switch>
+            <Route exact path="/posts">
+              <Posts />
+            </Route>
+            <Route path="/profile">
+              <Profile />
+            </Route>
+          </Switch>
+        </main>
+      </BrowserRouter>
     </div>
   );
 }
@@ -130,7 +153,9 @@ SideBar.propTypes = {
    * Injected by the documentation to work in an iframe.
    * You won't need it on your project.
    */
-  container: PropTypes.any,
+   container: PropTypes.instanceOf(
+     typeof Element === "undefined" ? Object : Element
+ )
 };
 
 export default SideBar;
