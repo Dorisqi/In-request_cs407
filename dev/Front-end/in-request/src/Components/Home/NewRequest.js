@@ -8,7 +8,11 @@ import { withStyles } from "@material-ui/core/styles";
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import Chip from '@material-ui/core/Chip';
+import Container from '@material-ui/core/Container';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import subDays from "date-fns/subDays";
 
 const styles = theme => ({
   container: {
@@ -19,6 +23,15 @@ const styles = theme => ({
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
     width: 200,
+  },
+  root: {
+		width: 600,
+    display: 'flex',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    '& > *': {
+      margin: theme.spacing(0.5),
+    },
   },
 });
 class NewRequest extends Component {
@@ -36,6 +49,7 @@ class NewRequest extends Component {
       this.handleValue = this.handleValue.bind(this);
       this.handleDateChange = this.handleDateChange.bind(this);
       this.onFormSubmit = this.onFormSubmit.bind(this);
+      this.handleClick = this.handleClick.bind(this);
   }
   handleNameChange = event => {
     const name_val = event.target.value;
@@ -49,6 +63,7 @@ class NewRequest extends Component {
     this.setState(state =>({
       description: description_val
     }));
+
   }
 
   handleValue = event => {
@@ -70,64 +85,91 @@ class NewRequest extends Component {
     e.preventDefault();
     console.log(this.state.returnDate)
   }
-  /*--- Still need a submit function---*/
+  handleClick = event => {
+    console.log("yout just clicked the chip!")
+  }
+
   render() {
     const { classes } = this.props;
     return (
+
       <Fragment>
-        <Typography variant="h4" gutterBottom>
-          Make A Request
-        </Typography>
-        <Grid container spacing={3}>
-          <Grid item xs={12} >
-            <TextField
-              required
-              id="item_Name"
-              name="itemName"
-              label="Item"
-              fullWidth
-              value = {this.state.itemName}
-              onChange = {this.handleNameChange}
-            / >
+        <CssBaseline />
+        <Container>
+          <Typography variant="h2" gutterBottom color="textPrimary">
+            Make A Request
+          </Typography>
+        </Container>
+        <CssBaseline />
+        <Container>
+          <br />
+          <Grid container spacing={2}>
+            <Grid item>
+              <Chip variant="outlined" size="small" label="HICKS" onClick={this.handleClick} />
+            </Grid>
+            <Grid item >
+              <Chip variant="outlined" size="small" label="LWSN" onClick={this.handleClick} />
+            </Grid>
+            <Grid item >
+              <Chip variant="outlined" size="small" label="PMU" onClick={this.handleClick} />
+            </Grid>
+            <Grid item >
+            <Chip variant="outlined" size="small" label="ECE" onClick={this.handleClick} />
+            </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <TextField
-              required
-              id="description"
-              name="description"
-              label="Description"
-              multiline
-              rows={2}
-              rowsMax={12}
-              fullWidth
-              value = {this.state.description}
-              onChange = {this.handleDescription}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              required
-              id="estimate_Val"
-              name="estimateVal"
-              label="Estimate Value"
-              value = {this.state.estimateVal}
-              onChange = {this.handleValue}
-              rows={1}
-            />
+          <Grid container spacing={3}>
+            <Grid item xs={4} >
+              <TextField
+                required
+                id="item_Name"
+                name="itemName"
+                label="Title"
+                fullWidth
+                value = {this.state.itemName}
+                onChange = {this.handleNameChange}
+              / >
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                id="description"
+                name="description"
+                label="Description"
+                multiline
+                rows={2}
+                rowsMax={12}
+                fullWidth
+                value = {this.state.description}
+                onChange = {this.handleDescription}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                id="estimate_Val"
+                name="estimateVal"
+                label="Estimate Value"
+                value = {this.state.estimateVal}
+                onChange = {this.handleValue}
+                rows={1}
+              />
+            </Grid>
+            <br />
           </Grid>
           <br />
-        </Grid>
-        <br />
-        <form onSubmit={ this.onFormSubmit }>
-            <div className="form-group">
-              <DatePicker
-                  selected={ this.state.returnDate }
-                  onChange={ this.handleDateChange }
-                  name="startDate"
-                  dateFormat="MM/dd/yyyy"
-              />
-            </div>
-        </form>
+          <form onSubmit={ this.onFormSubmit }>
+              <div className="form-group">
+                <DatePicker
+                    selected={ this.state.returnDate }
+                    onChange={ this.handleDateChange }
+                    name="startDate"
+                    dateFormat="MM/dd/yyyy"
+                    placeholderText="Click to select a date"
+                    minDate={subDays(new Date(), 0)}
+                />
+              </div>
+          </form>
+        </Container>
       </Fragment>
     );
   }
