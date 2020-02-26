@@ -1,4 +1,4 @@
-const myserver = require('C:/Users/lenovo/Desktop/nodeproject1/server.js');
+const myserver = require('./server.js');
 
 //***********************************************************************************************
 //This part is for firebase authentication, firebase SDK
