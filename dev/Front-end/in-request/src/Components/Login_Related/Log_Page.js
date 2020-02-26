@@ -1,6 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from "prop-types";
+import {withStyles} from '@material-ui/core/styles'
 import { storiesOf } from "@storybook/react";
 import { CircleInformation, Currency } from "grommet-icons";
 import { Box,Form,CheckBox,RangeInput,Select,FormField,
@@ -8,12 +9,17 @@ import { Box,Form,CheckBox,RangeInput,Select,FormField,
 import { grommet } from "grommet/themes";
 import { Attraction, Car, TreeOption } from "grommet-icons";
 import TextField from '@material-ui/core/TextField';
-import { deepMerge } from "grommet/utils";
 import {Log_in_Box} from "./Log_in_Box.js"
 import {Sign_up_Box} from "./Sign_up_Box.js"
-import { css } from "styled-components";
 
-const customFormFieldTheme = {
+import { deepMerge } from "grommet/utils";
+// import {Log_in_Box} from "./Log_in_Box.js";
+// import {Sign_up_Box} from "./Sign_up_Box.js";
+import {tryBox} from "./tryBox.js"
+import { css } from "styled-components";
+//import {Server} from "./server.js"
+
+const customFormFieldTheme ={
   global: {
     font: {
       size: "16px"
@@ -73,64 +79,100 @@ const customFormFieldTheme = {
     `
   }
 };
-const RichTabTitle = ({ icon, label }) => (
-  <Box direction="row" align="center" gap="xsmall" margin="xsmall">
-    {icon}
-    <Text size="small">
-      <strong>{label}</strong>
-    </Text>
-  </Box>
-);
+// const RichTabTitle = ({ icon, label }) => (
+//   <Box direction="row" align="center" gap="xsmall" margin="xsmall">
+//     {icon}
+//     <Text size="small">
+//       <strong>{label}</strong>
+//     </Text>
+//   </Box>
+// );
 
-const ControlledTabs = () => {
-  const [index, setIndex] = React.useState();
 
-  const onActive = nextIndex => setIndex(nextIndex);
 
-  return (
-    <Grommet theme={deepMerge(grommet, customFormFieldTheme)}>
-      <Tabs color="#d1bec3" activeIndex={index} onActive={onActive}>
-      <Tab
-        title={
-          <RichTabTitle
 
-            label="LOG IN"
-          />
-        }
-      >
-        <Log_in_Box/>
-      </Tab>
-      <Tab
-        title={
-          <RichTabTitle
-
-            label="SIGN UP"
-          />
-        }
-      >
-        <Sign_up_Box/>
-      </Tab>
-      </Tabs>
-    </Grommet>
-  );
-};
-
-storiesOf("Tabs", module).add("Controlled", () => <ControlledTabs />);
-RichTabTitle.propTypes = {
-  icon: PropTypes.node.isRequired,
-  label: PropTypes.string.isRequired
-};
 
 class Login extends React.Component {
   constructor(props){
     super(props)
     this.state ={
-      email:"",
-      password:"",
+      Email:"",
+      Password:"",
       Nickname:"",
+      db:this.props.db,
+      firebase:this.props.firebase,
+      name:"",
+      index:0,
+
+
 
     }
+
+    this.on_Submit=this.on_Submit.bind(this)
+    this.update_Pw=this.update_Pw.bind(this)
+    this.update_Email=this.update_Email.bind(this)
+    this.onActive=this.onActive.bind(this)
   }
+
+
+  on_Submit=event =>{
+    //console.log(this.state.Email)
+    this.props.firebase.auth().signInWithEmailAndPassword("te@st.com", "123456").then(error => {
+  // log-in successful.
+    const ref = this.state.db.collection('users').doc("te@st.com");
+    ref.get().then(doc => {
+      if (!doc.exists) {
+        console.log('No such document!');
+      } else {
+        ref.update({
+          LoginState: true
+        }).then(() => {
+          console.log('login successful');
+          // console.log('Data:', doc.data());
+        });
+      }
+    }).catch(err => {
+      // An error happened.
+      console.log('Error logging in', err);
+    });
+  });
+
+  }
+  // update_Values(name,value){
+  //
+  //   if(name == "Email"){
+  //     this.setState(state => ({
+  //       Email:value
+  //     }))
+  //   }else if(name =="Password"){
+  //     this.setState(state => ({
+  //       Password:value
+  //     }))
+  //   }
+  //   console.log(name)
+  // }
+  update_Email(value){
+
+
+      this.setState(state => ({
+        Email:value
+      }))
+
+  }
+  update_Pw(value){
+      this.setState(state => ({
+        Password:value
+      }))
+    console.log(value)
+  }
+
+  onActive=event=>{
+    const value = this.state.index == 0? 1:0
+    this.setState({ index: value })
+  }
+
+
+
 
   render() {
     return (
@@ -143,8 +185,36 @@ class Login extends React.Component {
         >
             <Box right pad="380px" background="#d1bec3">
               <Box right width="90%" height="80%" pad="{{ left: 'large', right: 'large' }}" >
-                <ControlledTabs/>
 
+
+              <Tabs color="#d1bec3" activeIndex={this.state.index} onActive={this.onActive}>
+              <Tab
+                title={
+                  <Box direction="row" align="center" gap="xsmall" margin="xsmall">
+                    <Text size="small">
+                      <strong>"LOG IN"</strong>
+                    </Text>
+                  </Box>
+                }
+              >
+                <Log_in_Box P_update_pw={this.update_Pw}
+                P_update_email={this.update_Email}
+                db={this.db}
+                firebase={this.firebase}
+                P_Submit_func={this.on_Submit}/>
+              </Tab>
+              <Tab
+                title={
+                  <Box direction="row" align="center" gap="xsmall" margin="xsmall">
+                    <Text size="small">
+                      <strong>"SIGN UP"</strong>
+                    </Text>
+                  </Box>
+                }
+              >
+                <Sign_up_Box/>
+              </Tab>
+              </Tabs>
             </Box>
           </Box>
         </Box>
