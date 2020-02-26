@@ -1,26 +1,26 @@
-const myserver = require('C:/Users/lenovo/Desktop/nodeproject1/server.js');
+const myserver = require('./server.js');
 
 //***********************************************************************************************
 //This part is for firebase authentication, firebase SDK
 
 // Firebase App (the core Firebase SDK) is always required and
 // must be listed before other Firebase SDKs
-var firebase = require("firebase/app");
+// var firebase = require("firebase/app");
 
-// Add the Firebase products that you want to use
-require("firebase/auth");
-require("firebase/firestore");
+// // Add the Firebase products that you want to use
+// require("firebase/auth");
+// require("firebase/firestore");
 
-var firebaseConfig = {
-  apiKey: "AIzaSyB8fmbeFCz6MflVeRF-pU7N5WyPCDbQDQw",
-  authDomain: "in-request.firebaseapp.com",
-  databaseURL: "https://in-request.firebaseio.com",
-  projectId: "in-request",
-  storageBucket: "in-request.appspot.com",
-};
+// var firebaseConfig = {
+//   apiKey: "AIzaSyB8fmbeFCz6MflVeRF-pU7N5WyPCDbQDQw",
+//   authDomain: "in-request.firebaseapp.com",
+//   databaseURL: "https://in-request.firebaseio.com",
+//   projectId: "in-request",
+//   storageBucket: "in-request.appspot.com",
+// };
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+// // Initialize Firebase
+// firebase.initializeApp(firebaseConfig);
 
 
 
