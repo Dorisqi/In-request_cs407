@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import { withStyles } from "@material-ui/core/styles";
+import { createMuiTheme, withStyles, makeStyles, ThemeProvider } from '@material-ui/core/styles';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -13,6 +13,16 @@ import Chip from '@material-ui/core/Chip';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import subDays from "date-fns/subDays";
+import TitleIcon from '@material-ui/icons/Title';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import Input from '@material-ui/core/Input';
+import DescriptionIcon from '@material-ui/icons/Description';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import TodayIcon from '@material-ui/icons/Today';
+import LocationOnIcon from '@material-ui/icons/LocationOn';
+import FlashOnIcon from '@material-ui/icons/FlashOn';
+import Button from '@material-ui/core/Button';
+import './NewRequest.css'
 
 const styles = theme => ({
   container: {
@@ -103,7 +113,11 @@ class NewRequest extends Component {
         <CssBaseline />
         <Container>
           <br />
-          <Grid container spacing={2}>
+          <br />
+          <Grid container spacing={1} alignItems="flex-end">
+            <Grid item>
+              <LocationOnIcon />
+            </Grid>
             <Grid item>
               <Chip variant="outlined" size="small" label="HICKS" onClick={this.handleClick} />
             </Grid>
@@ -112,24 +126,50 @@ class NewRequest extends Component {
             </Grid>
             <Grid item >
               <Chip variant="outlined" size="small" label="PMU" onClick={this.handleClick} />
-            </Grid>
-            <Grid item >
-            <Chip variant="outlined" size="small" label="ECE" onClick={this.handleClick} />
+            </Grid >
+            <Grid item>
+              <Chip variant="outlined" size="small" label="ECE" onClick={this.handleClick} />
             </Grid>
           </Grid>
-          <Grid container spacing={3}>
-            <Grid item xs={4} >
-              <TextField
-                required
-                id="item_Name"
-                name="itemName"
-                label="Title"
-                fullWidth
-                value = {this.state.itemName}
-                onChange = {this.handleNameChange}
-              / >
+          <br />
+          <Grid container spacing={1} alignItems="flex-end">
+            <Grid item>
+              <FlashOnIcon/>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item>
+              <Chip variant="outlined" size="small" label="Level 1" onClick={this.handleClick} />
+            </Grid>
+            <Grid item>
+              <Chip variant="outlined" size="small" label="Level 2" onClick={this.handleClick} />
+            </Grid>
+            <Grid item>
+              <Chip variant="outlined" size="small" label="Level 3" onClick={this.handleClick} />
+            </Grid>
+          </Grid>
+          <br />
+          <br />
+          <Grid container spacing={1} alignItems="flex-end">
+            <Grid item>
+              <TitleIcon />
+            </Grid>
+             <Grid item>
+             <TextField
+               required
+               id="item_Name"
+               name="itemName"
+               label="Title"
+               fullWidth
+               value = {this.state.itemName}
+               onChange = {this.handleNameChange}
+               / >
+              </Grid>
+          </Grid>
+          <br />
+          <Grid container spacing={1} alignItems="flex-end">
+            <Grid item>
+              <DescriptionIcon />
+            </Grid>
+            <Grid item xs={10}>
               <TextField
                 required
                 id="description"
@@ -143,7 +183,14 @@ class NewRequest extends Component {
                 onChange = {this.handleDescription}
               />
             </Grid>
-            <Grid item xs={12}>
+          </Grid>
+          <br />
+          <br />
+          <Grid container spacing={1} alignItems="flex-end">
+            <Grid item>
+              <AttachMoneyIcon />
+            </Grid>
+            <Grid item xs={3}>
               <TextField
                 required
                 id="estimate_Val"
@@ -154,21 +201,29 @@ class NewRequest extends Component {
                 rows={1}
               />
             </Grid>
-            <br />
           </Grid>
           <br />
-          <form onSubmit={ this.onFormSubmit }>
-              <div className="form-group">
-                <DatePicker
-                    selected={ this.state.returnDate }
-                    onChange={ this.handleDateChange }
-                    name="startDate"
-                    dateFormat="MM/dd/yyyy"
-                    placeholderText="Click to select a date"
-                    minDate={subDays(new Date(), 0)}
-                />
-              </div>
-          </form>
+          <br />
+          <Grid container spacing={1} alignItems="flex-end">
+            <Grid item xs={1}>
+              <TodayIcon/>
+            </Grid>
+            <Grid item xs={6}>
+              <form onSubmit={ this.onFormSubmit }>
+                  <DatePicker
+                      selected={ this.state.returnDate }
+                      onChange={ this.handleDateChange }
+                      name="startDate"
+                      dateFormat="MM/dd/yyyy"
+                      placeholderText="Click to select a date"
+                      minDate={subDays(new Date(), 0)}
+                  />
+              </form>
+            </Grid>
+            <Grid item>
+              <Button variant="contained">SUBMIT!</Button>
+            </Grid>
+          </Grid>
         </Container>
       </Fragment>
     );
