@@ -122,6 +122,16 @@ RichTabTitle.propTypes = {
 };
 
 class Login extends React.Component {
+  constructor(props){
+    super(props)
+    this.state ={
+      email:"",
+      password:"",
+      Nickname:"",
+
+    }
+  }
+
   render() {
     return (
       <Grommet theme={deepMerge(grommet, customFormFieldTheme)}>
@@ -134,7 +144,6 @@ class Login extends React.Component {
             <Box right pad="380px" background="#d1bec3">
               <Box right width="90%" height="80%" pad="{{ left: 'large', right: 'large' }}" >
                 <ControlledTabs/>
-
 
             </Box>
           </Box>

@@ -28,15 +28,33 @@ const coloredButton = {
     gap:"medium"
   }
 };
+
 class Log_in_Box extends React.Component {
   constructor(props){
     super(props)
     this.state ={
-      email:"",
-      password:"",
-      Nickname:"",
+      Email:"",
+      Password:"",
 
     }
+    this.on_Change=this.on_Change.bind(this)
+  }
+
+
+  on_Change=event =>{
+    const value = event.target.value
+    const name = event.target.name
+    if(name == "Email"){
+      this.setState(state => ({
+        Email:value
+      }))
+    }else if(name =="Password"){
+      this.setState(state => ({
+        Password:value
+      }))
+    }
+    console.log(name)
+
   }
   render() {
 
@@ -44,8 +62,8 @@ class Log_in_Box extends React.Component {
       <Grommet theme={grommet}>
         <Box fullWidth fill align="center" pad="large" width="large" background="#f0dde2">
           <Form>
-            <FormFieldLabel name="email" label="E-mail" required />
-            <FormFieldLabel name="password" label="Password" required />
+            <FormFieldLabel name="Email" label="E-mail" onChange={this.on_Change} required />
+            <FormFieldLabel name="Password" label="Password" onChange={this.on_Change} required />
 
             <Grommet>
               <Button left type="submit" color="#f5edef" label="Submit" primary />
