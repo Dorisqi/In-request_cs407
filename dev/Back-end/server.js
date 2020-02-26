@@ -17,11 +17,40 @@ module.exports= {
   },
 
   login: function(fb, db, email, password, name, nickname){
-
+    fb.auth().signInWithEmailAndPassword(email, password).then(error => {
+  // log-in successful.
+    const ref = db.collection('users').doc(email);
+    ref.get().then(doc => {
+      if (!doc.exists) {
+        console.log('No such document!');
+      } else {
+        ref.update({
+          LoginState: true
+        }).then(() => {
+          console.log('login successful');
+          // console.log('Data:', doc.data());
+        });
+      }
+    }).catch(err => {
+      // An error happened.
+      console.log('Error logging in', err);
+    });
+  });
   },
 
   logout: function(fb, db, email, password, name, nickname){
-
+    fb.auth().signOut().then(function() {
+  // log-out successful.
+    const ref = db.collection('users').doc(email);
+    ref.update({
+      LoginState: false
+    }).then(() => {
+      console.log('logout successful');
+    });
+  }).catch(err => {
+    // An error happened.
+    console.log('Error logging out', err);
+  });
   },
 
   resetPassword: function(fb, email, password, name, nickname){
