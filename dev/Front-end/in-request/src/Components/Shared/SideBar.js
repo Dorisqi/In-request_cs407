@@ -17,7 +17,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
-
+import Upload from '../Home/uploadimg';
+import Button from '@material-ui/core/Button';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 
 const drawerWidth = 240;
@@ -70,7 +71,7 @@ function SideBar(props) {
       <Grid container justify = "center">
         {/* --- TODO: clickable image --- */}
         {/* --- TODO: display user's rating -- */}
-        <Avatar>F</Avatar>
+        <Upload/>
       </Grid>
       <br />
       <br />
