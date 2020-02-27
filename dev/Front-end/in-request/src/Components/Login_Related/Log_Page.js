@@ -192,7 +192,7 @@ class Login extends React.Component {
                 title={
                   <Box direction="row" align="center" gap="xsmall" margin="xsmall">
                     <Text size="small">
-                      <strong>"LOG IN"</strong>
+                      <strong>LOG IN</strong>
                     </Text>
                   </Box>
                 }
@@ -207,7 +207,7 @@ class Login extends React.Component {
                 title={
                   <Box direction="row" align="center" gap="xsmall" margin="xsmall">
                     <Text size="small">
-                      <strong>"SIGN UP"</strong>
+                      <strong>SIGN UP</strong>
                     </Text>
                   </Box>
                 }
