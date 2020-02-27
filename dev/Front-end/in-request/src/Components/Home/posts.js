@@ -1,24 +1,39 @@
 import React, { Component } from 'react';
+import {fdb} from "../../firebase";
 
 /* ---  THIS FILE CONTAINS ALL THE POSTS --- */
 class Posts extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      posts: [{}]
+      post_list: [],
+      fdb: this.fdb
     }
-    this.loadData = this.loadData.bind(this)
   }
   componentDidMount() {
-    this.loadData()
+    let requests_collection = fdb.collection('requests');
+    let all_requests = requests_collection.get()
+      .then(snapshot => {
+        snapshot.forEach(doc => {
+          const item = doc.data();
+          this.setState({
+               post_list: [...this.state.post_list, item],
+          });
+        });
+      }).catch(err => {
+        console.log('Error getting documents', err);
+      });
   }
-
   render() {
+      const {post_list} = this.state
       return (
         <ul>
-          {this.props.posts.map(function(post) {
-            return <li key={post.title}> {post.description} - {post.borrower} </li>
-          })}
+          {post_list.map(post =>
+            <li Key={post.id}>
+              <a>{post.borrower} </a>
+              <a>{post.content} </a>
+            </li>
+          )}
         </ul>
       );
   }

@@ -91,8 +91,7 @@ class App extends Component {
     <div>
       <ul>
         <li>
-          <Link to="/Login">Home</Link>
-
+          <Link to="/posts">Home</Link>
         </li>
       </ul>
 
@@ -105,8 +104,9 @@ class App extends Component {
       */}
       <Switch>
 
-        <Route path="/Login">
-          <Log_Page db={this.db} firebase={this.firebase}/>
+        <Route path="/posts">
+          // <Log_Page db={this.db} firebase={this.firebase}/>
+          <SideBar/>
         </Route>
       </Switch>
     </div>

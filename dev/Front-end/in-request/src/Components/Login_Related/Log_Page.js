@@ -20,6 +20,7 @@ import { css } from "styled-components";
 import "firebase/auth"
 import {auth} from "../../firebase";
 import {fdb} from "../../firebase";
+import { Redirect } from 'react-router';
 
 //import {Server} from "./server.js"
 const customFormFieldTheme ={
@@ -135,6 +136,7 @@ class Login extends React.Component {
           LoginState: true
         }).then(() => {
           console.log('login successful');
+          
           // console.log('Data:', doc.data());
           //todo redirect to post
         });

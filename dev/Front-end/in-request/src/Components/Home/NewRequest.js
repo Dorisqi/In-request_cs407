@@ -22,6 +22,7 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 import FlashOnIcon from '@material-ui/icons/FlashOn';
 import Button from '@material-ui/core/Button';
 import './NewRequest.css'
+import {fdb} from "../../firebase";
 
 const styles = theme => ({
   container: {
