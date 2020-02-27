@@ -52,6 +52,7 @@ class NewRequest extends Component {
         description: "",
         estimateVal: "",
         returnDate: new Date(),
+        color1:"default",
       };
       // This binding is necessary to make `this` work in the callback
       this.handleNameChange = this.handleNameChange.bind(this);
@@ -95,9 +96,11 @@ class NewRequest extends Component {
     e.preventDefault();
     console.log(this.state.returnDate)
   }
-  handleClick = event => {
-    console.log("yout just clicked the chip!")
+  handleClick = (event) => {
+    const color1_val  = this.state.color1 == "default" ? "primary" : "default"
+    this.setState({ color: color1_val })
   }
+
 
   render() {
     const { classes } = this.props;
@@ -119,16 +122,16 @@ class NewRequest extends Component {
               <LocationOnIcon />
             </Grid>
             <Grid item>
-              <Chip variant="outlined" size="small" label="HICKS" onClick={this.handleClick} />
+              <Chip variant="outlined" size="small" label="HICKS" color = {this.state.color1} onClick={(event) => this.handleClick(event)}>hicks </Chip>
             </Grid>
             <Grid item >
-              <Chip variant="outlined" size="small" label="LWSN" onClick={this.handleClick} />
+              <Chip variant="outlined" size="small" label="LWSN" color = {this.state.color2} onClick={(event) => this.handleClick(event)} />
             </Grid>
             <Grid item >
-              <Chip variant="outlined" size="small" label="PMU" onClick={this.handleClick} />
+              <Chip variant="outlined" size="small" label="PMU" color = {this.state.color3} onClick={(event) => this.handleClick(event)} />
             </Grid >
             <Grid item>
-              <Chip variant="outlined" size="small" label="ECE" onClick={this.handleClick} />
+              <Chip variant="outlined" size="small" label="ECE" color = {this.state.color4} onClick={(event) => this.handleClick(event)}/>
             </Grid>
           </Grid>
           <br />
@@ -137,13 +140,13 @@ class NewRequest extends Component {
               <FlashOnIcon/>
             </Grid>
             <Grid item>
-              <Chip variant="outlined" size="small" label="Level 1" onClick={this.handleClick} />
+              <Chip variant="outlined" size="small" label="Level 1" color = {this.state.color5} onClick={(event) => this.handleClick(event)} />
             </Grid>
             <Grid item>
-              <Chip variant="outlined" size="small" label="Level 2" onClick={this.handleClick} />
+              <Chip variant="outlined" size="small" label="Level 2" color = {this.state.color6} onClick={(event) => this.handleClick(event)}/>
             </Grid>
             <Grid item>
-              <Chip variant="outlined" size="small" label="Level 3" onClick={this.handleClick} />
+              <Chip variant="outlined" size="small" label="Level 3" color = {this.state.color7} onClick={(event) => this.handleClick(event)}/>
             </Grid>
           </Grid>
           <br />
