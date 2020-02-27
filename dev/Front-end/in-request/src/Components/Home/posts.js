@@ -9,7 +9,7 @@ class Posts extends Component {
     }
     this.loadData = this.loadData.bind(this)
   }
-  ComponentDidMount() {
+  componentDidMount() {
     this.loadData()
   }
 
@@ -24,4 +24,4 @@ class Posts extends Component {
   }
 }
 
-export default Home;
+export default Posts;

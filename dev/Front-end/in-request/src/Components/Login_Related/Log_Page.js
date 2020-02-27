@@ -18,6 +18,9 @@ import { deepMerge } from "grommet/utils";
 import {tryBox} from "./tryBox.js"
 import { css } from "styled-components";
 import "firebase/auth"
+import {auth} from "../../firebase";
+import {fdb} from "../../firebase";
+
 //import {Server} from "./server.js"
 
 const customFormFieldTheme ={
@@ -102,6 +105,8 @@ class Login extends React.Component {
       Nickname:"",
       db:this.props.db,
       firebase:this.props.firebase,
+      fdb: this.fdb,
+      auth: this.auth,
       name:"",
       index:0,
 
@@ -119,9 +124,9 @@ class Login extends React.Component {
   on_Submit=event =>{
     //console.log(this.state.Email)
     //const auth=this.props.firebase.auth()
-    this.props.firebase.auth().signInWithEmailAndPassword("te@st.com", "123456").then(error => {
+    auth.signInWithEmailAndPassword("te@st.com", "123456").then(error => {
   // log-in successful.
-    const ref = this.props.db.collection('users').doc("te@st.com");
+    const ref = fdb.collection('users').doc("te@st.com");
     ref.get().then(doc => {
       if (!doc.exists) {
         console.log('No such document!');
