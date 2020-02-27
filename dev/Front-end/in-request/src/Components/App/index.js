@@ -10,9 +10,11 @@ import {
   Route,
   Link
 } from "react-router-dom";
-// import firebase from "firebase/app"
+import firebase from "firebase/app"
 // import admin from "firebase-admin"
-
+import "firebase/auth"
+import "firebase/firestore"
+import admin from "firebase-admin"
 //const firebase = require("firebase/app");
 
 // Add the Firebase products that you want to use
@@ -79,11 +81,11 @@ class App extends Component {
     // //const admin = require('firebase-admin');
     //
     // const serviceAccount = require('./in-request-firebase-adminsdk-2upr0-a94880f19f.json');
-
+    //
     // admin.initializeApp({
     //   credential: admin.credential.cert(serviceAccount),
     // });
-    //
+    // const database= firebase.database();
     // const db = admin.firestore();
     return (
 
