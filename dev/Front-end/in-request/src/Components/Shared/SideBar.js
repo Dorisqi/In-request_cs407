@@ -22,6 +22,8 @@ import Profile from '../Home/profile';
 import Posts from '../Home/posts';
 import NewRequest from '../Home/NewRequest';
 
+import Upload from '../Home/uploadimg';
+import Button from '@material-ui/core/Button';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 
 const drawerWidth = 240;
@@ -83,7 +85,7 @@ function SideBar(props) {
         {/* --- TODO: clickable image --- */}
 
         {/* --- TODO: display user's rating -- */}
-        <Avatar>F</Avatar>
+        <Upload/>
       </Grid>
       <br />
       <br />

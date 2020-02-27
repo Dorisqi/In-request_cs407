@@ -14,8 +14,11 @@ import {Sign_up_Box} from "./Sign_up_Box.js"
 import { deepMerge } from "grommet/utils";
 import {tryBox} from "./tryBox.js"
 import { css } from "styled-components";
-//import {Server} from "./server.js"
+import "firebase/auth"
+import {auth} from "../../firebase";
+import {fdb} from "../../firebase";
 
+//import {Server} from "./server.js"
 const customFormFieldTheme ={
   global: {
     font: {
@@ -98,6 +101,8 @@ class Login extends React.Component {
       Nickname:"",
       db:this.props.db,
       firebase:this.props.firebase,
+      auth: this.auth,
+      fdb: this.fdb,
       name:"",
       index:0,
 
@@ -119,7 +124,7 @@ class Login extends React.Component {
     //const auth=this.props.firebase.auth()
     auth.signInWithEmailAndPassword("te@st.com", "123456").then(error => {
   // log-in successful.
-    const ref = db.collection('users').doc("te@st.com");
+    const ref = fdb.collection('users').doc("te@st.com");
     ref.get().then(doc => {
       if (!doc.exists) {
         console.log('No such document!');
@@ -129,6 +134,7 @@ class Login extends React.Component {
         }).then(() => {
           console.log('login successful');
           // console.log('Data:', doc.data());
+          //todo redirect to post
         });
       }
     }).catch(err => {

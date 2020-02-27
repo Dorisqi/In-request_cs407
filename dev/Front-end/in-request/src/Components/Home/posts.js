@@ -1,15 +1,27 @@
 import React, { Component } from 'react';
 
 /* ---  THIS FILE CONTAINS ALL THE POSTS --- */
-class Home extends Component {
-
-    render() {
-        return (
-            <div className="Post">
-                <h2>All the posts will be displayed here</h2>
-            </div>
-        );
+class Posts extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      posts: [{}]
     }
+    this.loadData = this.loadData.bind(this)
+  }
+  componentDidMount() {
+    this.loadData()
+  }
+
+  render() {
+      return (
+        <ul>
+          {this.props.posts.map(function(post) {
+            return <li key={post.title}> {post.description} - {post.borrower} </li>
+          })}
+        </ul>
+      );
+  }
 }
 
-export default Home;
+export default Posts;

@@ -93,7 +93,7 @@ class App extends Component {
     <div>
       <ul>
         <li>
-          <Link to="/posts">Home</Link>
+          <Link to="/Login">Home</Link>
 
         </li>
       </ul>
@@ -107,7 +107,7 @@ class App extends Component {
       */}
       <Switch>
 
-        <Route path="/posts">
+        <Route path="/Login">
           <Log_Page db={this.db} firebase={this.firebase}/>
         </Route>
       </Switch>
