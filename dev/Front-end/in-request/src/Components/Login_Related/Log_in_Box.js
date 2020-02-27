@@ -1,7 +1,9 @@
 import React from "react";
 import { storiesOf } from "@storybook/react";
 
-import { grommet, Box, FormField, Form, Text, Button, Grommet } from "grommet";
+import { grommet, Box, FormField, Form, Text, Button, Grommet, Layer,
+  TextArea,
+  TextInput } from "grommet";
 const FormFieldLabel = props => {
   const { required, label, ...rest } = props;
   return (
@@ -35,6 +37,7 @@ class Log_in_Box extends React.Component {
     this.state ={
       Email:"",
       Password:"",
+      Open:false
 
     }
     this.on_Change_email=this.on_Change_email.bind(this)
@@ -54,13 +57,23 @@ class Log_in_Box extends React.Component {
   on_Change_pw=event =>{
     const value = event.target.value
   //const name = event.target.name
-    console.log(value)
+    //console.log(value)
     this.props.P_update_pw(value)
 
   }
   on_Submit=event=>{
-    console.log("submit click")
+    //console.log("submit click")
     this.props.P_Submit_func()
+  }
+  onOpen=event=>{
+    this.setState({
+      Open:true
+    })
+  }
+  onClose=event=>{
+    this.setState({
+      Open:false
+    })
   }
   render() {
 
@@ -73,7 +86,42 @@ class Log_in_Box extends React.Component {
 
             <Grommet>
               <Button left type="submit" color="#f5edef" label="Submit" primary onClick={this.on_Submit}/>
-              <Button plain size="xsmall" color="#8a6e79" label="forget password?" hoverIndicator="true"/>
+              <Button plain size="xsmall" color="#8a6e79" label="forget password?" hoverIndicator="true"
+                    onClick={this.onOpen}/>
+
+              {this.state.Open && (
+              <Layer
+                position="center"
+
+                modal
+                onClickOutside={this.onClose}
+                onEsc={this.onClose}
+              >
+                <Box
+                  as="form"
+                  fill="vertical"
+                  overflow="auto"
+                  width="medium"
+                  pad="medium"
+                  onSubmit={this.onClose}
+                >
+
+                  <Box flex="grow" overflow="auto" pad={{ vertical: "medium" }}>
+                    <FormField label="Please enter Email:">
+                      <TextInput />
+                    </FormField>
+                  </Box>
+                  <Box flex={false} as="footer" align="start">
+                    <Button
+                      type="submit"
+                      label="Send"
+                      onClick={this.onClose}
+                      primary
+                    />
+                  </Box>
+                </Box>
+              </Layer>
+            )}
             </Grommet>
             <Text margin={{ left: "small" }} size="small" color="status-critical">
               * Required Field

@@ -17,25 +17,41 @@ const firebaseConfig = {
   databaseURL: "https://in-request.firebaseio.com",
   projectId: "in-request",
   storageBucket: "in-request.appspot.com",
+  messagingSenderId: "566878675007",
+  appId: "1:566878675007:web:234477171d4f9c7311d88a",
+  measurementId: "G-5PRZRKXFQ2"
 };
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-
-// This part is for firebase-cloud firestore setup
-const admin = require('firebase-admin');
-
-const serviceAccount = require('./in-request-firebase-adminsdk-2upr0-a94880f19f.json');
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
-
-const db = admin.firestore();
+// // Initialize Firebase
+// firebase.initializeApp(firebaseConfig);
+//
+// // This part is for firebase-cloud firestore setup
+// const admin = require('firebase-admin');
+//
+// const serviceAccount = require('./in-request-firebase-adminsdk-2upr0-a94880f19f.json');
+//
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+// });
+//
+// const db = admin.firestore();
 
 class App extends Component {
 
   render() {
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // This part is for firebase-cloud firestore setup
+    const admin = require('firebase-admin');
+
+    const serviceAccount = require('./in-request-firebase-adminsdk-2upr0-a94880f19f.json');
+
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+    });
+
+    const db = admin.firestore();
     return (
   <div>
       <Log_Page db = {db} firebase={firebase}/>

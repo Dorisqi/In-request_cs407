@@ -116,7 +116,7 @@ class Login extends React.Component {
 
 
   on_Submit=event =>{
-    //console.log(this.state.Email)
+    console.log(this.state.Email)
     this.props.firebase.auth().signInWithEmailAndPassword("te@st.com", "123456").then(error => {
   // log-in successful.
     const ref = this.state.db.collection('users').doc("te@st.com");
