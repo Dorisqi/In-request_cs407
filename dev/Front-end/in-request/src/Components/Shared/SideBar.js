@@ -15,8 +15,7 @@ import MailIcon from '@material-ui/icons/Mail';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import PhotoCamera from '@material-ui/icons/PhotoCamera';
+import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar'
 import { Switch, Route, Link, BrowserRouter } from "react-router-dom";
@@ -53,9 +52,6 @@ const useStyles = makeStyles(theme => ({
   drawerPaper: {
     width: drawerWidth,
   },
-  input: {
-   display: 'none',
-  },
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
@@ -76,6 +72,7 @@ function SideBar(props) {
     <div>
       <div className={classes.toolbar} />
       <Grid container justify = "center">
+<<<<<<< HEAD
         {/* --- TODO: clickable IconButton --- */}
         <input accept="image/*" className={classes.input} id="icon-button-file" type="file" />
         <label htmlFor="icon-button-file">
@@ -84,7 +81,11 @@ function SideBar(props) {
             <Avatar>F</Avatar>
           </IconButton>
         </label>
+=======
+        {/* --- TODO: clickable image --- */}
+>>>>>>> cd63c8d488aaa2b796720f07acd19857e9c1400b
         {/* --- TODO: display user's rating -- */}
+        <Avatar>F</Avatar>
       </Grid>
       <br />
       <br />
