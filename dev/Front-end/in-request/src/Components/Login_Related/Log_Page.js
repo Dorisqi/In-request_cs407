@@ -19,7 +19,8 @@ import {tryBox} from "./tryBox.js"
 import { css } from "styled-components";
 import "firebase/auth"
 //import {Server} from "./server.js"
-
+import {auth} from "../../firebase";
+import {fdb} from "../../firebase";
 const customFormFieldTheme ={
   global: {
     font: {
@@ -102,6 +103,8 @@ class Login extends React.Component {
       Nickname:"",
       db:this.props.db,
       firebase:this.props.firebase,
+      auth: this.auth,
+      fdb: this.fdb,
       name:"",
       index:0,
 
@@ -119,9 +122,9 @@ class Login extends React.Component {
   on_Submit=event =>{
     //console.log(this.state.Email)
     //const auth=this.props.firebase.auth()
-    this.props.firebase.auth().signInWithEmailAndPassword("te@st.com", "123456").then(error => {
-  // log-in successful.
-    const ref = this.props.db.collection('users').doc("te@st.com");
+    auth.signInWithEmailAndPassword("te@st.com", "123456").then(error => {
+      // log-in successful.
+    const ref = fdb.collection('users').doc("te@st.com");
     ref.get().then(doc => {
       if (!doc.exists) {
         console.log('No such document!');
@@ -131,6 +134,7 @@ class Login extends React.Component {
         }).then(() => {
           console.log('login successful');
           // console.log('Data:', doc.data());
+          //todo redirect to post
         });
       }
     }).catch(err => {

@@ -12212,6 +12212,11 @@ stealthy-require@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/stealthy-require/-/stealthy-require-1.1.1.tgz#35b09875b4ff49f26a777e509b3090a3226bf24b"
 
+storage@latest:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/storage/-/storage-0.2.0.tgz#b978d8fda47a0accbcc10bf3944fdce308f1d355"
+  integrity sha1-uXjY/aR6Csy8wQvzlE/c4wjx01U=
+
 store2@^2.7.1:
   version "2.10.0"
   resolved "https://registry.yarnpkg.com/store2/-/store2-2.10.0.tgz#46b82bb91878daf1b0d56dec2f1d41e54d5103cf"
