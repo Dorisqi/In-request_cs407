@@ -18,9 +18,10 @@ import { deepMerge } from "grommet/utils";
 import {tryBox} from "./tryBox.js"
 import { css } from "styled-components";
 import "firebase/auth"
-//import {Server} from "./server.js"
 import {auth} from "../../firebase";
 import {fdb} from "../../firebase";
+
+//import {Server} from "./server.js"
 const customFormFieldTheme ={
   global: {
     font: {
@@ -124,6 +125,7 @@ class Login extends React.Component {
     //const auth=this.props.firebase.auth()
     auth.signInWithEmailAndPassword("te@st.com", "123456").then(error => {
       // log-in successful.
+  // log-in successful.
     const ref = fdb.collection('users').doc("te@st.com");
     ref.get().then(doc => {
       if (!doc.exists) {

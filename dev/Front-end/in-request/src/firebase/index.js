@@ -19,3 +19,4 @@ const fdb = firebase.firestore();
 export {
     storage, auth, fdb, firebase as default
 }
+
