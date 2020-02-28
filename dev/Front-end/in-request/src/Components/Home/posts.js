@@ -72,7 +72,7 @@ class Posts extends Component {
                 <br />
               </Typography>
               <Typography variant="body2" component="p" color="textSecondary">
-                Guranrtor: {post.guarantor} 
+                Guranrtor: {post.guarantor}
                 <br />
               </Typography>
             </CardContent>
