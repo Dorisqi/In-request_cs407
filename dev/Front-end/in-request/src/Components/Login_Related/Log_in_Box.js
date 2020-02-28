@@ -42,22 +42,18 @@ class Log_in_Box extends React.Component {
     }
     this.on_Change_email=this.on_Change_email.bind(this)
     this.on_Change_pw=this.on_Change_pw.bind(this)
-
     this.on_Submit=this.on_Submit.bind(this)
   }
 
 
   on_Change_email=event =>{
     const value = event.target.value
-  //const name = event.target.name
     console.log(value)
     this.props.P_update_email(value)
 
   }
   on_Change_pw=event =>{
     const value = event.target.value
-  //const name = event.target.name
-    //console.log(value)
     this.props.P_update_pw(value)
 
   }
@@ -71,6 +67,14 @@ class Log_in_Box extends React.Component {
     })
   }
   onClose=event=>{
+    // const user = firebase.auth().currentUser;
+    // var newPassword = getASecureRandomPassword();
+    //
+    // user.updatePassword(newPassword).then(function() {
+    //   // Update successful.
+    // }).catch(function(error) {
+    //   // An error happened.
+    // });
     this.setState({
       Open:false
     })
@@ -82,10 +86,10 @@ class Log_in_Box extends React.Component {
         <Box fullWidth fill align="center" pad="large" width="large" background="#f0dde2">
           <Form>
             <FormFieldLabel name="Email" label="E-mail" onChange={this.on_Change_email} required />
-            <FormFieldLabel name="Password" label="Password" onChange={this.on_Change_pw} required />
+            <FormFieldLabel name="Password" type="password" label="Password" onChange={this.on_Change_pw} required />
 
             <Grommet>
-              <Button left type="submit" color="#f5edef" label="Submit" primary onClick={this.on_Submit}/>
+              <Button left type="submit" color="#f5edef" label="Log in" primary onClick={this.on_Submit}/>
               <Button plain size="xsmall" color="#8a6e79" label="forget password?" hoverIndicator="true"
                     onClick={this.onOpen}/>
 

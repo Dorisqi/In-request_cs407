@@ -99,32 +99,32 @@ class Login extends React.Component {
       Email:"",
       Password:"",
       Nickname:"",
-      db:this.props.db,
-      firebase:this.props.firebase,
       auth: this.auth,
       fdb: this.fdb,
       name:"",
       index:0,
+      tab_f:0
 
 
 
     }
 
-    this.on_Submit=this.on_Submit.bind(this)
+    this.on_Login=this.on_Login.bind(this)
+    this.on_Signup=this.on_Signup.bind(this)
     this.update_Pw=this.update_Pw.bind(this)
     this.update_Email=this.update_Email.bind(this)
+    this.update_Nickname=this.update_Nickname.bind(this)
     this.onActive=this.onActive.bind(this)
   }
 
 
-  on_Submit=event =>{
+  on_Login=event =>{
     //console.log(this.state.Email)
-    const email = "te@st.com"
-    const ps = "123456"
-    //const auth=this.props.firebase.auth()
-    auth.signInWithEmailAndPassword("te@st.com", "123456").then(error => {
+    const email = this.state.Email
+    const ps = this.state.Password
+    auth.signInWithEmailAndPassword(email, ps).then(error => {
   // log-in successful.
-    const ref = fdb.collection('users').doc("te@st.com");
+    const ref = fdb.collection('users').doc(email);
     ref.get().then(doc => {
       if (!doc.exists) {
         console.log('No such document!');
@@ -142,21 +142,43 @@ class Login extends React.Component {
       console.log('Error logging in', err);
     });
   });
+  }
+
+  on_Signup=event =>{
+    //console.log(this.state.Email)
+    const email = this.state.Email
+    const ps = this.state.Password
+    const nickname=this.state.Nickname
+    console.log("in signuup")
+    console.log(nickname)
+    auth.createUserWithEmailAndPassword(email, ps).then(error => {
+  // log-in successful.
+    const ref = fdb.collection('users').doc(email);
+    // ref.get().then(doc => {
+    //   if (!doc.exists) {
+    //     console.log('No such document!');
+    //   } else {
+    //     ref.set({
+    //       nickname: nickname, email: email,
+    //       LoginState: true, photostate: false
+    //     }).then(() => {
+    //       console.log('signup successful');
+    //       // console.log('Data:', doc.data());
+    //       //todo redirect to post
+    //     });
+    //   }
+      ref.set({
+        nickname: nickname, email: email,
+        LoginState: true, photostate: false
+      });
+      console.log('signup successful');
+    }).catch(err => {
+      // An error happened.
+      console.log('Error sign up', err);
+    });
 
   }
-  // update_Values(name,value){
-  //
-  //   if(name == "Email"){
-  //     this.setState(state => ({
-  //       Email:value
-  //     }))
-  //   }else if(name =="Password"){
-  //     this.setState(state => ({
-  //       Password:value
-  //     }))
-  //   }
-  //   console.log(name)
-  // }
+
   update_Email(value){
 
 
@@ -169,10 +191,18 @@ class Login extends React.Component {
       this.setState(state => ({
         Password:value
       }))
-    console.log(value)
+    //console.log(value)
+  }
+  update_Nickname(value){
+      this.setState(state => ({
+        Nickname:value
+      }))
+    //console.log(value)
   }
 
   onActive=event=>{
+
+    //console.log(nextIndex)
     const value = this.state.index == 0? 1:0
     this.setState({ index: value })
   }
@@ -203,11 +233,10 @@ class Login extends React.Component {
                   </Box>
                 }
               >
-                <Log_in_Box P_update_pw={this.update_Pw}
+                <Log_in_Box
+                P_update_pw={this.update_Pw}
                 P_update_email={this.update_Email}
-                db={this.db}
-                firebase={this.firebase}
-                P_Submit_func={this.on_Submit}/>
+                P_Submit_func={this.on_Login}/>
               </Tab>
               <Tab
                 title={
@@ -218,7 +247,11 @@ class Login extends React.Component {
                   </Box>
                 }
               >
-                <Sign_up_Box/>
+                <Sign_up_Box
+                P_update_pw={this.update_Pw}
+                P_update_email={this.update_Email}
+                P_Submit_func={this.on_Signup}
+                P_update_nickname={this.update_Nickname}/>
               </Tab>
               </Tabs>
             </Box>
