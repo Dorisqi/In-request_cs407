@@ -134,21 +134,27 @@ class Login extends React.Component {
       if (!doc.exists) {
         console.log('No such document!');
       } else {
-        ref.update({
-          LoginState: true
-        }).then(() => {
-          console.log('login successful');
+        if(auth.currentUser.emailVerified){
+          ref.update({
+            LoginState: true
+          }).then(() => {
+            console.log('login successful');
+            console.log(this.props.history)
+            this.props.history.push({
+              pathname:"/posts",
+              state:{
+                Email:this.state.Email,
+                Nickname:this.state.Nickname,
+                auth:this.auth,
 
-          this.props.history.push({pathname:"/posts",
-            state:{
-              Email:this.state.Email,
-              Nickname:this.state.Nickname
-            }
+              }
+            });
           });
+        }else{
+          alert("Email is not verified")
+        }
+        // console.log(auth.currentUser.emailVerified)
 
-          // console.log('Data:', doc.data());
-          //todo redirect to post
-        });
       }
     }).catch(err => {
       // An error happened.
@@ -177,7 +183,6 @@ class Login extends React.Component {
         LoginState: true, photostate: false
       });
       var user = auth.currentUser;
-
       user.sendEmailVerification().then(function() {
         // Email sent.
         //console.log("varification")
@@ -188,7 +193,8 @@ class Login extends React.Component {
       this.props.history.push("/posts",{
         state:{
           Email:this.state.Email,
-          Nickname:this.state.Nickname
+          Nickname:this.state.Nickname,
+          auth:this.auth
         }
       });
       console.log('signup successful');

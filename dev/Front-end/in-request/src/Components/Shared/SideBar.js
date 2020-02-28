@@ -23,14 +23,16 @@ import Posts from '../Home/Posts.js';
 import NewRequest from '../Home/NewRequest';
 import Upload from '../Home/uploadimg';
 import Button from '@material-ui/core/Button';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { withStyles, useTheme } from '@material-ui/core/styles';
 import {auth} from "../../firebase";
 import {fdb} from "../../firebase";
+import { useLocation } from "react-router-dom";
+import {withRouter } from "react-router-dom";
 
 
 const drawerWidth = 240;
 
-const useStyles = makeStyles(theme => ({
+const styles = theme => ({
   root: {
     display: 'flex',
   },
@@ -60,117 +62,240 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     padding: theme.spacing(3),
   },
-}));
+});
+class SideBar extends React.Component {
+  constructor(props){
+    super(props)
+    this.state ={
+      Email:"",
+      Password:"",
+      Nickname:"",
+      auth: this.auth,
+      fdb: this.fdb,
+      name:"",
 
-////
-function SideBar(props) {
-  const { container,location } = props;
-  const classes = useStyles();
-  const theme = useTheme();
-  const [mobileOpen, setMobileOpen] = React.useState(false);
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-  const Logout=()=>{
+
+
+    }
+    // this.handleDrawerToggle = this.handleDrawerToggle.bind(this)
+    this.Logout= this.Logout.bind(this)
+  }
+  // handleDrawerToggle = () => {
+  //   const value = this.state.
+  //   this.setState({
+  //     mobileOpen:
+  //   })
+  //   setMobileOpen(!this.mobileOpen);
+  // }
+
+  Logout=event=>{
+    //const loc = useLocation();
+    //console.log(this.props.location.state.Email)
+    // console.log(prevProps.Email)
+    const email = this.props.location.state.Email
+    const history = this.props.history
     auth.signOut().then(function() {
   // log-out successful.
-      console.log(auth.currentUser)
-      const ref = fdb.collection('users').doc(props.location.state.Email);
+      //const email = this.props.location.state.Email
+      const ref = fdb.collection('users').doc(email);
       ref.update({
         LoginState: false
       }).then(() => {
         console.log('logout successful');
-        this.props.history.push("/login");
+        history.push("/login");
       });
     }).catch(err => {
       // An error happened.
       console.log('Error logging out', err);
     });
   }
+  render(){
+    const {classes} = this.props;
+    const theme = useTheme;
+    return(
 
-  const drawer = (
-    <div>
-      <div className={classes.toolbar} />
-      <Grid container justify = "center">
+        <div className={classes.root}>
+        <CssBaseline />
+        <BrowserRouter>
+          <nav className={classes.drawer} aria-label="mailbox folders">
+            <Hidden xsDown implementation="css">
+              <Drawer
+                classes={{
+                  paper: styles.drawerPaper,
+                }}
+                variant="permanent"
+                open
+              >
+              <div>
+                <div className={classes.toolbar} />
+                <Grid container justify = "center">
 
-        {/* --- TODO: clickable IconButton --- */}
-        <label htmlFor="icon-button-file">
-          <IconButton color="primary" aria-label="upload picture" component="span">
-            {/* --- TODO: display user's profile picture -- */}
-          </IconButton>
-        </label>
+                  <label htmlFor="icon-button-file">
+                    <IconButton color="primary" aria-label="upload picture" component="span">
+                    </IconButton>
+                  </label>
 
-        {/* --- TODO: clickable image --- */}
+                  <Upload/>
+                </Grid>
+                <br />
+                <br />
+                <Divider />
+                <List>
+                  {['Posts', 'New Request', 'Active Transaction', 'Archived'].map((text, index) => (
+                    <ListItem button key={text} component={Link} to={"/" + text.replace(/\s/g,'')}>
+                      <ListItemIcon>
+                        {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                      </ListItemIcon>
+                      <ListItemText primary={text} />
+                    </ListItem>
+                  ))}
+                </List>
+                <Divider />
+                <List>
+                  {['Profile', 'Log Out'].map((text, index) => (
+                    <ListItem button onClick={this.Logout} key={text} component={Link} to={"/" + text.replace(/\s/g,'')}>
+                      <ListItemIcon>
+                        {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                      </ListItemIcon>
+                      <ListItemText primary={text} />
+                    </ListItem>
+                  ))}
+                </List>
+                </div>
+              </Drawer>
+            </Hidden>
+          </nav>
+          <main className={classes.content}>
+            <div className={classes.toolbar} />
+            <Switch>
+              <Route exact path="/posts">
+                <Posts />
+              </Route>
+              <Route path="/profile">
+                <Profile />
+              </Route>
+              <Route path="/NewRequest">
+                <NewRequest />
+              </Route>
+            </Switch>
+          </main>
+        </BrowserRouter>
+      </div>
+    );
+  }
 
-        {/* --- TODO: display user's rating -- */}
-        <Upload/>
-      </Grid>
-      <br />
-      <br />
-      <Divider />
-      <List>
-        {['Posts', 'New Request', 'Active Transaction', 'Archived'].map((text, index) => (
-          <ListItem button key={text} component={Link} to={"/" + text.replace(/\s/g,'')}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['Profile', 'Log Out'].map((text, index) => (
-          <ListItem button onClick={Logout} key={text} component={Link} to={"/" + text.replace(/\s/g,'')}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
-    </div>
-  );
 
-  return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <BrowserRouter>
-        <nav className={classes.drawer} aria-label="mailbox folders">
-          {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-          <Hidden xsDown implementation="css">
-            <Drawer
-              classes={{
-                paper: classes.drawerPaper,
-              }}
-              variant="permanent"
-              open
-            >
-              {drawer}
-            </Drawer>
-          </Hidden>
-        </nav>
-        {/*--- Add remaing components to each Route  ---*/}
-        <main className={classes.content}>
-          <div className={classes.toolbar} />
-          <Switch>
-            <Route exact path="/posts">
-              <Posts />
-            </Route>
-            <Route path="/profile">
-              <Profile />
-            </Route>
-            <Route path="/NewRequest">
-              <NewRequest />
-            </Route>
-          </Switch>
-        </main>
-      </BrowserRouter>
-    </div>
-  );
 }
-
+//
+// function SideBar(props) {
+//   const { container,location } = props;
+//   const classes = useStyles();
+//   const theme = useTheme();
+//   const [mobileOpen, setMobileOpen] = React.useState(false);
+//
+//   const handleDrawerToggle = () => {
+//     setMobileOpen(!mobileOpen);
+//   };
+//   const Logout=()=>{
+//     auth.signOut().then(function() {
+//   // log-out successful.
+//       console.log(auth.currentUser)
+//       const ref = fdb.collection('users').doc(props.location.state.Email);
+//       ref.update({
+//         LoginState: false
+//       }).then(() => {
+//         console.log('logout successful');
+//         this.props.history.push("/login");
+//       });
+//     }).catch(err => {
+//       // An error happened.
+//       console.log('Error logging out', err);
+//     });
+//   }
+//
+//   const drawer = (
+//     <div>
+//       <div className={classes.toolbar} />
+//       <Grid container justify = "center">
+//
+//         {/* --- TODO: clickable IconButton --- */}
+//         <label htmlFor="icon-button-file">
+//           <IconButton color="primary" aria-label="upload picture" component="span">
+//             {/* --- TODO: display user's profile picture -- */}
+//           </IconButton>
+//         </label>
+//
+//         {/* --- TODO: clickable image --- */}
+//
+//         {/* --- TODO: display user's rating -- */}
+//         <Upload/>
+//       </Grid>
+//       <br />
+//       <br />
+//       <Divider />
+//       <List>
+//         {['Posts', 'New Request', 'Active Transaction', 'Archived'].map((text, index) => (
+//           <ListItem button key={text} component={Link} to={"/" + text.replace(/\s/g,'')}>
+//             <ListItemIcon>
+//               {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+//             </ListItemIcon>
+//             <ListItemText primary={text} />
+//           </ListItem>
+//         ))}
+//       </List>
+//       <Divider />
+//       <List>
+//         {['Profile', 'Log Out'].map((text, index) => (
+//           <ListItem button onClick={Logout} key={text} component={Link} to={"/" + text.replace(/\s/g,'')}>
+//             <ListItemIcon>
+//               {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+//             </ListItemIcon>
+//             <ListItemText primary={text} />
+//           </ListItem>
+//         ))}
+//       </List>
+//     </div>
+//   );
+//
+//   return (
+//     <div className={classes.root}>
+//       <CssBaseline />
+//       <BrowserRouter>
+//         <nav className={classes.drawer} aria-label="mailbox folders">
+//           {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+//           <Hidden xsDown implementation="css">
+//             <Drawer
+//               classes={{
+//                 paper: classes.drawerPaper,
+//               }}
+//               variant="permanent"
+//               open
+//             >
+//               {drawer}
+//             </Drawer>
+//           </Hidden>
+//         </nav>
+//         {/*--- Add remaing components to each Route  ---*/}
+//         <main className={classes.content}>
+//           <div className={classes.toolbar} />
+//           <Switch>
+//             <Route exact path="/posts">
+//               <Posts />
+//             </Route>
+//             <Route path="/profile">
+//               <Profile />
+//             </Route>
+//             <Route path="/NewRequest">
+//               <NewRequest />
+//             </Route>
+//           </Switch>
+//         </main>
+//       </BrowserRouter>
+//     </div>
+//   );
+// }
+//
 SideBar.propTypes = {
   /**
    * Injected by the documentation to work in an iframe.
@@ -179,7 +304,8 @@ SideBar.propTypes = {
    container: PropTypes.instanceOf(
      typeof Element === "undefined" ? Object : Element
  ),
- Email:PropTypes.string
+    Email:PropTypes.string,
+    // auth:PropTypes.object
 };
 
-export default SideBar;
+export default withRouter(withStyles(styles, {withTheme: true})(SideBar));
