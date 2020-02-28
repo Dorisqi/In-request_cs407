@@ -130,6 +130,15 @@ class NewRequest extends Component {
     if (this.state.color4 == 1) {
       this.state.tagList.push("ECE")
     }
+    if(this.state.color5 == 1) {
+      this.state.tagList.push("LEVEL1")
+    }
+    if(this.state.color6 == 1) {
+      this.state.tagList.push("LEVEL2")
+    }
+    if(this.state.color7 == 1) {
+      this.state.tagList.push("LEVEL3")
+    }
     const listoftags = this.state.tagList
     let addDoc = fdb.collection('requests').add({
       title: itemName,
@@ -139,6 +148,7 @@ class NewRequest extends Component {
       taglist: listoftags
     }).then(ref =>{
       console.log('Added document with ID: ', ref.id);
+      window.location.reload(true);
     }).catch(err => {
       // An error happened.
       console.log('Error making a request', err);
@@ -165,17 +175,27 @@ class NewRequest extends Component {
   handleClick5=event=>{
 
     const value = this.state.color5==1? 0:1
-    this.setState({ color5: value})
+    this.setState({
+      color5: value,
+      color6: 0,
+      color7: 0,
+    })
   }
   handleClick6=event=>{
-
     const value = this.state.color6 ==1? 0:1
-    this.setState({ color6: value})
+    this.setState({
+      color6: value,
+      color5: 0,
+      color7:0,
+    })
   }
   handleClick7=event=>{
-
     const value = this.state.color7 ==1? 0:1
-    this.setState({ color7: value})
+    this.setState({
+      color7: value,
+      color5: 0,
+      color6: 0,
+    })
   }
 
   render() {
