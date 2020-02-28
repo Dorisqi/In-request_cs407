@@ -136,7 +136,7 @@ class SideBar extends React.Component {
                     </IconButton>
                   </label>
 
-                  <Upload/>
+                  <Upload url={this.props.location.state.url}/>
                 </Grid>
                 <br />
                 <br />

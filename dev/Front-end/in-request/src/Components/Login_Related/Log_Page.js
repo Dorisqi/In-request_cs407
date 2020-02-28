@@ -17,6 +17,7 @@ import { css } from "styled-components";
 import "firebase/auth"
 import {auth} from "../../firebase";
 import {fdb} from "../../firebase";
+import {storage} from '../../firebase';
 import { Redirect } from 'react-router';
 import {withRouter,BrowserRouter, Switch, Route } from "react-router-dom";
 
@@ -107,7 +108,8 @@ class Login extends React.Component {
       name:"",
       index:0,
       tab_f:0,
-      success_open:false
+      success_open:false,
+      url:""
 
 
 
@@ -139,13 +141,19 @@ class Login extends React.Component {
             LoginState: true
           }).then(() => {
             console.log('login successful');
-            console.log(this.props.history)
+            // console.log(this.props.history)
+            //get user image
+            storage.ref('images').child(this.props.email).getDownloadURL().then(url => {
+                console.log(url);
+                this.setState({url});
+            })
             this.props.history.push({
               pathname:"/posts",
               state:{
                 Email:this.state.Email,
                 Nickname:this.state.Nickname,
                 auth:this.auth,
+                url:this.state.url
 
               }
             });

@@ -13,8 +13,9 @@ class Upload extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            image: null,
-            url: ''
+            image: "",
+            url: this.props.url,
+            imgName:this.props.email
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleUpdate = this.handleUpdate.bind(this);
@@ -26,12 +27,13 @@ class Upload extends Component{
             const image = e.target.files[0];
             this.setState(()=>({image}));
             //image = this.state.image;
-            const uploadtask = storage.ref(`images/${image.name}`).put(image);
+            const name = 'images/'+ this.props.email
+            const uploadtask = storage.ref(name).put(image);
             uploadtask.on('state_changed', (snapshot) => {
                 console.log("intheresomewhere")//progress
             }, (error) => {console.log()}, () => {
                 //complete
-                storage.ref('images').child(image.name).getDownloadURL().then(url => {
+                storage.ref('images').child(this.props.email).getDownloadURL().then(url => {
                     console.log(url);
                     this.setState({url});
                 })
