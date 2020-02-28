@@ -19,7 +19,7 @@ import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar'
 import { Switch, Route, Link, BrowserRouter } from "react-router-dom";
 import Profile from '../Home/profile';
-import Posts from '../Home/Posts';
+import Posts from '../Home/Posts.js';
 import NewRequest from '../Home/NewRequest';
 
 import Upload from '../Home/uploadimg';

@@ -1,5 +1,7 @@
 import React from "react";
 import { storiesOf } from "@storybook/react";
+import {auth} from "../../firebase";
+
 
 import { grommet, Box, FormField, Form, Text, Button, Grommet, Layer,
   TextArea,
@@ -42,15 +44,29 @@ class Log_in_Box extends React.Component {
     }
     this.on_Change_email=this.on_Change_email.bind(this)
     this.on_Change_pw=this.on_Change_pw.bind(this)
+    this.on_Change = this.on_Change.bind(this)
     this.on_Submit=this.on_Submit.bind(this)
+    this.onOpen =this.onOpen.bind(this)
+    this.on_Reset=this.on_Reset.bind(this)
+    this.onClose=this.onClose.bind(this)
   }
 
 
   on_Change_email=event =>{
     const value = event.target.value
-    console.log(value)
+    this.setState(state => ({
+      Email:value
+    }))
+    //console.log(value)
     this.props.P_update_email(value)
 
+  }
+  on_Change=event=>{
+    const value = event.target.value
+    //console.log(value)
+    this.setState(state => ({
+      Email:value
+    }))
   }
   on_Change_pw=event =>{
     const value = event.target.value
@@ -66,15 +82,21 @@ class Log_in_Box extends React.Component {
       Open:true
     })
   }
+  on_Reset=event=>{
+    const email = this.state.Email
+    console.log(this.state.Email)
+    auth.sendPasswordResetEmail(this.state.Email).then(function() {
+  // Email sent.
+    console.log("email sent")
+    }).catch(function(error) {
+      // An error happened.
+      console.log(error)
+    });
+    this.setState({
+      Open:false
+    })
+  }
   onClose=event=>{
-    // const user = firebase.auth().currentUser;
-    // var newPassword = getASecureRandomPassword();
-    //
-    // user.updatePassword(newPassword).then(function() {
-    //   // Update successful.
-    // }).catch(function(error) {
-    //   // An error happened.
-    // });
     this.setState({
       Open:false
     })
@@ -111,15 +133,15 @@ class Log_in_Box extends React.Component {
                 >
 
                   <Box flex="grow" overflow="auto" pad={{ vertical: "medium" }}>
-                    <FormField label="Please enter Email:">
-                      <TextInput />
+                    <FormField label="Please enter Email:" onChange={this.on_Change}>
+
                     </FormField>
                   </Box>
                   <Box flex={false} as="footer" align="start">
                     <Button
                       type="submit"
                       label="Send"
-                      onClick={this.onClose}
+                      onClick={this.on_Reset}
                       primary
                     />
                   </Box>

@@ -54,29 +54,6 @@ class Sign_up_Box extends React.Component {
 
   }
 
-
-  // on_Change=event =>{
-  //   const value = event.target.value
-  //   const name = event.target.name
-  //   console.log( name)
-  //   if(name == "email"){
-  //     this.setState(state => ({
-  //       Email:value
-  //     }))
-  //     this.props.P_update_email(value)
-  //   }else if(name =="password"){
-  //     this.setState(state => ({
-  //       Password:value
-  //     }))
-  //     this.props.P_update_pw(value)
-  //   }else if (name =="nickname") {
-  //     this.setState(state => ({
-  //       Nickname:value
-  //     }))
-  //   }
-  //   this.props.P_update_nickname(value)
-  //   //console.log(name)
-  // }
   on_Submit=event=>{
     //console.log("submit click")
     this.props.P_Submit_func()

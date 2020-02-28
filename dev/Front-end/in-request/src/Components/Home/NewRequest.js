@@ -139,19 +139,32 @@ class NewRequest extends Component {
 
     const value = this.state.color5==1? 0:1
     //const color1_val  = this.state.color1 == "default" ? "primary" : "default"
-    this.setState({ color5: value})
+    this.setState({
+      color5: value,
+      color6:0,
+      color7:0
+    })
   }
   handleClick6=event=>{
 
     const value = this.state.color6 ==1? 0:1
     //const color1_val  = this.state.color1 == "default" ? "primary" : "default"
-    this.setState({ color6: value})
+    this.setState({
+      color6: value,
+      color5:0,
+      color7:0
+
+    })
   }
   handleClick7=event=>{
 
     const value = this.state.color7 ==1? 0:1
     //const color1_val  = this.state.color1 == "default" ? "primary" : "default"
-    this.setState({ color7: value})
+    this.setState({
+       color7: value,
+       color6:0,
+       color5:0
+     })
   }
 
   render() {

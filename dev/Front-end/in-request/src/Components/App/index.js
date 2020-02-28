@@ -21,7 +21,7 @@ class App extends Component {
     <div>
       <ul>
         <li>
-          <Link to="/posts">Home</Link>
+          <Link to="/login"></Link>
         </li>
       </ul>
 
@@ -34,8 +34,11 @@ class App extends Component {
       */}
       <Switch>
 
+        <Route path="/login">
+          <Log_Page />
+        </Route>
         <Route path="/posts">
-          <Log_Page db={this.db} firebase={this.firebase}/>
+          <SideBar />
         </Route>
       </Switch>
     </div>
