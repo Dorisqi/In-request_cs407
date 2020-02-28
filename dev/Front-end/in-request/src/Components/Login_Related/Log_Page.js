@@ -17,6 +17,7 @@ import { css } from "styled-components";
 import "firebase/auth"
 import {auth} from "../../firebase";
 import {fdb} from "../../firebase";
+import {storage} from '../../firebase';
 import { Redirect } from 'react-router';
 import {withRouter,BrowserRouter, Switch, Route } from "react-router-dom";
 
@@ -107,7 +108,9 @@ class Login extends React.Component {
       name:"",
       index:0,
       tab_f:0,
-      success_open:false
+      success_open:false,
+      url:"",
+      hasPhoto:false
 
 
 
@@ -134,31 +137,70 @@ class Login extends React.Component {
       if (!doc.exists) {
         console.log('No such document!');
       } else {
-        ref.update({
-          LoginState: true
-        }).then(() => {
-          console.log('login successful');
+        if(auth.currentUser.emailVerified){
+          ref.update({
+            LoginState: true
+          }).then(() => {
+            console.log('login successful');
+            // console.log(this.props.history)
+            //get user image
+            storage.ref('images').child(this.state.Email).getDownloadURL().then(url => {
+                //console.log(url);
+                this.setState({url:url});
+                if(url.length != 0){
+                  this.setState({
+                    hasPhoto: true
+                  })
+                }
+                const data = doc.data()
 
-          this.props.history.push({pathname:"/posts",
-            state:{
-              Email:this.state.Email,
-              Nickname:this.state.Nickname
-            }
+                this.props.history.push({
+                  pathname:"/posts",
+                  state:{
+                    Email:this.state.Email,
+                    Nickname:data.nickname,
+                    auth:this.auth,
+                    url:url,
+                    hasPhoto:data.photostate
+
+                  }
+                });
+
+            })
+            //console.log(this.state.url);
+            // this.props.history.push({
+            //   pathname:"/posts",
+            //   state:{
+            //     Email:this.state.Email,
+            //     Nickname:this.state.Nickname,
+            //     auth:this.auth,
+            //     url:this.state.url
+            //
+            //   }
+            // });
           });
+        }else{
+          alert("Email is not verified")
+        }
+        // console.log(auth.currentUser.emailVerified)
 
-          // console.log('Data:', doc.data());
-          //todo redirect to post
-        });
       }
-    }).catch(err => {
+    }).catch(error => {
       // An error happened.
-      console.log('Error logging in', err);
-      this.setState(state => ({
-        success_open:true
-      }))
-      console.log(err.message)
+      alert(error)
+      console.log('Error logging in', error);
+      //console.log(error)
+      // alert(error)
+      // this.setState(state => ({
+      //   success_open:true
+      // }))
+      // console.log(error.message)
       //this.props.history.push("/login");
     });
+  }).catch(err => {
+    // An error happened.
+    alert(err)
+    console.log('Error logging in', err);
   });
   }
 
@@ -177,23 +219,43 @@ class Login extends React.Component {
         LoginState: true, photostate: false
       });
       var user = auth.currentUser;
-
       user.sendEmailVerification().then(function() {
         // Email sent.
         //console.log("varification")
       }).catch(function(error) {
         // An error happened.
         console.log(error)
+        alert(error)
+        //alert(console.error())
       });
-      this.props.history.push("/posts",{
+      ref.get().then(doc => {
+        const data = doc.data()
+        this.setState({
+          Nickname:data.nickname
+        })
+      }).catch(error => {
+        // An error happened.
+        alert(error)
+        console.log('Error sign up', error);
+
+      });
+
+
+      this.props.history.push({
+        pathname:"/posts",
         state:{
           Email:this.state.Email,
-          Nickname:this.state.Nickname
+          Nickname:this.state.Nickname,
+          auth:this.auth,
+          url:"",
+          hasPhoto:false
+
         }
       });
       console.log('signup successful');
     }).catch(err => {
       // An error happened.
+      alert(err)
       console.log('Error sign up', err);
     });
 
