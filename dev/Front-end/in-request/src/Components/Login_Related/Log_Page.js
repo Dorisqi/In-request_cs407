@@ -175,7 +175,7 @@ class Login extends React.Component {
                   Email:this.state.Email,
                   Nickname:data.nickname,
                   auth:this.auth,
-                  url:"",
+                  url:null,
                   hasPhoto:data.photostate
 
                 }

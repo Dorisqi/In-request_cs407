@@ -79,6 +79,8 @@ class Upload extends Component{
 
 componentWillMount() {
   console.log(this.props.url)
+//  const url_=this.props.url
+
   this.setState({
     url:this.props.url
   })
