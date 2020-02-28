@@ -110,6 +110,25 @@ class NewRequest extends Component {
     e.preventDefault();
     console.log(this.state.returnDate)
   }
+  onSubmitRequest = event => {
+    //console.log(this.state.Email)
+    const itemName = this.state.itemName
+    const description = this.state.description
+    const estimateVal = this.state.estimateVal
+    const returnDate = this.state.returnDate
+    let addDoc = fdb.collection('requests').add({
+      title: itemName,
+      content: description,
+      price: estimateVal,
+      estReturn: returnDate
+    }).then(ref =>{
+      console.log('Added document with ID: ', ref.id);
+    }).catch(err => {
+      // An error happened.
+      console.log('Error making a request', err);
+    });
+
+  }
   handleClick1=event=>{
 
     const value = (this.state.color1 ==1)? 0:1
@@ -276,7 +295,10 @@ class NewRequest extends Component {
               </form>
             </Grid>
             <Grid item>
-              <Button variant="contained">SUBMIT!</Button>
+              <Button variant="contained"
+              onClick={this.onSubmitRequest}>
+              SUBMIT!
+              </Button>
             </Grid>
           </Grid>
         </Container>
