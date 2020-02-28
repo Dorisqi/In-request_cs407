@@ -38,8 +38,9 @@ class Log_in_Box extends React.Component {
     super(props)
     this.state ={
       Email:"",
-      Password:"",
-      Open:false
+      Password1:"",
+      Password2:"",
+      Open:false,
 
     }
     this.on_Change_email=this.on_Change_email.bind(this)
@@ -68,14 +69,17 @@ class Log_in_Box extends React.Component {
       Email:value
     }))
   }
-  on_Change_pw=event =>{
+  on_Change_pw=event=>{
     const value = event.target.value
     this.props.P_update_pw(value)
-
   }
+
+
   on_Submit=event=>{
     //console.log("submit click")
-    this.props.P_Submit_func()
+      this.props.P_Submit_func()
+
+
   }
   onOpen=event=>{
     this.setState({
@@ -109,7 +113,6 @@ class Log_in_Box extends React.Component {
           <Form>
             <FormFieldLabel name="Email" label="E-mail" onChange={this.on_Change_email} required />
             <FormFieldLabel name="Password" type="password" label="Password" onChange={this.on_Change_pw} required />
-
             <Grommet>
               <Button left type="submit" color="#f5edef" label="Log in" primary onClick={this.on_Submit}/>
               <Button plain size="xsmall" color="#8a6e79" label="forget password?" hoverIndicator="true"

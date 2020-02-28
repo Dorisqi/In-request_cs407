@@ -3,9 +3,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from "prop-types";
 import {withStyles} from '@material-ui/core/styles'
 import { storiesOf } from "@storybook/react";
-import { CircleInformation, Currency } from "grommet-icons";
-import { Box,Form,CheckBox,RangeInput,Select,FormField,
-  TextArea,Button,MaskedInput,RadioButtonGroup, Grommet,Grid,Stack, Tab, Tabs, Text, TextInput } from "grommet";
+import { CircleInformation,FormClose, StatusGood } from "grommet-icons";
+import { Box,Form,CheckBox,RangeInput,Select,FormField,Layer,TextInput,
+  TextArea,Button,MaskedInput,RadioButtonGroup, Grommet,Grid,Stack, Tab, Tabs, Text } from "grommet";
 import { grommet } from "grommet/themes";
 import { Attraction, Car, TreeOption } from "grommet-icons";
 import TextField from '@material-ui/core/TextField';
@@ -19,6 +19,7 @@ import {auth} from "../../firebase";
 import {fdb} from "../../firebase";
 import { Redirect } from 'react-router';
 import {withRouter,BrowserRouter, Switch, Route } from "react-router-dom";
+
 
 //import {Server} from "./server.js"
 const customFormFieldTheme ={
@@ -105,7 +106,8 @@ class Login extends React.Component {
       fdb: this.fdb,
       name:"",
       index:0,
-      tab_f:0
+      tab_f:0,
+      success_open:false
 
 
 
@@ -117,6 +119,7 @@ class Login extends React.Component {
     this.update_Email=this.update_Email.bind(this)
     this.update_Nickname=this.update_Nickname.bind(this)
     this.onActive=this.onActive.bind(this)
+    this.onClose=this.onClose.bind(this)
   }
 
 
@@ -135,6 +138,7 @@ class Login extends React.Component {
           LoginState: true
         }).then(() => {
           console.log('login successful');
+
           this.props.history.push("/posts");
 
           // console.log('Data:', doc.data());
@@ -144,6 +148,11 @@ class Login extends React.Component {
     }).catch(err => {
       // An error happened.
       console.log('Error logging in', err);
+      this.setState(state => ({
+        success_open:true
+      }))
+      alert(error)
+      this.props.history.push("/login");
     });
   });
   }
@@ -171,7 +180,7 @@ class Login extends React.Component {
         // An error happened.
         console.log(error)
       });
-
+      this.props.history.push("/posts");
       console.log('signup successful');
     }).catch(err => {
       // An error happened.
@@ -209,7 +218,9 @@ class Login extends React.Component {
     const value = this.state.index == 0? 1:0
     this.setState({ index: value })
   }
-
+onClose=event=>{
+  this.setState({ success_open: true })
+}
 
 
 
@@ -241,6 +252,33 @@ class Login extends React.Component {
                 P_update_email={this.update_Email}
                 P_Submit_func={this.on_Login}
                 auth={this.auth}/>
+                {this.state.success_open && (
+                <Layer
+                  position="bottom"
+                  modal={false}
+                  margin={{ vertical: "medium", horizontal: "small" }}
+                  onEsc={this.onClose}
+                  responsive={false}
+                  plain
+                >
+                  <Box
+                    align="center"
+                    direction="row"
+                    gap="small"
+                    justify="between"
+                    round="medium"
+                    elevation="medium"
+                    pad={{ vertical: "xsmall", horizontal: "small" }}
+                    background="#bfdbbf"
+                  >
+                    <Box align="center" direction="row" gap="xsmall">
+                      <StatusGood />
+                      <Text>Login Successful</Text>
+                    </Box>
+                    <Button icon={<FormClose />} onClick={this.onClose} plain />
+                  </Box>
+                </Layer>
+              )}
               </Tab>
               <Tab
                 title={
