@@ -325,8 +325,10 @@ class NewRequest extends Component {
             </Grid>
             <Grid item>
               <Button variant="contained"
-              onClick={this.onSubmitRequest}>
-              SUBMIT!
+                onClick={this.onSubmitRequest}
+                disabled={!this.state.itemName || !this.state.description || !this.state.estimateVal}
+              >
+                SUBMIT!
               </Button>
             </Grid>
           </Grid>
