@@ -176,7 +176,7 @@ class SideBar extends React.Component {
                 <Profile />
               </Route>
               <Route path="/NewRequest">
-                <NewRequest hasPhoto={this.props.location.state.hasPhoto}/>
+                <NewRequest hasPhoto={this.props.location.state.hasPhoto} Email={this.props.location.state.Email}/>
               </Route>
             </Switch>
           </main>
