@@ -34,10 +34,8 @@ class App extends Component {
       */}
       <Switch>
 
-        <Route path="/posts">
-          //<Log_Page db={this.db} firebase={this.firebase}/>
-          <SideBar />
-        </Route>
+
+
       </Switch>
     </div>
   </Router>
