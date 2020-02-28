@@ -1,7 +1,31 @@
 import React, { Component } from 'react';
 import {fdb} from "../../firebase";
+import { withStyles, makeStyles, ThemeProvider } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
 
 /* ---  THIS FILE CONTAINS ALL THE POSTS --- */
+const styles = theme => ({
+  root: {
+    minWidth: 275,
+    margin: 10,
+  },
+  bullet: {
+    display: 'inline-block',
+    margin: '0 2px',
+    transform: 'scale(0.8)',
+  },
+  title: {
+    fontSize: 14,
+  },
+  pos: {
+    marginBottom: 12,
+  },
+});
+
 class Posts extends Component {
   constructor(props) {
     super(props);
@@ -25,18 +49,37 @@ class Posts extends Component {
       });
   }
   render() {
-      const {post_list} = this.state
-      return (
-        <ul>
-          {post_list.map(post =>
-            <li Key={post.id}>
-              <a>{post.borrower} </a>
-              <a>{post.content} </a>
-            </li>
-          )}
-        </ul>
-      );
+    const{classes} = this.props
+    const {post_list} = this.state
+    return (
+
+    <div>
+      {post_list.map(post=>
+        <Card className={classes.root}>
+            <CardContent>
+              <Typography variant="h5" component="h2">
+                {post.title}
+              </Typography>
+              <Typography variant= "subtitle1" >
+                {post.content}
+              </Typography>
+              <Typography variant="body2" component="p" color="textSecondary">
+                Borrower: {post.borrower}
+                <br />
+              </Typography>
+              <Typography variant="body2" component="p" color="textSecondary">
+                Guranrtor: {post.guarantor}
+                <br />
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="small">Lend</Button>
+            </CardActions>
+        </Card>
+      )}
+    </div>
+    );
   }
 }
 
-export default Posts;
+export default withStyles(styles, {withTheme: true})(Posts);;
