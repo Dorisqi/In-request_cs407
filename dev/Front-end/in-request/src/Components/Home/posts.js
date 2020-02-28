@@ -68,7 +68,11 @@ class Posts extends Component {
                 <br />
               </Typography>
               <Typography variant="body2" component="p" color="textSecondary">
-                Guranrtor: {post.guarantor}
+                Estimated Value: {post.price} $
+                <br />
+              </Typography>
+              <Typography variant="body2" component="p" color="textSecondary">
+                Guranrtor: {post.guarantor} 
                 <br />
               </Typography>
             </CardContent>
