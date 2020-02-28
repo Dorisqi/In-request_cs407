@@ -139,7 +139,12 @@ class Login extends React.Component {
         }).then(() => {
           console.log('login successful');
 
-          this.props.history.push("/posts");
+          this.props.history.push({pathname:"/posts",
+            state:{
+              Email:this.state.Email,
+              Nickname:this.state.Nickname
+            }
+          });
 
           // console.log('Data:', doc.data());
           //todo redirect to post
@@ -151,8 +156,8 @@ class Login extends React.Component {
       this.setState(state => ({
         success_open:true
       }))
-      alert(error)
-      this.props.history.push("/login");
+      console.log(err.message)
+      //this.props.history.push("/login");
     });
   });
   }
@@ -180,7 +185,12 @@ class Login extends React.Component {
         // An error happened.
         console.log(error)
       });
-      this.props.history.push("/posts");
+      this.props.history.push("/posts",{
+        state:{
+          Email:this.state.Email,
+          Nickname:this.state.Nickname
+        }
+      });
       console.log('signup successful');
     }).catch(err => {
       // An error happened.

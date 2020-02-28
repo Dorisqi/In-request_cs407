@@ -21,10 +21,12 @@ import { Switch, Route, Link, BrowserRouter } from "react-router-dom";
 import Profile from '../Home/profile';
 import Posts from '../Home/Posts.js';
 import NewRequest from '../Home/NewRequest';
-
 import Upload from '../Home/uploadimg';
 import Button from '@material-ui/core/Button';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
+import {auth} from "../../firebase";
+import {fdb} from "../../firebase";
+
 
 const drawerWidth = 240;
 
@@ -60,8 +62,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+////
 function SideBar(props) {
-  const { container } = props;
+  const { container,location } = props;
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -69,6 +72,22 @@ function SideBar(props) {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+  const Logout=()=>{
+    auth.signOut().then(function() {
+  // log-out successful.
+      console.log(auth.currentUser)
+      const ref = fdb.collection('users').doc(props.location.state.Email);
+      ref.update({
+        LoginState: false
+      }).then(() => {
+        console.log('logout successful');
+        this.props.history.push("/login");
+      });
+    }).catch(err => {
+      // An error happened.
+      console.log('Error logging out', err);
+    });
+  }
 
   const drawer = (
     <div>
@@ -103,7 +122,7 @@ function SideBar(props) {
       <Divider />
       <List>
         {['Profile', 'Log Out'].map((text, index) => (
-          <ListItem button key={text} component={Link} to={"/" + text.replace(/\s/g,'')}>
+          <ListItem button onClick={Logout} key={text} component={Link} to={"/" + text.replace(/\s/g,'')}>
             <ListItemIcon>
               {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
             </ListItemIcon>
@@ -159,7 +178,8 @@ SideBar.propTypes = {
    */
    container: PropTypes.instanceOf(
      typeof Element === "undefined" ? Object : Element
- )
+ ),
+ Email:PropTypes.string
 };
 
 export default SideBar;

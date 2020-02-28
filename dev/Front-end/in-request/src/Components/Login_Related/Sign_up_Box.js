@@ -27,7 +27,8 @@ class Sign_up_Box extends React.Component {
     super(props)
     this.state ={
       Email:"",
-      Password:"",
+      Password1:"",
+      Password2:"",
       Nickname:"",
 
     }
@@ -57,7 +58,7 @@ class Sign_up_Box extends React.Component {
   on_Change_pw2=event =>{
     const value = event.target.value
     this.setState({
-      Password1:value
+      Password2:value
     })
   }
   on_Change_nickname=event =>{
@@ -67,8 +68,8 @@ class Sign_up_Box extends React.Component {
   }
 
   on_Submit=event=>{
-    //console.log("submit click")
-    if(this.state.Password1 == this.state.Password2){
+
+    if(this.state.Password1 === this.state.Password2){
       this.props.P_Submit_func()
 
     }else{
