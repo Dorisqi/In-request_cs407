@@ -6,7 +6,7 @@ import PersonIcon from '@material-ui/icons/Person';
 import PublishIcon from '@material-ui/icons/Publish';
 import Avatar from "@material-ui/core/Avatar";
 import { makeStyles,withStyles } from '@material-ui/core/styles';
-
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 class Upload extends Component{
@@ -64,9 +64,11 @@ class Upload extends Component{
         return (
             <div style={style}>
                 <input id="myInput" type="file" ref={(ref) => this.myInput = ref} style = {{display : 'none'}}  onChange={this.handleChange}/>
-                <IconButton onClick={(e) => this.myInput.click() } >
+                <Tooltip title = 'Upload .jpg or .png file'>
+                  <IconButton onClick={(e) => this.myInput.click() } >
                     <Avatar src={this.state.url} />
-                </IconButton>
+                  </IconButton>
+                </Tooltip>
 
             </div>
         )
