@@ -117,6 +117,10 @@ class NewRequest extends Component {
   }
   onSubmitRequest = event => {
     //console.log(this.state.Email)
+    if (this.props.hasPhoto === false) {
+      alert("Please upload ID photo first!")
+      return;
+    }
     const itemName = this.state.itemName
     const description = this.state.description
     const estimateVal = this.state.estimateVal
@@ -148,10 +152,10 @@ class NewRequest extends Component {
       content: description,
       price: estimateVal,
       estReturn: returnDate,
-      taglist: listoftags
+      taglist: listoftags,
+      borrower: this.props.Email,
     }).then(ref =>{
       console.log('Added document with ID: ', ref.id);
-      window.location.reload(true);
     }).catch(err => {
       // An error happened.
       console.log('Error making a request', err);
