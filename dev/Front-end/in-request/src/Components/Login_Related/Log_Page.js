@@ -166,7 +166,22 @@ class Login extends React.Component {
                   }
                 });
 
-            })
+            }).catch(error =>{
+              const data = doc.data()
+
+              this.props.history.push({
+                pathname:"/posts",
+                state:{
+                  Email:this.state.Email,
+                  Nickname:data.nickname,
+                  auth:this.auth,
+                  url:"",
+                  hasPhoto:data.photostate
+
+                }
+              });
+
+            });
             //console.log(this.state.url);
             // this.props.history.push({
             //   pathname:"/posts",
