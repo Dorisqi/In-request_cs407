@@ -87,6 +87,9 @@ class NewRequest extends Component {
 
   handleDescription = event => {
     const description_val = event.target.value;
+    if (description_val.length == 280){
+      alert("Description cannot be longer than 280")
+    }
     this.setState(state =>({
       description: description_val
     }));
@@ -282,6 +285,7 @@ class NewRequest extends Component {
                 fullWidth
                 value = {this.state.description}
                 onChange = {this.handleDescription}
+                inputProps={{ maxLength: 280 }}
               />
             </Grid>
           </Grid>
