@@ -109,7 +109,8 @@ class Login extends React.Component {
       index:0,
       tab_f:0,
       success_open:false,
-      url:""
+      url:"",
+      hasPhoto:false
 
 
 
@@ -143,20 +144,40 @@ class Login extends React.Component {
             console.log('login successful');
             // console.log(this.props.history)
             //get user image
-            storage.ref('images').child(this.props.email).getDownloadURL().then(url => {
-                console.log(url);
-                this.setState({url});
-            })
-            this.props.history.push({
-              pathname:"/posts",
-              state:{
-                Email:this.state.Email,
-                Nickname:this.state.Nickname,
-                auth:this.auth,
-                url:this.state.url
+            storage.ref('images').child(this.state.Email).getDownloadURL().then(url => {
+                //console.log(url);
+                this.setState({url:url});
+                if(url.length != 0){
+                  this.setState({
+                    hasPhoto: true
+                  })
+                }
+                const data = doc.data()
 
-              }
-            });
+                this.props.history.push({
+                  pathname:"/posts",
+                  state:{
+                    Email:this.state.Email,
+                    Nickname:data.nickname,
+                    auth:this.auth,
+                    url:url,
+                    hasPhoto:data.photostate
+
+                  }
+                });
+
+            })
+            //console.log(this.state.url);
+            // this.props.history.push({
+            //   pathname:"/posts",
+            //   state:{
+            //     Email:this.state.Email,
+            //     Nickname:this.state.Nickname,
+            //     auth:this.auth,
+            //     url:this.state.url
+            //
+            //   }
+            // });
           });
         }else{
           alert("Email is not verified")
@@ -164,15 +185,22 @@ class Login extends React.Component {
         // console.log(auth.currentUser.emailVerified)
 
       }
-    }).catch(err => {
+    }).catch(error => {
       // An error happened.
-      console.log('Error logging in', err);
-      this.setState(state => ({
-        success_open:true
-      }))
-      console.log(err.message)
+      alert(error)
+      console.log('Error logging in', error);
+      //console.log(error)
+      // alert(error)
+      // this.setState(state => ({
+      //   success_open:true
+      // }))
+      // console.log(error.message)
       //this.props.history.push("/login");
     });
+  }).catch(err => {
+    // An error happened.
+    alert(err)
+    console.log('Error logging in', err);
   });
   }
 
@@ -197,17 +225,37 @@ class Login extends React.Component {
       }).catch(function(error) {
         // An error happened.
         console.log(error)
+        alert(error)
+        //alert(console.error())
       });
-      this.props.history.push("/posts",{
+      ref.get().then(doc => {
+        const data = doc.data()
+        this.setState({
+          Nickname:data.nickname
+        })
+      }).catch(error => {
+        // An error happened.
+        alert(error)
+        console.log('Error sign up', error);
+
+      });
+
+
+      this.props.history.push({
+        pathname:"/posts",
         state:{
           Email:this.state.Email,
           Nickname:this.state.Nickname,
-          auth:this.auth
+          auth:this.auth,
+          url:"",
+          hasPhoto:false
+
         }
       });
       console.log('signup successful');
     }).catch(err => {
       // An error happened.
+      alert(err)
       console.log('Error sign up', err);
     });
 

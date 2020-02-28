@@ -6,7 +6,16 @@ import PersonIcon from '@material-ui/icons/Person';
 import PublishIcon from '@material-ui/icons/Publish';
 import Avatar from "@material-ui/core/Avatar";
 import { makeStyles,withStyles } from '@material-ui/core/styles';
+import {fdb} from '../../firebase';
 
+
+// const largeAvatar = withStyles(theme => ({
+//   root: {
+//     width: 200,
+//     height: 150,
+//     border: `2px solid ${theme.palette.background.paper}`,
+//   },
+// }))(Avatar);
 
 
 class Upload extends Component{
@@ -27,16 +36,28 @@ class Upload extends Component{
             const image = e.target.files[0];
             this.setState(()=>({image}));
             //image = this.state.image;
-            const name = 'images/'+ this.props.email
+            const name = 'images/'+ this.props.Email
+            console.log(name)
             const uploadtask = storage.ref(name).put(image);
             uploadtask.on('state_changed', (snapshot) => {
                 console.log("intheresomewhere")//progress
-            }, (error) => {console.log()}, () => {
+            },
+            (error) => {
+              console.log(error);
+              alert(error)
+            },
+            () => {
                 //complete
-                storage.ref('images').child(this.props.email).getDownloadURL().then(url => {
+
+                storage.ref('images').child(this.props.Email).getDownloadURL().then(url => {
                     console.log(url);
                     this.setState({url});
                 })
+                const ref = fdb.collection('users').doc(this.props.Email);
+                  ref.set({
+                  photostate: true
+                  });
+
             });
         }
 
@@ -55,6 +76,12 @@ class Upload extends Component{
         // });
     }
 
+componentWillMount() {
+  console.log(this.props.url)
+  this.setState({
+    url:this.props.url
+  })
+}
 
     render(){
         const style = {
@@ -66,9 +93,10 @@ class Upload extends Component{
         return (
             <div style={style}>
                 <input id="myInput" type="file" ref={(ref) => this.myInput = ref} style = {{display : 'none'}}  onChange={this.handleChange}/>
-                <IconButton onClick={(e) => this.myInput.click() } >
-                    <Avatar src={this.state.url} />
+                <IconButton onClick={(e) => this.myInput.click() }  >
+                    <Avatar src={this.state.url}  />
                 </IconButton>
+                <label fontSize={30}>{this.props.Nickname}</label>
 
             </div>
         )

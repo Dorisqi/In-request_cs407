@@ -136,7 +136,7 @@ class SideBar extends React.Component {
                     </IconButton>
                   </label>
 
-                  <Upload url={this.props.location.state.url}/>
+                  <Upload url={this.props.location.state.url} Email={this.props.location.state.Email} Nickname={this.props.location.state.Nickname}/>
                 </Grid>
                 <br />
                 <br />
@@ -176,7 +176,7 @@ class SideBar extends React.Component {
                 <Profile />
               </Route>
               <Route path="/NewRequest">
-                <NewRequest />
+                <NewRequest hasPhoto={this.props.location.state.hasPhoto}/>
               </Route>
             </Switch>
           </main>
