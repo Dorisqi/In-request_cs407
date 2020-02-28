@@ -10,81 +10,11 @@ import {
   Route,
   Link
 } from "react-router-dom";
-// import firebase from "firebase/app"
-// import admin from "firebase-admin"
-
-//const firebase = require("firebase/app");
-
-// Add the Firebase products that you want to use
-// require("firebase/auth");
-// require("firebase/firestore");
-//
-// const firebaseConfig = {
-//   apiKey: "AIzaSyB8fmbeFCz6MflVeRF-pU7N5WyPCDbQDQw",
-//   authDomain: "in-request.firebaseapp.com",
-//   databaseURL: "https://in-request.firebaseio.com",
-//   projectId: "in-request",
-//   storageBucket: "in-request.appspot.com",
-//   messagingSenderId: "566878675007",
-//   appId: "1:566878675007:web:234477171d4f9c7311d88a",
-//   measurementId: "G-5PRZRKXFQ2"
-// };
-
-// // Initialize Firebase
-// firebase.initializeApp(firebaseConfig);
-//
-// // This part is for firebase-cloud firestore setup
-// const admin = require('firebase-admin');
-//
-// const serviceAccount = require('./in-request-firebase-adminsdk-2upr0-a94880f19f.json');
-//
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-// });
-//
-// const db = admin.firestore();
 
 class App extends Component {
-  // constructor(props){
-  //   this.state:{
-  //     admin:require('firebase-admin');
-  //     serviceAccount:require('./in-request-firebase-adminsdk-2upr0-a94880f19f.json');
-  //     db:admin.firestore();
-  //   }
-  // }
-  // admin.initializeApp({
-  //   credential: admin.credential.cert(serviceAccount),
-  // });
-  // firebase.initializeApp(firebaseConfig);
 
   render() {
-    // Initialize Firebase
-    // require("firebase/auth");
-    // require("firebase/firestore");
 
-    // const firebaseConfig = {
-    //   apiKey: "AIzaSyB8fmbeFCz6MflVeRF-pU7N5WyPCDbQDQw",
-    //   authDomain: "in-request.firebaseapp.com",
-    //   databaseURL: "https://in-request.firebaseio.com",
-    //   projectId: "in-request",
-    //   storageBucket: "in-request.appspot.com",
-    //   messagingSenderId: "566878675007",
-    //   appId: "1:566878675007:web:234477171d4f9c7311d88a",
-    //   measurementId: "G-5PRZRKXFQ2"
-    // };
-    // //const firebase = require("firebase/app");
-    // firebase.initializeApp(firebaseConfig);
-    //
-    // // This part is for firebase-cloud firestore setup
-    // //const admin = require('firebase-admin');
-    //
-    // const serviceAccount = require('./in-request-firebase-adminsdk-2upr0-a94880f19f.json');
-
-    // admin.initializeApp({
-    //   credential: admin.credential.cert(serviceAccount),
-    // });
-    //
-    // const db = admin.firestore();
     return (
 
   <Router>
