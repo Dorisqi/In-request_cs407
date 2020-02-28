@@ -21,7 +21,7 @@ class App extends Component {
     <div>
       <ul>
         <li>
-          <Link to="/posts">Home</Link>
+          <Link to="/login"></Link>
         </li>
       </ul>
 
@@ -34,8 +34,12 @@ class App extends Component {
       */}
       <Switch>
 
-
-
+        <Route exact path="/login">
+          <Log_Page />
+        </Route>
+        <Route path="/posts">
+          <SideBar />
+        </Route>
       </Switch>
     </div>
   </Router>

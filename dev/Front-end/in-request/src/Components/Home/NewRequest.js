@@ -179,6 +179,7 @@ class NewRequest extends Component {
       color5: value,
       color6: 0,
       color7: 0,
+
     })
   }
   handleClick6=event=>{
@@ -187,6 +188,7 @@ class NewRequest extends Component {
       color6: value,
       color5: 0,
       color7:0,
+
     })
   }
   handleClick7=event=>{
@@ -196,6 +198,7 @@ class NewRequest extends Component {
       color5: 0,
       color6: 0,
     })
+
   }
 
   render() {

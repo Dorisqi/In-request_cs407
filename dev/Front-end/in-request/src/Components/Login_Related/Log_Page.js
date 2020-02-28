@@ -18,6 +18,7 @@ import "firebase/auth"
 import {auth} from "../../firebase";
 import {fdb} from "../../firebase";
 import { Redirect } from 'react-router';
+import {withRouter,BrowserRouter, Switch, Route } from "react-router-dom";
 
 //import {Server} from "./server.js"
 const customFormFieldTheme ={
@@ -134,7 +135,8 @@ class Login extends React.Component {
           LoginState: true
         }).then(() => {
           console.log('login successful');
-          
+          this.props.history.push("/posts");
+
           // console.log('Data:', doc.data());
           //todo redirect to post
         });
@@ -152,32 +154,31 @@ class Login extends React.Component {
     const ps = this.state.Password
     const nickname=this.state.Nickname
     console.log("in signuup")
-    console.log(nickname)
+
     auth.createUserWithEmailAndPassword(email, ps).then(error => {
   // log-in successful.
     const ref = fdb.collection('users').doc(email);
-    // ref.get().then(doc => {
-    //   if (!doc.exists) {
-    //     console.log('No such document!');
-    //   } else {
-    //     ref.set({
-    //       nickname: nickname, email: email,
-    //       LoginState: true, photostate: false
-    //     }).then(() => {
-    //       console.log('signup successful');
-    //       // console.log('Data:', doc.data());
-    //       //todo redirect to post
-    //     });
-    //   }
       ref.set({
         nickname: nickname, email: email,
         LoginState: true, photostate: false
       });
+      var user = auth.currentUser;
+
+      user.sendEmailVerification().then(function() {
+        // Email sent.
+        //console.log("varification")
+      }).catch(function(error) {
+        // An error happened.
+        console.log(error)
+      });
+
       console.log('signup successful');
     }).catch(err => {
       // An error happened.
       console.log('Error sign up', err);
     });
+
+
 
   }
 
@@ -238,7 +239,8 @@ class Login extends React.Component {
                 <Log_in_Box
                 P_update_pw={this.update_Pw}
                 P_update_email={this.update_Email}
-                P_Submit_func={this.on_Login}/>
+                P_Submit_func={this.on_Login}
+                auth={this.auth}/>
               </Tab>
               <Tab
                 title={
@@ -264,4 +266,4 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+export default withRouter(Login);
