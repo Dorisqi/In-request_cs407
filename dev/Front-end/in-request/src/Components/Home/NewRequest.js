@@ -98,7 +98,7 @@ class NewRequest extends Component {
 
   handleValue = event => {
     const estimate_val = event.target.value;
-    if (!Number(estimate_val)) {
+    if (!Number(estimate_val) && estimate_val.length > 0) {
       alert("Numbers Only");
       return;
     }
