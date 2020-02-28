@@ -6,12 +6,9 @@ import PersonIcon from '@material-ui/icons/Person';
 import PublishIcon from '@material-ui/icons/Publish';
 import Avatar from "@material-ui/core/Avatar";
 import { makeStyles,withStyles } from '@material-ui/core/styles';
-<<<<<<< HEAD
 import Tooltip from '@material-ui/core/Tooltip';
-=======
 import {fdb} from '../../firebase';
 
->>>>>>> Logout
 
 // const largeAvatar = withStyles(theme => ({
 //   root: {
@@ -96,13 +93,13 @@ componentWillMount() {
         };
         return (
             <div style={style}>
-                <input id="myInput" type="file" ref={(ref) => this.myInput = ref} style = {{display : 'none'}}  onChange={this.handleChange}/>
+              <input id="myInput" type="file" ref={(ref) => this.myInput = ref} style = {{display : 'none'}}  onChange={this.handleChange}/>
               <Tooltip title = 'Upload .jpg or .png file'>
                 <IconButton onClick={(e) => this.myInput.click() }  >
                     <Avatar src={this.state.url}  />
                 </IconButton>
-                <label fontSize={30}>{this.props.Nickname}</label>
-                </Tooltip>
+              </Tooltip>
+              <label fontSize={30}>{this.props.Nickname}</label>
 
 
 
