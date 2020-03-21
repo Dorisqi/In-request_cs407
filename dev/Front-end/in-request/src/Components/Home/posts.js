@@ -185,33 +185,38 @@ class Posts extends Component {
             </Grid>
           </Grid>
         </Container>
+        <br />
+        <Grid container xs={12} spacing={3}>
         {filtered.map(post=>
-          <Card className={classes.root}>
-              <CardContent>
-                <Typography variant="h5" component="h2">
-                  {post.title}
-                </Typography>
-                <Typography variant= "subtitle1" >
-                  {post.content}
-                </Typography>
-                <Typography variant="body2" component="p" color="textSecondary">
-                  Borrower: {post.borrower}
-                  <br />
-                </Typography>
-                <Typography variant="body2" component="p" color="textSecondary">
-                  Estimated Value: {post.price} $
-                  <br />
-                </Typography>
-                <Typography variant="body2" component="p" color="textSecondary">
-                  Guranrtor: {post.guarantor}
-                  <br />
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button size="small">Lend</Button>
-              </CardActions>
-          </Card>
+          <Grid item xs={4}>
+            <Card>
+                <CardContent>
+                  <Typography variant="h5" component="h2">
+                    {post.title}
+                  </Typography>
+                  <Typography variant= "subtitle1" >
+                    {post.content}
+                  </Typography>
+                  <Typography variant="body2" component="p" color="textSecondary">
+                    Borrower: {post.borrower}
+                    <br />
+                  </Typography>
+                  <Typography variant="body2" component="p" color="textSecondary">
+                    Estimated Value: {post.price} $
+                    <br />
+                  </Typography>
+                  <Typography variant="body2" component="p" color="textSecondary">
+                    Guranrtor: {post.guarantor}
+                    <br />
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button size="small">Lend</Button>
+                </CardActions>
+            </Card>
+          </Grid>
         )}
+        </Grid>
       </div>
     );
   }
