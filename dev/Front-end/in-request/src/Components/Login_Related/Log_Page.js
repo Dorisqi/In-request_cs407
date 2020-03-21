@@ -3,9 +3,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from "prop-types";
 import {withStyles} from '@material-ui/core/styles'
 import { storiesOf } from "@storybook/react";
-import { CircleInformation, Currency } from "grommet-icons";
-import { Box,Form,CheckBox,RangeInput,Select,FormField,
-  TextArea,Button,MaskedInput,RadioButtonGroup, Grommet,Grid,Stack, Tab, Tabs, Text, TextInput } from "grommet";
+import { CircleInformation,FormClose, StatusGood } from "grommet-icons";
+import { Box,Form,CheckBox,RangeInput,Select,FormField,Layer,TextInput,
+  TextArea,Button,MaskedInput,RadioButtonGroup, Grommet,Grid,Stack, Tab, Tabs, Text } from "grommet";
 import { grommet } from "grommet/themes";
 import { Attraction, Car, TreeOption } from "grommet-icons";
 import TextField from '@material-ui/core/TextField';
@@ -17,7 +17,10 @@ import { css } from "styled-components";
 import "firebase/auth"
 import {auth} from "../../firebase";
 import {fdb} from "../../firebase";
+import {storage} from '../../firebase';
 import { Redirect } from 'react-router';
+import {withRouter,BrowserRouter, Switch, Route } from "react-router-dom";
+
 
 //import {Server} from "./server.js"
 const customFormFieldTheme ={
@@ -104,7 +107,10 @@ class Login extends React.Component {
       fdb: this.fdb,
       name:"",
       index:0,
-      tab_f:0
+      tab_f:0,
+      success_open:false,
+      url:"",
+      hasPhoto:false
 
 
 
@@ -116,6 +122,7 @@ class Login extends React.Component {
     this.update_Email=this.update_Email.bind(this)
     this.update_Nickname=this.update_Nickname.bind(this)
     this.onActive=this.onActive.bind(this)
+    this.onClose=this.onClose.bind(this)
   }
 
 
@@ -130,19 +137,85 @@ class Login extends React.Component {
       if (!doc.exists) {
         console.log('No such document!');
       } else {
-        ref.update({
-          LoginState: true
-        }).then(() => {
-          console.log('login successful');
-          
-          // console.log('Data:', doc.data());
-          //todo redirect to post
-        });
+        if(auth.currentUser.emailVerified){
+          ref.update({
+            LoginState: true
+          }).then(() => {
+            console.log('login successful');
+            // console.log(this.props.history)
+            //get user image
+            storage.ref('images').child(this.state.Email).getDownloadURL().then(url => {
+                //console.log(url);
+                this.setState({url:url});
+                if(url.length != 0){
+                  this.setState({
+                    hasPhoto: true
+                  })
+                }
+                const data = doc.data()
+
+                this.props.history.push({
+                  pathname:"/posts",
+                  state:{
+                    Email:this.state.Email,
+                    Nickname:data.nickname,
+                    auth:this.auth,
+                    url:url,
+                    hasPhoto:data.photostate
+
+                  }
+                });
+
+            }).catch(error =>{
+              const data = doc.data()
+
+              this.props.history.push({
+                pathname:"/posts",
+                state:{
+                  Email:this.state.Email,
+                  Nickname:data.nickname,
+                  auth:this.auth,
+                  url:"",
+                  hasPhoto:data.photostate
+
+                }
+              });
+
+            });
+            //console.log(this.state.url);
+            // this.props.history.push({
+            //   pathname:"/posts",
+            //   state:{
+            //     Email:this.state.Email,
+            //     Nickname:this.state.Nickname,
+            //     auth:this.auth,
+            //     url:this.state.url
+            //
+            //   }
+            // });
+          });
+        }else{
+          alert("Email is not verified")
+        }
+        // console.log(auth.currentUser.emailVerified)
+
       }
-    }).catch(err => {
+    }).catch(error => {
       // An error happened.
-      console.log('Error logging in', err);
+      alert(error)
+      console.log('Error logging in', error);
+      //console.log(error)
+      // alert(error)
+      // this.setState(state => ({
+      //   success_open:true
+      // }))
+      // console.log(error.message)
+      //this.props.history.push("/login");
     });
+  }).catch(err => {
+    // An error happened.
+    alert(err)
+    console.log('Error logging in', err);
   });
   }
 
@@ -152,32 +225,56 @@ class Login extends React.Component {
     const ps = this.state.Password
     const nickname=this.state.Nickname
     console.log("in signuup")
-    console.log(nickname)
+
     auth.createUserWithEmailAndPassword(email, ps).then(error => {
   // log-in successful.
     const ref = fdb.collection('users').doc(email);
-    // ref.get().then(doc => {
-    //   if (!doc.exists) {
-    //     console.log('No such document!');
-    //   } else {
-    //     ref.set({
-    //       nickname: nickname, email: email,
-    //       LoginState: true, photostate: false
-    //     }).then(() => {
-    //       console.log('signup successful');
-    //       // console.log('Data:', doc.data());
-    //       //todo redirect to post
-    //     });
-    //   }
       ref.set({
         nickname: nickname, email: email,
         LoginState: true, photostate: false
       });
+      var user = auth.currentUser;
+      user.sendEmailVerification().then(function() {
+        // Email sent.
+        //console.log("varification")
+      }).catch(function(error) {
+        // An error happened.
+        console.log(error)
+        alert(error)
+        //alert(console.error())
+      });
+      ref.get().then(doc => {
+        const data = doc.data()
+        this.setState({
+          Nickname:data.nickname
+        })
+      }).catch(error => {
+        // An error happened.
+        alert(error)
+        console.log('Error sign up', error);
+
+      });
+
+
+      this.props.history.push({
+        pathname:"/posts",
+        state:{
+          Email:this.state.Email,
+          Nickname:this.state.Nickname,
+          auth:this.auth,
+          url:"",
+          hasPhoto:false
+
+        }
+      });
       console.log('signup successful');
     }).catch(err => {
       // An error happened.
+      alert(err)
       console.log('Error sign up', err);
     });
+
+
 
   }
 
@@ -208,7 +305,9 @@ class Login extends React.Component {
     const value = this.state.index == 0? 1:0
     this.setState({ index: value })
   }
-
+onClose=event=>{
+  this.setState({ success_open: true })
+}
 
 
 
@@ -238,7 +337,35 @@ class Login extends React.Component {
                 <Log_in_Box
                 P_update_pw={this.update_Pw}
                 P_update_email={this.update_Email}
-                P_Submit_func={this.on_Login}/>
+                P_Submit_func={this.on_Login}
+                auth={this.auth}/>
+                {this.state.success_open && (
+                <Layer
+                  position="bottom"
+                  modal={false}
+                  margin={{ vertical: "medium", horizontal: "small" }}
+                  onEsc={this.onClose}
+                  responsive={false}
+                  plain
+                >
+                  <Box
+                    align="center"
+                    direction="row"
+                    gap="small"
+                    justify="between"
+                    round="medium"
+                    elevation="medium"
+                    pad={{ vertical: "xsmall", horizontal: "small" }}
+                    background="#bfdbbf"
+                  >
+                    <Box align="center" direction="row" gap="xsmall">
+                      <StatusGood />
+                      <Text>Login Successful</Text>
+                    </Box>
+                    <Button icon={<FormClose />} onClick={this.onClose} plain />
+                  </Box>
+                </Layer>
+              )}
               </Tab>
               <Tab
                 title={
@@ -264,4 +391,4 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+export default withRouter(Login);

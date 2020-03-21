@@ -27,13 +27,15 @@ class Sign_up_Box extends React.Component {
     super(props)
     this.state ={
       Email:"",
-      Password:"",
+      Password1:"",
+      Password2:"",
       Nickname:"",
 
     }
     this.on_Change_email=this.on_Change_email.bind(this)
     this.on_Change_nickname=this.on_Change_nickname.bind(this)
-    this.on_Change_pw=this.on_Change_pw.bind(this)
+    this.on_Change_pw1=this.on_Change_pw1.bind(this)
+    this.on_Change_pw2=this.on_Change_pw2.bind(this)
     this.on_Submit=this.on_Submit.bind(this)
   }
 
@@ -43,10 +45,21 @@ class Sign_up_Box extends React.Component {
     this.props.P_update_email(value)
 
   }
-  on_Change_pw=event =>{
+
+  on_Change_pw1=event =>{
     const value = event.target.value
+    const compare=this.state.Password2
+    this.setState({
+      Password1:value
+    })
     this.props.P_update_pw(value)
 
+  }
+  on_Change_pw2=event =>{
+    const value = event.target.value
+    this.setState({
+      Password2:value
+    })
   }
   on_Change_nickname=event =>{
     const value = event.target.value
@@ -54,32 +67,14 @@ class Sign_up_Box extends React.Component {
 
   }
 
-
-  // on_Change=event =>{
-  //   const value = event.target.value
-  //   const name = event.target.name
-  //   console.log( name)
-  //   if(name == "email"){
-  //     this.setState(state => ({
-  //       Email:value
-  //     }))
-  //     this.props.P_update_email(value)
-  //   }else if(name =="password"){
-  //     this.setState(state => ({
-  //       Password:value
-  //     }))
-  //     this.props.P_update_pw(value)
-  //   }else if (name =="nickname") {
-  //     this.setState(state => ({
-  //       Nickname:value
-  //     }))
-  //   }
-  //   this.props.P_update_nickname(value)
-  //   //console.log(name)
-  // }
   on_Submit=event=>{
-    //console.log("submit click")
-    this.props.P_Submit_func()
+
+    if(this.state.Password1 === this.state.Password2){
+      this.props.P_Submit_func()
+
+    }else{
+      alert("password not match")
+    }
   }
 
   render() {
@@ -90,7 +85,8 @@ class Sign_up_Box extends React.Component {
           <Form>
             <FormFieldLabel name="email" label="E-mail" onChange={this.on_Change_email} required />
             <FormFieldLabel name="nickname" label="Nickname" onChange={this.on_Change_nickname} required />
-            <FormFieldLabel type="password" name="password" label="Password" onChange={this.on_Change_pw} required />
+            <FormFieldLabel type="password" name="password" label="Password" onChange={this.on_Change_pw1} required />
+            <FormFieldLabel name="Password" type="password" label="Password" onChange={this.on_Change_pw2} required />
             <Button type="submit" color="#f5edef" label="Sign Up" primary onClick={this.on_Submit}/>
             <Text margin={{ left: "small" }} size="small" color="status-critical">
               * Required Field

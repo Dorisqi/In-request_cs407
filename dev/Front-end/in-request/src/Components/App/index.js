@@ -10,6 +10,7 @@ import {
   Route,
   Link
 } from "react-router-dom";
+import {auth} from "../../firebase";
 
 class App extends Component {
 
@@ -20,8 +21,8 @@ class App extends Component {
   <Router>
     <div>
       <ul>
-        <li>
-          <Link to="/posts">Home</Link>
+      <li>
+          <Link to="/login">Home</Link>
         </li>
       </ul>
 
@@ -34,8 +35,11 @@ class App extends Component {
       */}
       <Switch>
 
+        <Route path="/login">
+          <Log_Page />
+        </Route>
         <Route path="/posts">
-          <Log_Page db={this.db} firebase={this.firebase}/>
+          <SideBar />
         </Route>
       </Switch>
     </div>

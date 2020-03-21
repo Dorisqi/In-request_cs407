@@ -52,6 +52,7 @@ class NewRequest extends Component {
         description: "",
         estimateVal: "",
         returnDate: new Date(),
+        tagList: [],
         color1:0,
         color2:0,
         color3:0,
@@ -73,6 +74,7 @@ class NewRequest extends Component {
       this.handleClick5 = this.handleClick5.bind(this);
       this.handleClick6 = this.handleClick6.bind(this);
       this.handleClick7 = this.handleClick7.bind(this);
+      this.onSubmitRequest = this.onSubmitRequest.bind(this);
 
 
   }
@@ -85,6 +87,9 @@ class NewRequest extends Component {
 
   handleDescription = event => {
     const description_val = event.target.value;
+    if (description_val.length == 280){
+      alert("Description cannot be longer than 280")
+    }
     this.setState(state =>({
       description: description_val
     }));
@@ -93,7 +98,7 @@ class NewRequest extends Component {
 
   handleValue = event => {
     const estimate_val = event.target.value;
-    if (!Number(estimate_val)) {
+    if (!Number(estimate_val) && estimate_val.length > 0) {
       alert("Numbers Only");
       return;
     }
@@ -110,54 +115,102 @@ class NewRequest extends Component {
     e.preventDefault();
     console.log(this.state.returnDate)
   }
-  handleClick1=event=>{
-
-    const value = (this.state.color1 ==1)? 0:1
-    //console.log(color)
-    //const color1_val  = this.state.color1 == "default" ? "primary" : "default"
-    this.setState({ color1: value})
+  onSubmitRequest = event => {
+    //console.log(this.state.Email)
+    if (this.props.hasPhoto === false) {
+      alert("Please upload ID photo first!")
+      return;
+    }
+    const itemName = this.state.itemName
+    const description = this.state.description
+    const estimateVal = this.state.estimateVal
+    const returnDate = this.state.returnDate
+    if (this.state.color1 == 1) {
+      this.state.tagList.push("HICKS")
+    }
+    if (this.state.color2 == 1) {
+      this.state.tagList.push("LWSN")
+    }
+    if (this.state.color3 == 1) {
+      this.state.tagList.push("PMU")
+    }
+    if (this.state.color4 == 1) {
+      this.state.tagList.push("ECE")
+    }
+    if(this.state.color5 == 1) {
+      this.state.tagList.push("LEVEL1")
+    }
+    if(this.state.color6 == 1) {
+      this.state.tagList.push("LEVEL2")
+    }
+    if(this.state.color7 == 1) {
+      this.state.tagList.push("LEVEL3")
+    }
+    const listoftags = this.state.tagList
+    let addDoc = fdb.collection('requests').add({
+      title: itemName,
+      content: description,
+      price: estimateVal,
+      estReturn: returnDate,
+      taglist: listoftags,
+      borrower: this.props.Email,
+    }).then(ref =>{
+      console.log('Added document with ID: ', ref.id);
+    }).catch(err => {
+      // An error happened.
+      console.log('Error making a request', err);
+    });
+  }
+  handleClick1 = event =>{
+    const value = (this.state.color1 ==1 )? 0:1
+    this.setState({color1: value})
   }
   handleClick2=event=>{
-
     const value = (this.state.color2 ==1)? 0:1
-    //const color1_val  = this.state.color1 == "default" ? "primary" : "default"
     this.setState({ color2: value})
   }
   handleClick3=event=>{
 
     const value = (this.state.color3 ==1)? 0:1
-    //const color1_val  = this.state.color1 == "default" ? "primary" : "default"
     this.setState({ color3: value})
   }
   handleClick4=event=>{
 
     const value = this.state.color4 ==1? 0:1
-    //const color1_val  = this.state.color1 == "default" ? "primary" : "default"
     this.setState({ color4: value})
   }
   handleClick5=event=>{
 
     const value = this.state.color5==1? 0:1
-    //const color1_val  = this.state.color1 == "default" ? "primary" : "default"
-    this.setState({ color5: value})
+    this.setState({
+      color5: value,
+      color6: 0,
+      color7: 0,
+
+    })
   }
   handleClick6=event=>{
-
     const value = this.state.color6 ==1? 0:1
-    //const color1_val  = this.state.color1 == "default" ? "primary" : "default"
-    this.setState({ color6: value})
+    this.setState({
+      color6: value,
+      color5: 0,
+      color7:0,
+
+    })
   }
   handleClick7=event=>{
-
     const value = this.state.color7 ==1? 0:1
-    //const color1_val  = this.state.color1 == "default" ? "primary" : "default"
-    this.setState({ color7: value})
+    this.setState({
+      color7: value,
+      color5: 0,
+      color6: 0,
+    })
+
   }
 
   render() {
     const { classes } = this.props;
     return (
-
       <Fragment>
         <CssBaseline />
         <Container>
@@ -174,7 +227,7 @@ class NewRequest extends Component {
               <LocationOnIcon />
             </Grid>
             <Grid item>
-              <Chip variant="outlined" size="small" label="HICKS" color = {this.state.color1==0? "default":"primary" } onClick={this.handleClick1}>hicks </Chip>
+              <Chip variant="outlined" size="small" label="HICKS" color = {this.state.color1==0? "default":"primary" } onClick={this.handleClick1}/>
             </Grid>
             <Grid item >
               <Chip variant="outlined" size="small" label="LWSN" color = {this.state.color2==0? "default":"primary" } onClick={this.handleClick2} />
@@ -236,6 +289,7 @@ class NewRequest extends Component {
                 fullWidth
                 value = {this.state.description}
                 onChange = {this.handleDescription}
+                inputProps={{ maxLength: 280 }}
               />
             </Grid>
           </Grid>
@@ -264,7 +318,6 @@ class NewRequest extends Component {
               <TodayIcon/>
             </Grid>
             <Grid item xs={6}>
-              <form onSubmit={ this.onFormSubmit }>
                   <DatePicker
                       selected={ this.state.returnDate }
                       onChange={ this.handleDateChange }
@@ -273,10 +326,14 @@ class NewRequest extends Component {
                       placeholderText="Click to select a date"
                       minDate={subDays(new Date(), 0)}
                   />
-              </form>
             </Grid>
             <Grid item>
-              <Button variant="contained">SUBMIT!</Button>
+              <Button variant="contained"
+                onClick={this.onSubmitRequest}
+                disabled={!this.state.itemName || !this.state.description || !this.state.estimateVal}
+              >
+                SUBMIT!
+              </Button>
             </Grid>
           </Grid>
         </Container>
