@@ -166,6 +166,10 @@ class NewRequest extends Component {
     if(this.state.color12 == 1) {
       this.state.tagList.push("Sports")
     }
+    if(estimateVal > 50) {
+      alert("Currently unable to borrow property more than 50 dollars");
+      return;
+    }
     const listoftags = this.state.tagList
     let addDoc = fdb.collection('requests').add({
       title: itemName,
@@ -206,7 +210,6 @@ class NewRequest extends Component {
       color5: value,
       color6: 0,
       color7: 0,
-
     })
   }
   handleClick6=event=>{
