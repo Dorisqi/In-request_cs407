@@ -370,15 +370,19 @@ class NewRequest extends Component {
           <br />
           <br />
           <Grid container spacing={1} alignItems="flex-end">
-            <Grid item xs={1}>
+            <Grid item>
               <TodayIcon/>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={8}>
                   <DatePicker
                       selected={ this.state.returnDate }
                       onChange={ this.handleDateChange }
+                      showTimeSelect
+                      timeFormat="HH:mm"
+                      timeIntervals={30}
+                      timeCaption="time"
                       name="startDate"
-                      dateFormat="MM/dd/yyyy"
+                      dateFormat="MMMM d, yyyy h:mm aa"
                       placeholderText="Click to select a date"
                       minDate={subDays(new Date(), 0)}
                   />
