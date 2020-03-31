@@ -23,6 +23,8 @@ import FlashOnIcon from '@material-ui/icons/FlashOn';
 import Button from '@material-ui/core/Button';
 import './NewRequest.css'
 import {fdb} from "../../firebase";
+import AppsIcon from '@material-ui/icons/Apps';
+
 
 const styles = theme => ({
   container: {
@@ -60,6 +62,10 @@ class NewRequest extends Component {
         color5:0,
         color6:0,
         color7:0,
+        color8:0,
+        color9:0,
+        color11:0,
+        color12:0,
       };
       // This binding is necessary to make `this` work in the callback
       this.handleNameChange = this.handleNameChange.bind(this);
@@ -74,9 +80,11 @@ class NewRequest extends Component {
       this.handleClick5 = this.handleClick5.bind(this);
       this.handleClick6 = this.handleClick6.bind(this);
       this.handleClick7 = this.handleClick7.bind(this);
+      this.handleClick8 = this.handleClick8.bind(this);
+      this.handleClick9 = this.handleClick9.bind(this);
+      this.handleClick11 = this.handleClick11.bind(this);
+      this.handleClick12 = this.handleClick12.bind(this);
       this.onSubmitRequest = this.onSubmitRequest.bind(this);
-
-
   }
   handleNameChange = event => {
     const name_val = event.target.value;
@@ -146,6 +154,22 @@ class NewRequest extends Component {
     if(this.state.color7 == 1) {
       this.state.tagList.push("LEVEL3")
     }
+    if(this.state.color8 == 1) {
+      this.state.tagList.push("Stationery")
+    }
+    if(this.state.color9 == 1) {
+      this.state.tagList.push("Commute")
+    }
+    if(this.state.color11 == 1) {
+      this.state.tagList.push("Living Essentials")
+    }
+    if(this.state.color12 == 1) {
+      this.state.tagList.push("Sports")
+    }
+    if(estimateVal > 50) {
+      alert("Currently unable to borrow property more than 50 dollars");
+      return;
+    }
     const listoftags = this.state.tagList
     let addDoc = fdb.collection('requests').add({
       title: itemName,
@@ -186,7 +210,6 @@ class NewRequest extends Component {
       color5: value,
       color6: 0,
       color7: 0,
-
     })
   }
   handleClick6=event=>{
@@ -205,7 +228,22 @@ class NewRequest extends Component {
       color5: 0,
       color6: 0,
     })
-
+  }
+  handleClick8=event=>{
+    const value = this.state.color8==1?0:1
+    this.setState({color8: value})
+  }
+  handleClick9=event=>{
+    const value = this.state.color9==1?0:1
+    this.setState({color9: value})
+  }
+  handleClick11=event=>{
+    const value = this.state.color11==1?0:1
+    this.setState({color11: value})
+  }
+  handleClick12=event=>{
+    const value = this.state.color12==1?0:1
+    this.setState({color12: value})
   }
 
   render() {
@@ -252,6 +290,24 @@ class NewRequest extends Component {
             </Grid>
             <Grid item>
               <Chip variant="outlined" size="small" label="Level 3" color = {this.state.color7==0? "default":"primary" } onClick={this.handleClick7}/>
+            </Grid>
+          </Grid>
+          <br />
+          <Grid container spacing={1} alignItems="flex-end">
+            <Grid item>
+              <AppsIcon/>
+            </Grid>
+            <Grid item>
+              <Chip variant="outlined" size="small" label="Stationery" color = {this.state.color8==0? "default":"primary" } onClick={this.handleClick8}/>
+            </Grid>
+            <Grid item>
+              <Chip variant="outlined" size="small" label="Commute" color = {this.state.color9==0? "default":"primary" } onClick={this.handleClick9}/>
+            </Grid>
+            <Grid item>
+              <Chip variant="outlined" size="small" label="Living Essentials" color = {this.state.color11==0? "default":"primary" } onClick={this.handleClick11}/>
+            </Grid>
+            <Grid item xs={6}>
+              <Chip variant="outlined" size="small" label="Sports" color = {this.state.color12==0? "default":"primary" } onClick={this.handleClick12}/>
             </Grid>
           </Grid>
           <br />
@@ -314,15 +370,19 @@ class NewRequest extends Component {
           <br />
           <br />
           <Grid container spacing={1} alignItems="flex-end">
-            <Grid item xs={1}>
+            <Grid item>
               <TodayIcon/>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={8}>
                   <DatePicker
                       selected={ this.state.returnDate }
                       onChange={ this.handleDateChange }
+                      showTimeSelect
+                      timeFormat="HH:mm"
+                      timeIntervals={30}
+                      timeCaption="time"
                       name="startDate"
-                      dateFormat="MM/dd/yyyy"
+                      dateFormat="MMMM d, yyyy h:mm aa"
                       placeholderText="Click to select a date"
                       minDate={subDays(new Date(), 0)}
                   />

@@ -11,6 +11,7 @@ import Chip from '@material-ui/core/Chip';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import FlashOnIcon from '@material-ui/icons/FlashOn';
 import Container from '@material-ui/core/Container';
+import AppsIcon from '@material-ui/icons/Apps';
 
 /* ---  THIS FILE CONTAINS ALL THE POSTS --- */
 const styles = theme => ({
@@ -44,6 +45,10 @@ class Posts extends Component {
       color5:0,
       color6:0,
       color7:0,
+      color8:0,
+      color9:0,
+      color11:0,
+      color12:0,
     };
     this.handleClick1 = this.handleClick1.bind(this);
     this.handleClick2 = this.handleClick2.bind(this);
@@ -52,6 +57,11 @@ class Posts extends Component {
     this.handleClick5 = this.handleClick5.bind(this);
     this.handleClick6 = this.handleClick6.bind(this);
     this.handleClick7 = this.handleClick7.bind(this);
+    this.handleClick8 = this.handleClick8.bind(this);
+    this.handleClick9 = this.handleClick9.bind(this);
+    this.handleClick11 = this.handleClick11.bind(this);
+    this.handleClick12 = this.handleClick12.bind(this);
+
   }
   componentDidMount() {
     let requests_collection = fdb.collection('requests');
@@ -110,10 +120,25 @@ class Posts extends Component {
       color6: 0,
     })
   }
-
+  handleClick8=event=>{
+    const value = (this.state.color8 ==1)?0:1
+    this.setState({ color8: value})
+  }
+  handleClick9=event=>{
+    const value = (this.state.color9 ==1)?0:1
+    this.setState({ color9: value})
+  }
+  handleClick11=event=>{
+    const value = (this.state.color11 ==1)?0:1
+    this.setState({ color11: value})
+  }
+  handleClick12=event=>{
+    const value = (this.state.color12 ==1)?0:1
+    this.setState({ color12: value})
+  }
   render() {
     const{classes} = this.props
-    const {post_list, color1,color2,color3,color4,color5,color6,color7} = this.state
+    const {post_list, color1,color2,color3,color4,color5,color6,color7,color8,color9,color11,color12} = this.state
     let buffer = []
     let filtered = []
     if (color1) {
@@ -142,6 +167,22 @@ class Posts extends Component {
     }
     if (color7) {
       const result = post_list.filter(obj =>(obj.taglist.includes("LEVEL3")));
+      buffer.push.apply(buffer, result)
+    }
+    if (color8) {
+      const result = post_list.filter(obj =>(obj.taglist.includes("Stationery")));
+      buffer.push.apply(buffer, result)
+    }
+    if (color9) {
+      const result = post_list.filter(obj =>(obj.taglist.includes("Commute")));
+      buffer.push.apply(buffer, result)
+    }
+    if (color11) {
+      const result = post_list.filter(obj =>(obj.taglist.includes("Living Essentials")));
+      buffer.push.apply(buffer, result)
+    }
+    if (color12) {
+      const result = post_list.filter(obj =>(obj.taglist.includes("Sports")));
       buffer.push.apply(buffer, result)
     }
     if (buffer.length == 0) {
@@ -184,34 +225,57 @@ class Posts extends Component {
               <Chip variant="outlined" size="small" label="Level 3" color = {this.state.color7==0? "default":"primary" } onClick={this.handleClick7}/>
             </Grid>
           </Grid>
+          <br />
+          <Grid container spacing={1} alignItems="flex-end">
+            <Grid item>
+              <AppsIcon/>
+            </Grid>
+            <Grid item>
+              <Chip variant="outlined" size="small" label="Stationery" color = {this.state.color8==0? "default":"primary" } onClick={this.handleClick8}/>
+            </Grid>
+            <Grid item>
+              <Chip variant="outlined" size="small" label="Commute" color = {this.state.color9==0? "default":"primary" } onClick={this.handleClick9}/>
+            </Grid>
+            <Grid item>
+              <Chip variant="outlined" size="small" label="Living Essentials" color = {this.state.color11==0? "default":"primary" } onClick={this.handleClick11}/>
+            </Grid>
+            <Grid item xs={6}>
+              <Chip variant="outlined" size="small" label="Sports" color = {this.state.color12==0? "default":"primary" } onClick={this.handleClick12}/>
+            </Grid>
+          </Grid>
         </Container>
+        <br />
+        <Grid container xs={12} spacing={3}>
         {filtered.map(post=>
-          <Card className={classes.root}>
-              <CardContent>
-                <Typography variant="h5" component="h2">
-                  {post.title}
-                </Typography>
-                <Typography variant= "subtitle1" >
-                  {post.content}
-                </Typography>
-                <Typography variant="body2" component="p" color="textSecondary">
-                  Borrower: {post.borrower}
-                  <br />
-                </Typography>
-                <Typography variant="body2" component="p" color="textSecondary">
-                  Estimated Value: {post.price} $
-                  <br />
-                </Typography>
-                <Typography variant="body2" component="p" color="textSecondary">
-                  Guranrtor: {post.guarantor}
-                  <br />
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button size="small">Lend</Button>
-              </CardActions>
-          </Card>
+          <Grid item xs={4}>
+            <Card>
+                <CardContent>
+                  <Typography variant="h5" component="h2">
+                    {post.title}
+                  </Typography>
+                  <Typography variant= "subtitle1" >
+                    {post.content}
+                  </Typography>
+                  <Typography variant="body2" component="p" color="textSecondary">
+                    Borrower: {post.borrower}
+                    <br />
+                  </Typography>
+                  <Typography variant="body2" component="p" color="textSecondary">
+                    Estimated Value: {post.price} $
+                    <br />
+                  </Typography>
+                  <Typography variant="body2" component="p" color="textSecondary">
+                    Guranrtor: {post.guarantor}
+                    <br />
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button size="small">Lend</Button>
+                </CardActions>
+            </Card>
+          </Grid>
         )}
+        </Grid>
       </div>
     );
   }
