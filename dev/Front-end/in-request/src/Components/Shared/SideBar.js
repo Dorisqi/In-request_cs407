@@ -173,7 +173,7 @@ class SideBar extends React.Component {
                 <Posts />
               </Route>
               <Route path="/profile">
-                <Profile />
+
               </Route>
               <Route path="/NewRequest">
                 <NewRequest hasPhoto={this.props.location.state.hasPhoto} Email={this.props.location.state.Email}/>
