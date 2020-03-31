@@ -1,8 +1,6 @@
 import React from "react";
 import { storiesOf } from "@storybook/react";
 import {auth} from "../../firebase";
-
-
 import { grommet, Box, FormField, Form, Text, Button, Grommet, Layer,
   TextArea,
   TextInput } from "grommet";

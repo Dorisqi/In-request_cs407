@@ -12,6 +12,7 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 import FlashOnIcon from '@material-ui/icons/FlashOn';
 import Container from '@material-ui/core/Container';
 import AppsIcon from '@material-ui/icons/Apps';
+import { InfiniteScroll,Box,Text} from "grommet";
 
 /* ---  THIS FILE CONTAINS ALL THE POSTS --- */
 const styles = theme => ({
@@ -49,6 +50,7 @@ class Posts extends Component {
       color9:0,
       color11:0,
       color12:0,
+      open:false
     };
     this.handleClick1 = this.handleClick1.bind(this);
     this.handleClick2 = this.handleClick2.bind(this);
@@ -61,6 +63,9 @@ class Posts extends Component {
     this.handleClick9 = this.handleClick9.bind(this);
     this.handleClick11 = this.handleClick11.bind(this);
     this.handleClick12 = this.handleClick12.bind(this);
+    this.onClick_Open = this.onClick_Open.bind(this);
+    this.onClick_Close = this.onClick_Close.bind(this);
+
 
   }
   componentDidMount() {
@@ -76,6 +81,13 @@ class Posts extends Component {
       }).catch(err => {
         console.log('Error getting documents', err);
       });
+  }
+
+  onClick_Open=event=>{
+    this.setState({open:true})
+  }
+  onClick_Close=event=>{
+    this.setState({open:false})
   }
   handleClick1 = event =>{
     const value = (this.state.color1 ==1 )? 0:1
@@ -268,9 +280,24 @@ class Posts extends Component {
                     Guranrtor: {post.guarantor}
                     <br />
                   </Typography>
+                  {this.state.open && (<Box height="medium" overflow="auto">
+                    <InfiniteScroll items={[1,2,3,4,]}>
+                      {(item) => (
+                        <Box
+                          flex={false}
+                          pad="small"
+                          background={`${(item % 2)}`==0 ? "#e8dce2":"#ede6e9"}
+                        >
+                          <Text>{item} kjhkhkhkjhkhkh</Text>
+                        </Box>
+                      )}
+                    </InfiniteScroll>
+                  </Box>
+                )}
                 </CardContent>
                 <CardActions>
-                  <Button size="small">Lend</Button>
+                  <Button size="small" onClick={this.onClick_Close}>Lend</Button>
+                  <Button size="small"onClick={this.onClick_Open}>Comments</Button>
                 </CardActions>
             </Card>
           </Grid>
