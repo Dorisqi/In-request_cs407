@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {fdb} from "../../firebase";
+import {fdb,auth} from "../../firebase";
 import { withStyles, makeStyles, ThemeProvider } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -39,6 +39,7 @@ class Posts extends Component {
     this.state = {
       filterList:[],
       post_list: [],
+      comment_list:{},
       color1:0,
       color2:0,
       color3:0,
@@ -65,6 +66,7 @@ class Posts extends Component {
     this.handleClick12 = this.handleClick12.bind(this);
     this.onClick_Open = this.onClick_Open.bind(this);
     this.onClick_Close = this.onClick_Close.bind(this);
+    //this.get_comment=this.get_comment.bind(this)
 
 
   }
@@ -77,14 +79,37 @@ class Posts extends Component {
           this.setState({
               post_list: [...this.state.post_list, item],
           });
+          this.state.comment_list[item.content]=item.comments
+          console.log(item.comments)
         });
       }).catch(err => {
         console.log('Error getting documents', err);
       });
+
+
   }
 
   onClick_Open=event=>{
+    // if(this.state.flag == 0){
+    //   return
+    // }
+
     this.setState({open:true})
+    //console.log(event.target.value)
+    // post.comments.map(item=>
+    //   item.get().then(function(doc) {
+    //   if (doc.exists) {
+    //       console.log("Document data:", doc.data().content);
+    //       this.state.comment_list.append(doc.data().content)
+    //
+    //   } else {
+    //       // doc.data() will be undefined in this case
+    //       console.log("No such document!");
+    //   }
+    //   }).catch(function(error) {
+    //     //  console.log("Error getting document:", error);
+    //   })
+    // );
   }
   onClick_Close=event=>{
     this.setState({open:false})
@@ -148,9 +173,36 @@ class Posts extends Component {
     const value = (this.state.color12 ==1)?0:1
     this.setState({ color12: value})
   }
+  // get_comment=item=>{
+  //   //console.log(await getReference(item))
+  //   let result = ""
+  //   item.get().then(function(doc) {
+  //   if (doc.exists) {
+  //       console.log("Document data:", doc.data().content);
+  //       result = doc.data().content
+  //   } else {
+  //       // doc.data() will be undefined in this case
+  //       console.log("No such document!");
+  //   }
+  //   }).catch(function(error) {
+  //       console.log("Error getting document:", error);
+  //   });
+  //
+  //   //listen multiple documents: *********************
+  //   // db.collection("cities").where("state", "==", "CA")
+  //   // .onSnapshot(function(querySnapshot) {
+  //   //     var cities = [];
+  //   //     querySnapshot.forEach(function(doc) {
+  //   //         cities.push(doc.data().name);
+  //   //     });
+  //   //     console.log("Current cities in CA: ", cities.join(", "));
+  //   // });
+  //
+  // }
   render() {
     const{classes} = this.props
     const {post_list, color1,color2,color3,color4,color5,color6,color7,color8,color9,color11,color12} = this.state
+
     let buffer = []
     let filtered = []
     if (color1) {
@@ -280,15 +332,15 @@ class Posts extends Component {
                     Guranrtor: {post.guarantor}
                     <br />
                   </Typography>
-                  {this.state.open && (<Box height="medium" overflow="auto">
-                    <InfiniteScroll items={[1,2,3,4,]}>
+                  {this.state.open && (<Box height="auto" overflow="auto">
+                    <InfiniteScroll items={this.state.comment_list[post.content]}>
                       {(item) => (
                         <Box
                           flex={false}
                           pad="small"
-                          background={`${(item % 2)}`==0 ? "#e8dce2":"#ede6e9"}
+                          background={"#e8dce2"}
                         >
-                          <Text>{item} kjhkhkhkjhkhkh</Text>
+                          <Text>{item}</Text>
                         </Box>
                       )}
                     </InfiniteScroll>
@@ -297,7 +349,7 @@ class Posts extends Component {
                 </CardContent>
                 <CardActions>
                   <Button size="small" onClick={this.onClick_Close}>Lend</Button>
-                  <Button size="small"onClick={this.onClick_Open}>Comments</Button>
+                  <Button size="small" onClick={this.onClick_Open}>Comments</Button>
                 </CardActions>
             </Card>
           </Grid>
