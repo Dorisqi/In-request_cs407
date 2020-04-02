@@ -62,6 +62,9 @@ const styles = theme => ({
     flexGrow: 1,
     padding: theme.spacing(3),
   },
+  listItemText:{
+    fontSize:'1.8em',
+  }
 });
 class SideBar extends React.Component {
   constructor(props){
@@ -147,7 +150,7 @@ class SideBar extends React.Component {
                       <ListItemIcon>
                         {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                       </ListItemIcon>
-                      <ListItemText primary={text} />
+                      <ListItemText classes={{primary:classes.listItemText}} primary={text} />
                     </ListItem>
                   ))}
                 </List>
@@ -158,7 +161,7 @@ class SideBar extends React.Component {
                       <ListItemIcon>
                         {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                       </ListItemIcon>
-                      <ListItemText primary={text} />
+                      <ListItemText classes={{primary:classes.listItemText}} primary={text} />
                     </ListItem>
                   ))}
                 </List>
