@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {fdb,auth} from "../../firebase";
+import {fdb,auth,storage} from "../../firebase";
 import { withStyles, makeStyles, ThemeProvider } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -12,7 +12,11 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 import FlashOnIcon from '@material-ui/icons/FlashOn';
 import Container from '@material-ui/core/Container';
 import AppsIcon from '@material-ui/icons/Apps';
-import { InfiniteScroll,Box,Text} from "grommet";
+import { grommet,Grommet,FormField,TextInput,InfiniteScroll,Box,Text} from "grommet";
+import Tooltip from '@material-ui/core/Tooltip';
+import Avatar from "@material-ui/core/Avatar";
+
+
 
 /* ---  THIS FILE CONTAINS ALL THE POSTS --- */
 const styles = theme => ({
@@ -31,6 +35,9 @@ const styles = theme => ({
   pos: {
     marginBottom: 12,
   },
+  label_size:{
+    fontSize:8,
+  }
 });
 
 class Posts extends Component {
@@ -40,6 +47,7 @@ class Posts extends Component {
       filterList:[],
       post_list: [],
       comment_list:{},
+      storage:storage,
       color1:0,
       color2:0,
       color3:0,
@@ -51,7 +59,9 @@ class Posts extends Component {
       color9:0,
       color11:0,
       color12:0,
-      open:false
+      open:false,
+      url:"",
+      add_cmt:0
     };
     this.handleClick1 = this.handleClick1.bind(this);
     this.handleClick2 = this.handleClick2.bind(this);
@@ -66,7 +76,7 @@ class Posts extends Component {
     this.handleClick12 = this.handleClick12.bind(this);
     this.onClick_Open = this.onClick_Open.bind(this);
     this.onClick_Close = this.onClick_Close.bind(this);
-    //this.get_comment=this.get_comment.bind(this)
+    this.get_url=this.get_url.bind(this)
 
 
   }
@@ -79,8 +89,6 @@ class Posts extends Component {
           this.setState({
               post_list: [...this.state.post_list, item],
           });
-          this.state.comment_list[item.content]=item.comments
-          console.log(item.comments)
         });
       }).catch(err => {
         console.log('Error getting documents', err);
@@ -90,29 +98,19 @@ class Posts extends Component {
   }
 
   onClick_Open=event=>{
-    // if(this.state.flag == 0){
-    //   return
-    // }
+    const status = this.state.open == 0? 1:0
+    this.setState({open:status})
 
-    this.setState({open:true})
-    //console.log(event.target.value)
-    // post.comments.map(item=>
-    //   item.get().then(function(doc) {
-    //   if (doc.exists) {
-    //       console.log("Document data:", doc.data().content);
-    //       this.state.comment_list.append(doc.data().content)
-    //
-    //   } else {
-    //       // doc.data() will be undefined in this case
-    //       console.log("No such document!");
-    //   }
-    //   }).catch(function(error) {
-    //     //  console.log("Error getting document:", error);
-    //   })
-    // );
+
   }
   onClick_Close=event=>{
     this.setState({open:false})
+  }
+
+  add_Comment=event=>{
+    const status = this.state.add_cmt == 0? 1:0
+    this.setState({add_cmt:status})
+
   }
   handleClick1 = event =>{
     const value = (this.state.color1 ==1 )? 0:1
@@ -173,32 +171,20 @@ class Posts extends Component {
     const value = (this.state.color12 ==1)?0:1
     this.setState({ color12: value})
   }
-  // get_comment=item=>{
-  //   //console.log(await getReference(item))
-  //   let result = ""
-  //   item.get().then(function(doc) {
-  //   if (doc.exists) {
-  //       console.log("Document data:", doc.data().content);
-  //       result = doc.data().content
-  //   } else {
-  //       // doc.data() will be undefined in this case
-  //       console.log("No such document!");
-  //   }
-  //   }).catch(function(error) {
-  //       console.log("Error getting document:", error);
-  //   });
-  //
-  //   //listen multiple documents: *********************
-  //   // db.collection("cities").where("state", "==", "CA")
-  //   // .onSnapshot(function(querySnapshot) {
-  //   //     var cities = [];
-  //   //     querySnapshot.forEach(function(doc) {
-  //   //         cities.push(doc.data().name);
-  //   //     });
-  //   //     console.log("Current cities in CA: ", cities.join(", "));
-  //   // });
-  //
-  // }
+
+  get_url(email){
+
+    //console.log(email)
+    storage.ref('images').child(email).getDownloadURL().then(url => {
+        this.setState({url:url})
+    }).catch(err => {
+      this.setState({url:""})
+      console.log('Error getting image', err);
+    });
+    // console.log(url_)
+    return true
+  }
+
   render() {
     const{classes} = this.props
     const {post_list, color1,color2,color3,color4,color5,color6,color7,color8,color9,color11,color12} = this.state
@@ -314,42 +300,59 @@ class Posts extends Component {
           <Grid item xs={4}>
             <Card>
                 <CardContent>
-                  <Typography variant="h5" component="h2">
+                  <Typography variant="h4" component="h2">
                     {post.title}
                   </Typography>
-                  <Typography variant= "subtitle1" >
+                  <Typography variant= "h5" >
                     {post.content}
                   </Typography>
-                  <Typography variant="body2" component="p" color="textSecondary">
+                  <Typography variant="h6" component="p" color="textSecondary">
                     Borrower: {post.borrower}
                     <br />
                   </Typography>
-                  <Typography variant="body2" component="p" color="textSecondary">
+                  <Typography variant="body1" component="p" color="textSecondary">
                     Estimated Value: {post.price} $
                     <br />
                   </Typography>
-                  <Typography variant="body2" component="p" color="textSecondary">
+                  <Typography variant="h6" component="p" color="textSecondary">
                     Guranrtor: {post.guarantor}
                     <br />
                   </Typography>
                   {this.state.open && (<Box height="auto" overflow="auto">
-                    <InfiniteScroll items={this.state.comment_list[post.content]}>
+                    <Text>Coments:</Text>
+                    <InfiniteScroll items={post.comments}>
                       {(item) => (
                         <Box
                           flex={false}
                           pad="small"
-                          background={"#e8dce2"}
+                          background={"#f5edf1"}
                         >
-                          <Text>{item}</Text>
+
+                        <Tooltip title = {item.nickname}>
+                          {this.get_url(item.email) &&  <Avatar size="small" src={this.state.url}  /> }
+                        </Tooltip>
+
+                        <Typography variant="h6" component="p" color="textSecondary">
+                          {item.nickname} : {item.content}
+                          <br />
+                        </Typography>
+                        <Button size="small" width="50" >Lend from {item.nickname}</Button>
                         </Box>
                       )}
                     </InfiniteScroll>
                   </Box>
                 )}
+                {this.state.add_cmt && (<Grommet theme={grommet}>
+                <FormField >
+                  <TextInput placeholder="Enter here:" />
+                  <Button size="small" onClick={this.onSubmit}>Submit</Button>
+                </FormField>
+                </Grommet>)}
                 </CardContent>
                 <CardActions>
                   <Button size="small" onClick={this.onClick_Close}>Lend</Button>
                   <Button size="small" onClick={this.onClick_Open}>Comments</Button>
+                  <Button size="small" onClick={this.add_Comment}>Add Comments</Button>
                 </CardActions>
             </Card>
           </Grid>
