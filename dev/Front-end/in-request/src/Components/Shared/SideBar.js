@@ -28,10 +28,10 @@ import {auth} from "../../firebase";
 import {fdb} from "../../firebase";
 import { useLocation } from "react-router-dom";
 import {withRouter } from "react-router-dom";
-
+import ActiveTransaction from "../Home/ActiveTransaction"
+import Archived from "../Home/Archived"
 
 const drawerWidth = 240;
-
 const styles = theme => ({
   root: {
     display: 'flex',
@@ -180,6 +180,12 @@ class SideBar extends React.Component {
               </Route>
               <Route path="/NewRequest">
                 <NewRequest hasPhoto={this.props.location.state.hasPhoto} Email={this.props.location.state.Email}/>
+              </Route>
+              <Route path="/ActiveTransaction">
+                <ActiveTransaction curUser = {this.props.location.state.Email}/>
+              </Route>
+              <Route path="/Archived">
+                <Archived curUser = {this.props.location.state.Email} />
               </Route>
             </Switch>
           </main>
