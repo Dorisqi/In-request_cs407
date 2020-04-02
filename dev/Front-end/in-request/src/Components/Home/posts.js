@@ -75,10 +75,9 @@ class Posts extends Component {
     this.handleClick11 = this.handleClick11.bind(this);
     this.handleClick12 = this.handleClick12.bind(this);
     this.onClick_Open = this.onClick_Open.bind(this);
-    this.onClick_Close = this.onClick_Close.bind(this);
     this.get_url=this.get_url.bind(this)
-
-
+    this.add_Comment=this.add_Comment.bind(this)
+    this.on_Submit=this.on_Submit.bind(this)
   }
   componentDidMount() {
     let requests_collection = fdb.collection('requests');
@@ -103,8 +102,8 @@ class Posts extends Component {
 
 
   }
-  onClick_Close=event=>{
-    this.setState({open:false})
+  on_Submit=event=>{
+    ////ADD TO SPECIFIC REQUEST NICKNMAE,EMAIL. CONTENT
   }
 
   add_Comment=event=>{
@@ -177,12 +176,14 @@ class Posts extends Component {
     //console.log(email)
     storage.ref('images').child(email).getDownloadURL().then(url => {
         this.setState({url:url})
+        return true
     }).catch(err => {
       this.setState({url:""})
       console.log('Error getting image', err);
+      return true
     });
     // console.log(url_)
-    return true
+
   }
 
   render() {
@@ -319,8 +320,9 @@ class Posts extends Component {
                     <br />
                   </Typography>
                   {this.state.open && (<Box height="auto" overflow="auto">
-                    <Text>Coments:</Text>
+                      <Text>Comments:</Text>
                     <InfiniteScroll items={post.comments}>
+
                       {(item) => (
                         <Box
                           flex={false}
@@ -336,7 +338,7 @@ class Posts extends Component {
                           {item.nickname} : {item.content}
                           <br />
                         </Typography>
-                        <Button size="small" width="50" >Lend from {item.nickname}</Button>
+                        <Button size="small" right>Lend from {item.nickname}</Button>
                         </Box>
                       )}
                     </InfiniteScroll>
@@ -345,8 +347,8 @@ class Posts extends Component {
                 {this.state.add_cmt && (<Grommet theme={grommet}>
                 <FormField >
                   <TextInput placeholder="Enter here:" />
-                  <Button size="small" onClick={this.onSubmit}>Submit</Button>
                 </FormField>
+                <Button size="small" onClick={this.onSubmit}>Submit</Button>
                 </Grommet>)}
                 </CardContent>
                 <CardActions>
