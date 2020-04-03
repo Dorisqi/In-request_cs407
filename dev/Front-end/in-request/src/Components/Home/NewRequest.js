@@ -24,7 +24,7 @@ import Button from '@material-ui/core/Button';
 import './NewRequest.css'
 import {fdb} from "../../firebase";
 import AppsIcon from '@material-ui/icons/Apps';
-
+import TimerIcon from '@material-ui/icons/Timer';
 
 const styles = theme => ({
   container: {
@@ -54,6 +54,7 @@ class NewRequest extends Component {
         description: "",
         estimateVal: "",
         returnDate: new Date(),
+        durationTime: new Date(),
         tagList: [],
         color1:0,
         color2:0,
@@ -72,6 +73,7 @@ class NewRequest extends Component {
       this.handleDescription = this.handleDescription.bind(this);
       this.handleValue = this.handleValue.bind(this);
       this.handleDateChange = this.handleDateChange.bind(this);
+      this.handleDurationChange = this.handleDurationChange.bind(this);
       this.onFormSubmit = this.onFormSubmit.bind(this);
       this.handleClick1 = this.handleClick1.bind(this);
       this.handleClick2 = this.handleClick2.bind(this);
@@ -119,6 +121,11 @@ class NewRequest extends Component {
        returnDate: date
      })
   }
+  handleDurationChange(date) {
+    this.setState({
+      durationTime: date
+    })
+  }
   onFormSubmit(e) {
     e.preventDefault();
     console.log(this.state.returnDate)
@@ -146,6 +153,7 @@ class NewRequest extends Component {
     const description = this.state.description
     const estimateVal = this.state.estimateVal
     const returnDate = this.state.returnDate
+    const durationTime = this.state.durationTime
     if (this.state.color1 == 1) {
       this.state.tagList.push("HICKS")
     }
@@ -189,6 +197,7 @@ class NewRequest extends Component {
       content: description,
       price: estimateVal,
       estReturn: returnDate,
+      drTime: durationTime,
       taglist: listoftags,
       borrower: this.props.Email,
       comments:[],
@@ -389,7 +398,7 @@ class NewRequest extends Component {
             <Grid item>
               <TodayIcon/>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={2}>
                   <DatePicker
                       selected={ this.state.returnDate }
                       onChange={ this.handleDateChange }
@@ -402,6 +411,31 @@ class NewRequest extends Component {
                       placeholderText="Click to select a date"
                       minDate={subDays(new Date(), 0)}
                   />
+            </Grid>
+            <Grid item>
+              <p>
+                Please select your execpted return time
+              </p>
+            </Grid>
+          </Grid>
+          <Grid container spacing={1} alignItems="flex-end">
+            <Grid item>
+              <TimerIcon />
+            </Grid>
+            <Grid item xs={2}>
+                  <DatePicker
+                      selected={ this.state.durationTime }
+                      onChange={ this.handleDurationChange }
+                      name="durationDate"
+                      dateFormat="MMMM d, yyyy"
+                      placeholderText="Click to select a date"
+                      minDate={subDays(new Date(), 0)}
+                  />
+            </Grid>
+            <Grid item xs={8}>
+              <p>
+                Please select duration time of your post
+              </p>
             </Grid>
             <Grid item>
               <Button variant="contained"
