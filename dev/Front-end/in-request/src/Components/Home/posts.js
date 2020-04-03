@@ -80,21 +80,23 @@ class Posts extends Component {
     this.add_Comment=this.add_Comment.bind(this)
     this.on_Submit=this.on_Submit.bind(this)
     this.on_Change_content=this.on_Change_content.bind(this)
+    this.update_post = this.update_post.bind(this)
+    this.delete_Comment=this.delete_Comment.bind(this)
   }
   componentDidMount() {
     let requests_collection = fdb.collection('requests');
-    let all_requests = requests_collection.get()
+
+    let all_requests = requests_collection.where('status', '==', 'active').get()
       .then(snapshot => {
         snapshot.forEach(doc => {
           const item = doc.data();
-          //console.log(doc.id)
-          //console.log(storage.ref('images').child(email).getDownloadURL())
-          item['id']=doc.id
-          //console.log(item)
-          this.setState({
-              post_list: [...this.state.post_list, item],
-          });
+          const new_item = item
+          new_item['id']=doc.id
+          console.log(new_item)
 
+          this.setState({
+              post_list: [...this.state.post_list, new_item],
+          });
         });
       }).catch(err => {
         console.log('Error getting documents', err);
@@ -108,42 +110,71 @@ class Posts extends Component {
     const status = this.state.open == 0? 1:0
     this.setState({open:status})
 
+  }
+
+  update_post(comments,ref){
+    this.setState({
+        post_list: this.state.post_list.map(el => (el.id === ref.id ? {...el, comments} : el))
+      });
+      console.log("after setstate:",this.state.post_list)
+
+  }
+
+  delete_Comment(content,email){
 
   }
   on_Submit(ref){
     console.log(ref)
-    let document = fdb.collection('requests').doc(ref.id)
+    //let document =
     let old=""
-    document.get().then(function(doc) {
+    let new_comment={
+      email:this.props.Email,
+      nickname:this.props.Nickname,
+      content:this.state.content
+    }
+    let new_cmts=[]
+    //const component = this
+    fdb.collection('requests').doc(ref.id).get().then(function(doc) {
     if (doc.exists) {
         console.log("Document data:", doc.data());
-        old = doc.data().comments
+        old = doc.data()
+        //new_cmts=doc.data().comments
+
+        if( doc.data().comments==null  || doc.data().comments.length==0){
+          new_cmts=[new_comment]
+        }else{
+
+          new_cmts = doc.data().comments.concat(new_comment)
+        }
+        //const new_cmts=old.comments.concat(new_comment)
+        console.log("new comment:",new_cmts)
+        fdb.collection('requests').doc(ref.id).update({
+            comments:new_cmts
+          });
+
+        //console.log(old.comments)
     } else {
         // doc.data() will be undefined in this case
         console.log("No such document!");
     }
-  }).catch(function(error) {
-      console.log("Error getting document:", error);
-  });
+    }).catch(function(error) {
+    console.log("Error getting document:", error);
+    });
 
-    let new_comment={}
-    new_comment['email']=this.props.email
-    new_comment['nickname']=this.props.nickname
-    new_comment['content'] = this.state.content
-    //let new_comment = {,,this.state.content}
-    const new_ct =old.concat(new_comment)
-    document.update({
-      comments:old.concat(new_comment)
-    })
-    // document.update({
-    //   comments:comments.concat(new_comment)
-    // })
-    // const post_=fdb.collection('requests').where('borrower','==',ref.borrower).where('content','==',ref.content)
-    // console.log(post_)
-    // post_.set({
-    //   comments:[...comments,this.state.content]
-    // },{merge:true});
-    ////ADD TO SPECIFIC REQUEST NICKNMAE,EMAIL. CONTENT
+  return  this.update_post(new_cmts,ref)
+
+
+
+    // var temp = [...this.state.post_list];
+    // const prev_elemt = this.state.post_list.filter(obj =>(obj.content.includes(ref.content)));
+    // var index = this.state.post_list.indexOf(prev_elemt)
+    //
+    // prev_elemt.comments=new_cmts
+    // this.state.post_list.filter(obj =>(obj.content.includes(ref.content)))=prev_comment
+    // if (index !== -1) {
+    //   temp.splice(index, 1);
+    //   this.setState({post_list: temp});
+    // }
 
   }
 
@@ -370,9 +401,9 @@ class Posts extends Component {
                   </Typography>
                   <Box height="auto" overflow="auto">
 
-                    <InfiniteScroll items={post.comments}>
+                    {post.comments!=null && (<InfiniteScroll items={post.comments}>
 
-                      {(item) => (
+                      {item => (
                         <Box
                           flex={false}
                           pad="small"
@@ -380,7 +411,6 @@ class Posts extends Component {
                         >
 
                         <Tooltip title = {item.nickname}>
-
                           <Avatar size="small" src={item.content}/>
                         </Tooltip>
 
@@ -389,11 +419,17 @@ class Posts extends Component {
                           <br />
                         </Typography>
                         {(this.props.Email == post.borrower) && (this.props.Email!=item.email)&&
-                           (<Button size="small" right>Lend from {item.nickname}</Button>)}
+                           (<Button size="small" right>Lend from {item.nickname}</Button>
+                         )}
 
-                        </Box>
+                         {(this.props.Email==item.email)&&
+                            (<Button size="small" onClick={()=>this.delete_Comment(item.content,item.email)} >Delete above comment</Button>
+                          )}
+
+                           </Box>
                       )}
-                    </InfiniteScroll>
+
+                    </InfiniteScroll>)}
                   </Box>
 
                 <Grommet theme={grommet}>

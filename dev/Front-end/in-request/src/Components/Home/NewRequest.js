@@ -125,10 +125,23 @@ class NewRequest extends Component {
   }
   onSubmitRequest = event => {
     //console.log(this.state.Email)
-    if (this.props.hasPhoto === false) {
-      alert("Please upload ID photo first!")
-      return;
-    }
+    const ref = fdb.collection('users').doc(this.props.Email);
+      ref.get().then(function(doc) {
+      if (doc.exists) {
+          console.log("Document data:", doc.data());
+          if (doc.data().photostate === false) {
+            alert("Please upload ID photo first!")
+            return;
+          }
+          //console.log(old.comments)
+      } else {
+          // doc.data() will be undefined in this case
+          console.log("No such document!");
+      }
+      }).catch(function(error) {
+      console.log("Error getting document:", error);
+      });
+
     const itemName = this.state.itemName
     const description = this.state.description
     const estimateVal = this.state.estimateVal
@@ -178,8 +191,11 @@ class NewRequest extends Component {
       estReturn: returnDate,
       taglist: listoftags,
       borrower: this.props.Email,
+      comments:[],
+      status:"active"
     }).then(ref =>{
       console.log('Added document with ID: ', ref.id);
+      alert("Add new request successful")
     }).catch(err => {
       // An error happened.
       console.log('Error making a request', err);
