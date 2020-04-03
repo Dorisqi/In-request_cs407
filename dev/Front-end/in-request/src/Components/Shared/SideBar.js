@@ -170,7 +170,7 @@ class SideBar extends React.Component {
             <div className={classes.toolbar} />
             <Switch>
               <Route exact path="/posts">
-                <Posts />
+                <Posts Email={this.props.location.state.Email} Nickname={this.props.location.state.Nickname}/>
               </Route>
               <Route path="/profile">
 

@@ -61,7 +61,8 @@ class Posts extends Component {
       color12:0,
       open:false,
       url:"",
-      add_cmt:0
+      add_cmt:0,
+      content:""
     };
     this.handleClick1 = this.handleClick1.bind(this);
     this.handleClick2 = this.handleClick2.bind(this);
@@ -78,6 +79,7 @@ class Posts extends Component {
     this.get_url=this.get_url.bind(this)
     this.add_Comment=this.add_Comment.bind(this)
     this.on_Submit=this.on_Submit.bind(this)
+    this.on_Change_content=this.on_Change_content.bind(this)
   }
   componentDidMount() {
     let requests_collection = fdb.collection('requests');
@@ -85,9 +87,14 @@ class Posts extends Component {
       .then(snapshot => {
         snapshot.forEach(doc => {
           const item = doc.data();
+          //console.log(doc.id)
+          //console.log(storage.ref('images').child(email).getDownloadURL())
+          item['id']=doc.id
+          //console.log(item)
           this.setState({
               post_list: [...this.state.post_list, item],
           });
+
         });
       }).catch(err => {
         console.log('Error getting documents', err);
@@ -96,14 +103,54 @@ class Posts extends Component {
 
   }
 
-  onClick_Open=event=>{
+  onClick_Open=value=>{
+    console.log(value)
     const status = this.state.open == 0? 1:0
     this.setState({open:status})
 
 
   }
-  on_Submit=event=>{
+  on_Submit(ref){
+    console.log(ref)
+    let document = fdb.collection('requests').doc(ref.id)
+    let old=""
+    document.get().then(function(doc) {
+    if (doc.exists) {
+        console.log("Document data:", doc.data());
+        old = doc.data().comments
+    } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+    }
+  }).catch(function(error) {
+      console.log("Error getting document:", error);
+  });
+
+    let new_comment={}
+    new_comment['email']=this.props.email
+    new_comment['nickname']=this.props.nickname
+    new_comment['content'] = this.state.content
+    //let new_comment = {,,this.state.content}
+    const new_ct =old.concat(new_comment)
+    document.update({
+      comments:old.concat(new_comment)
+    })
+    // document.update({
+    //   comments:comments.concat(new_comment)
+    // })
+    // const post_=fdb.collection('requests').where('borrower','==',ref.borrower).where('content','==',ref.content)
+    // console.log(post_)
+    // post_.set({
+    //   comments:[...comments,this.state.content]
+    // },{merge:true});
     ////ADD TO SPECIFIC REQUEST NICKNMAE,EMAIL. CONTENT
+
+  }
+
+  on_Change_content=event=>{
+    const value= event.target.value
+    console.log(value)
+    this.setState({content:value})
   }
 
   add_Comment=event=>{
@@ -172,18 +219,19 @@ class Posts extends Component {
   }
 
   get_url(email){
-
-    //console.log(email)
+    let url_=""
+    //console.log(storage.ref('images').child(email).getDownloadURL())
     storage.ref('images').child(email).getDownloadURL().then(url => {
-        this.setState({url:url})
-        return true
+        console.log(url)
+        url_=url
+        //return url
     }).catch(err => {
       this.setState({url:""})
       console.log('Error getting image', err);
-      return true
+
     });
     // console.log(url_)
-
+    return url_
   }
 
   render() {
@@ -192,6 +240,7 @@ class Posts extends Component {
 
     let buffer = []
     let filtered = []
+
     if (color1) {
       const result = post_list.filter(obj =>(obj.taglist.includes("HICKS")));
       buffer.push.apply(buffer, result)
@@ -299,7 +348,7 @@ class Posts extends Component {
         <Grid container xs={12} spacing={3}>
         {filtered.map(post=>
           <Grid item xs={4}>
-            <Card>
+            <Card background={"#f5edf1"}>
                 <CardContent>
                   <Typography variant="h4" component="h2">
                     {post.title}
@@ -319,8 +368,8 @@ class Posts extends Component {
                     Guranrtor: {post.guarantor}
                     <br />
                   </Typography>
-                  {this.state.open && (<Box height="auto" overflow="auto">
-                      <Text>Comments:</Text>
+                  <Box height="auto" overflow="auto">
+
                     <InfiniteScroll items={post.comments}>
 
                       {(item) => (
@@ -331,25 +380,30 @@ class Posts extends Component {
                         >
 
                         <Tooltip title = {item.nickname}>
-                          {this.get_url(item.email) &&  <Avatar size="small" src={this.state.url}  /> }
+
+                          <Avatar size="small" src={item.content}/>
                         </Tooltip>
 
                         <Typography variant="h6" component="p" color="textSecondary">
                           {item.nickname} : {item.content}
                           <br />
                         </Typography>
-                        <Button size="small" right>Lend from {item.nickname}</Button>
+                        {(this.props.Email == post.borrower) && (this.props.Email!=item.email)&&
+                           (<Button size="small" right>Lend from {item.nickname}</Button>)}
+
                         </Box>
                       )}
                     </InfiniteScroll>
                   </Box>
-                )}
-                {this.state.add_cmt && (<Grommet theme={grommet}>
+
+                <Grommet theme={grommet}>
+
                 <FormField >
-                  <TextInput placeholder="Enter here:" />
+                  <TextInput onChange={this.on_Change_content} placeholder="Add Comments here:" />
                 </FormField>
-                <Button size="small" onClick={this.onSubmit}>Submit</Button>
-                </Grommet>)}
+                <Button size="small" onClick={()=>this.on_Submit(post)}>Submit</Button>
+
+                </Grommet>
                 </CardContent>
                 <CardActions>
                   <Button size="small" onClick={this.onClick_Close}>Lend</Button>
