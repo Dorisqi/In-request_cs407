@@ -54,6 +54,7 @@ class NewRequest extends Component {
         description: "",
         estimateVal: "",
         returnDate: new Date(),
+        durationTime: new Date(),
         tagList: [],
         color1:0,
         color2:0,
@@ -72,6 +73,7 @@ class NewRequest extends Component {
       this.handleDescription = this.handleDescription.bind(this);
       this.handleValue = this.handleValue.bind(this);
       this.handleDateChange = this.handleDateChange.bind(this);
+      this.handleDurationChange = this.handleDurationChange.bind(this);
       this.onFormSubmit = this.onFormSubmit.bind(this);
       this.handleClick1 = this.handleClick1.bind(this);
       this.handleClick2 = this.handleClick2.bind(this);
@@ -119,6 +121,11 @@ class NewRequest extends Component {
        returnDate: date
      })
   }
+  handleDurationChange(date) {
+    this.setState({
+      durationTime: date
+    })
+  }
   onFormSubmit(e) {
     e.preventDefault();
     console.log(this.state.returnDate)
@@ -133,6 +140,7 @@ class NewRequest extends Component {
     const description = this.state.description
     const estimateVal = this.state.estimateVal
     const returnDate = this.state.returnDate
+    const durationTime = this.state.durationTime
     if (this.state.color1 == 1) {
       this.state.tagList.push("HICKS")
     }
@@ -176,6 +184,7 @@ class NewRequest extends Component {
       content: description,
       price: estimateVal,
       estReturn: returnDate,
+      drTime: durationTime,
       taglist: listoftags,
       borrower: this.props.Email,
     }).then(ref =>{
@@ -399,14 +408,10 @@ class NewRequest extends Component {
             </Grid>
             <Grid item xs={2}>
                   <DatePicker
-                      selected={ this.state.returnDate }
-                      onChange={ this.handleDateChange }
-                      showTimeSelect
-                      timeFormat="HH:mm"
-                      timeIntervals={60}
-                      timeCaption="time"
-                      name="startDate"
-                      dateFormat="MMMM d, yyyy h:mm aa"
+                      selected={ this.state.durationTime }
+                      onChange={ this.handleDurationChange }
+                      name="durationDate"
+                      dateFormat="MMMM d, yyyy"
                       placeholderText="Click to select a date"
                       minDate={subDays(new Date(), 0)}
                   />
