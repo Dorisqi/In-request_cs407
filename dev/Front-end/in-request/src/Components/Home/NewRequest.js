@@ -24,7 +24,7 @@ import Button from '@material-ui/core/Button';
 import './NewRequest.css'
 import {fdb} from "../../firebase";
 import AppsIcon from '@material-ui/icons/Apps';
-
+import TimerIcon from '@material-ui/icons/Timer';
 
 const styles = theme => ({
   container: {
@@ -373,7 +373,7 @@ class NewRequest extends Component {
             <Grid item>
               <TodayIcon/>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={2}>
                   <DatePicker
                       selected={ this.state.returnDate }
                       onChange={ this.handleDateChange }
@@ -386,6 +386,35 @@ class NewRequest extends Component {
                       placeholderText="Click to select a date"
                       minDate={subDays(new Date(), 0)}
                   />
+            </Grid>
+            <Grid item>
+              <p>
+                Please select your execpted return time
+              </p>
+            </Grid>
+          </Grid>
+          <Grid container spacing={1} alignItems="flex-end">
+            <Grid item>
+              <TimerIcon />
+            </Grid>
+            <Grid item xs={2}>
+                  <DatePicker
+                      selected={ this.state.returnDate }
+                      onChange={ this.handleDateChange }
+                      showTimeSelect
+                      timeFormat="HH:mm"
+                      timeIntervals={60}
+                      timeCaption="time"
+                      name="startDate"
+                      dateFormat="MMMM d, yyyy h:mm aa"
+                      placeholderText="Click to select a date"
+                      minDate={subDays(new Date(), 0)}
+                  />
+            </Grid>
+            <Grid item xs={8}>
+              <p>
+                Please select duration time of your post
+              </p>
             </Grid>
             <Grid item>
               <Button variant="contained"
