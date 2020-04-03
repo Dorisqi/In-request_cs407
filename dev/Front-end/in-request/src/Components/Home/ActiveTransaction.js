@@ -40,7 +40,7 @@ class ActiveTransaction extends Component {
   }
   componentDidMount() {
     let request_collection = fdb.collection('requests')
-    let query = request_collection.where('borrower', '==', this.props.curUser).where('status', '==', 'active').get()
+    let query = request_collection.where('borrower', '==', this.props.curUser).where('msnone', '==', true).get()
       .then(snapshot => {
         snapshot.forEach(doc => {
           const item = doc.data();
@@ -51,7 +51,7 @@ class ActiveTransaction extends Component {
       }).catch(err => {
         console.log('Error getting borrowing documents', err);
       });
-    let len_query = request_collection.where('lender', '==', this.props.curUser).where('status','==','active').get()
+    let len_query = request_collection.where('lender', '==', this.props.curUser).where('msaccepted','==',true).get()
       .then(snapshot => {
         snapshot.forEach(doc => {
           const item = doc.data();
@@ -67,6 +67,7 @@ class ActiveTransaction extends Component {
   render() {
     const{classes} = this.props
     const{active_br_post, active_ld_post} = this.state
+
     return (
       <div>
         <Typography variant="h4" gutterBottom color="textPrimary">
@@ -84,13 +85,46 @@ class ActiveTransaction extends Component {
                     {post.content}
                   </Typography>
                   <Typography variant="body2" component="p" color="textSecondary">
-                    Lender: {post.lender}
-                    <br />
-                  </Typography>
-                  <Typography variant="body2" component="p" color="textSecondary">
                     Estimated Return Date: {post.estReturn.toDate().toString()}
                     <br />
                   </Typography>
+                  {post.msaccepted == false
+                    ?
+                      <CardActions>
+                        <Button size="small" disabled>Start</Button>
+                        <Button size="small" disabled>Finish</Button>
+                        <Button size="small" color="primary">Cancel</Button>
+                      </CardActions>
+                    :
+                    [
+                      (post.msstarted == false
+                        ?
+                        <div>
+                          <Typography variant="body2" component="p" color="textSecondary">
+                            Lender: {post.lender}
+                          <br />
+                          </Typography>
+                          <CardActions>
+                            <Button size="small" color="primary">Start</Button>
+                            <Button size="small" disabled>Finish</Button>
+                            <Button size="small" disabled>Cancel</Button>
+                          </CardActions>
+                        </div>
+                        :
+                        <div>
+                          <Typography variant="body2" component="p" color="textSecondary">
+                            Lender: {post.lender}
+                          <br />
+                          </Typography>
+                          <CardActions>
+                            <Button size="small" color="primary" disabled>Start</Button>
+                            <Button size="small">Finish</Button>
+                            <Button size="small" disabled>Cancel</Button>
+                          </CardActions>
+                        </div>
+                      ),
+                    ]
+                  }
                 </CardContent>
             </Card>
           </Grid>
