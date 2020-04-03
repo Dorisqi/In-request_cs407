@@ -62,7 +62,8 @@ class Posts extends Component {
       open:false,
       url:"",
       add_cmt:0,
-      content:""
+      content:"",
+      photo_map:{}
     };
     this.handleClick1 = this.handleClick1.bind(this);
     this.handleClick2 = this.handleClick2.bind(this);
@@ -121,7 +122,12 @@ class Posts extends Component {
   }
 
   delete_Comment(content,email){
-
+    var array = [...this.state.people]; // make a separate copy of the array
+    var index = array.indexOf(e.target.value)
+    if (index !== -1) {
+      array.splice(index, 1);
+      this.setState({people: array});
+    }
   }
   on_Submit(ref){
     console.log(ref)
@@ -255,7 +261,8 @@ class Posts extends Component {
     storage.ref('images').child(email).getDownloadURL().then(url => {
         console.log(url)
         url_=url
-        //return url
+        console.log(url)
+        return url
     }).catch(err => {
       this.setState({url:""})
       console.log('Error getting image', err);
@@ -411,7 +418,7 @@ class Posts extends Component {
                         >
 
                         <Tooltip title = {item.nickname}>
-                          <Avatar size="small" src={item.content}/>
+                          <Avatar size="small" src={this.get_url(item.email)}/>
                         </Tooltip>
 
                         <Typography variant="h6" component="p" color="textSecondary">
