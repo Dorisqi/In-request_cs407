@@ -65,7 +65,7 @@ class Posts extends Component {
   }
   componentDidMount() {
     let requests_collection = fdb.collection('requests');
-    let all_requests = requests_collection.get()
+    let all_requests = requests_collection.where('status', '==', 'archived').get()
       .then(snapshot => {
         snapshot.forEach(doc => {
           const item = doc.data();
