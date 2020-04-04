@@ -495,11 +495,7 @@ class Posts extends Component {
 
                     </InfiniteScroll>)}
                   </Box>
-                {((post.comments.length==0)) && (
-                  <Typography variant= "h5" >
-                    No Comments Yet!
-                  </Typography>
-                )}
+              
                 {(post.addcmt_flag)&&(<Grommet theme={grommet}>
 
                 <FormField >
