@@ -67,9 +67,9 @@ class SideBar extends React.Component {
   constructor(props){
     super(props)
     this.state ={
-      Email:this.props.location.state.Email,
+      Email:"",
       Password:"",
-      Nickname:this.props.location.state.Nickname,
+      Nickname:"",
       auth: this.auth,
       fdb: this.fdb,
       name:"",

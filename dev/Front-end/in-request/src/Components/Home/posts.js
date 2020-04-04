@@ -84,7 +84,6 @@ class Posts extends Component {
     this.add_Comment=this.add_Comment.bind(this)
     this.on_Submit=this.on_Submit.bind(this)
     this.on_Change_content=this.on_Change_content.bind(this)
-    this.update_post = this.update_post.bind(this)
     this.delete_Comment=this.delete_Comment.bind(this)
     this.onclickLend=this.onclickLend.bind(this)
     this.print_data=this.print_data.bind(this)
@@ -130,34 +129,51 @@ class Posts extends Component {
   })
 }
 
-  update_post(ref){
-    console.log("update_post id",ref.id);
-    console.log("commenis:",this.state.temp_comments)
-
-    const new_post=this.state.post_list.map(ele => (ele.id === ref.id ? {comments:this.state.temp_comments} : ele))
-    // this.setState({
-    //     post_list: this.state.post_list.map(el => (el.id === ref.id ? {...el, comments} : el))
-    //   });
-
-    console.log("after setstate:",this.state.post_list)
-    return this.setState({
-      post_list:new_post
-    });
-
-  }
+  // update_post(ref){
+  //   console.log("update_post id",ref.id);
+  //   console.log("commenis:",this.state.temp_comments)
+  //
+  //   const new_post=this.state.post_list.map(ele => (ele.id === ref.id ? {comments:this.state.temp_comments} : ele))
+  //   // this.setState({
+  //   //     post_list: this.state.post_list.map(el => (el.id === ref.id ? {...el, comments} : el))
+  //   //   });
+  //
+  //   console.log("after setstate:",this.state.post_list)
+  //   return this.setState({
+  //     post_list:new_post
+  //   });
+  //
+  // }
 
   delete_Comment(content,email,postid){
-    // var array = [...this.state.people]; // make a separate copy of the array
-    //
-    // var comments =  array.filter(obj =>(obj.id.includes(postid)));
-    // var index = array.indexOf(e.target.value)
-    // if (index !== -1) {
-    //   array.splice(index, 1);
-    //   this.setState({people: array});
-    // }
+    let new_comment_list=[];
+    const post = this.state.post_list.filter(obj =>(obj.id.includes(postid)));
+    const old_comments=post[0].comments;
+    let new_comments=[];
+    let i = 0
+    while(i < old_comments.length){
+      if((old_comments[i].content ===content)&&(old_comments[i].email === email)){
+      }else{
+        new_comments.push(old_comments[i])
+      }
+      i=i+1;
+    }
+
+    console.log("delete post info",new_comments)
+          //new_cmts=doc.data().comments
+    this.setState({
+        post_list: this.state.post_list.map(el => (el.id === postid ? {...el, comments:new_comments} : el))
+      });
+
+    fdb.collection('requests').doc(postid).update({
+        comments:new_comments
+      });
+
+
+
   }
   on_Submit(ref){
-    console.log(ref)
+    //console.log(ref)
     //let document =
     let old=""
     let new_comment={
@@ -179,46 +195,21 @@ class Posts extends Component {
 
             new_cmts = doc.data().comments.concat(new_comment)
           }
-          //const new_cmts=old.comments.concat(new_comment)
           console.log("new comment:",new_cmts)
-          // this.setState({
-          //   temp_comments:new_cmts,
-          // })
+
           this.setState({
               post_list: this.state.post_list.map(el => (el.id === ref.id ? {...el, comments:new_cmts} : el))
             });
+
           fdb.collection('requests').doc(ref.id).update({
               comments:new_cmts
             });
 
-          //console.log(old.comments)
-      // } else {
-      //     // doc.data() will be undefined in this case
-      //     console.log("No such document!");
-      // }
     }).catch(function(error) {
-    console.log("Error getting document:", error);
+      console.log("Error getting document:", error);
     });
-    // this.setState({
-    //     post_list: this.state.post_list.map(el => (el.id === ref.id ? {...el, new_cmts} : el))
-    //   });
-    //  console.log("after setstate:",this.state.post_list)
+
     return
-
-
-
-
-    // var temp = [...this.state.post_list];
-    // const prev_elemt = this.state.post_list.filter(obj =>(obj.content.includes(ref.content)));
-    // var index = this.state.post_list.indexOf(prev_elemt)
-    //
-    // prev_elemt.comments=new_cmts
-    // this.state.post_list.filter(obj =>(obj.content.includes(ref.content)))=prev_comment
-    // if (index !== -1) {
-    //   temp.splice(index, 1);
-    //   this.setState({post_list: temp});
-    // }
-
   }
 
   on_Change_content=event=>{
