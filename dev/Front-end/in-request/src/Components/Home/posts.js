@@ -63,7 +63,10 @@ class Posts extends Component {
       url:"",
       add_cmt:0,
       content:"",
-      photo_map:{}
+      photo_map:{},
+      temp_comments:[],
+      user_email:this.props.Email,
+      user_nickname:this.props.Nickname
     };
     this.handleClick1 = this.handleClick1.bind(this);
     this.handleClick2 = this.handleClick2.bind(this);
@@ -83,6 +86,8 @@ class Posts extends Component {
     this.on_Change_content=this.on_Change_content.bind(this)
     this.update_post = this.update_post.bind(this)
     this.delete_Comment=this.delete_Comment.bind(this)
+    this.onclickLend=this.onclickLend.bind(this)
+    this.print_data=this.print_data.bind(this)
   }
   componentDidMount() {
     let requests_collection = fdb.collection('requests');
@@ -110,24 +115,46 @@ class Posts extends Component {
     console.log(value)
     const status = this.state.open == 0? 1:0
     this.setState({open:status})
+  }
+
+  print_data=event=>{
+    console.log(this.state.post_list)
+  }
+
+  onclickLend(post){
+  var user = auth.currentUser;
+  var upd = fdb.collection("requests").doc(post.id);
+  upd.update({
+    msaccepted:true,
+    lender: user,
+  })
+}
+
+  update_post(ref){
+    console.log("update_post id",ref.id);
+    console.log("commenis:",this.state.temp_comments)
+
+    const new_post=this.state.post_list.map(ele => (ele.id === ref.id ? {comments:this.state.temp_comments} : ele))
+    // this.setState({
+    //     post_list: this.state.post_list.map(el => (el.id === ref.id ? {...el, comments} : el))
+    //   });
+
+    console.log("after setstate:",this.state.post_list)
+    return this.setState({
+      post_list:new_post
+    });
 
   }
 
-  update_post(comments,ref){
-    this.setState({
-        post_list: this.state.post_list.map(el => (el.id === ref.id ? {...el, comments} : el))
-      });
-      console.log("after setstate:",this.state.post_list)
-
-  }
-
-  delete_Comment(content,email){
-    var array = [...this.state.people]; // make a separate copy of the array
-    var index = array.indexOf(e.target.value)
-    if (index !== -1) {
-      array.splice(index, 1);
-      this.setState({people: array});
-    }
+  delete_Comment(content,email,postid){
+    // var array = [...this.state.people]; // make a separate copy of the array
+    //
+    // var comments =  array.filter(obj =>(obj.id.includes(postid)));
+    // var index = array.indexOf(e.target.value)
+    // if (index !== -1) {
+    //   array.splice(index, 1);
+    //   this.setState({people: array});
+    // }
   }
   on_Submit(ref){
     console.log(ref)
@@ -140,34 +167,44 @@ class Posts extends Component {
     }
     let new_cmts=[]
     //const component = this
-    fdb.collection('requests').doc(ref.id).get().then(function(doc) {
-    if (doc.exists) {
-        console.log("Document data:", doc.data());
-        old = doc.data()
-        //new_cmts=doc.data().comments
+    fdb.collection('requests').doc(ref.id).get().then(doc=> {
 
-        if( doc.data().comments==null  || doc.data().comments.length==0){
-          new_cmts=[new_comment]
-        }else{
+          console.log("Document data:", doc.data());
+          old = doc.data()
+          //new_cmts=doc.data().comments
 
-          new_cmts = doc.data().comments.concat(new_comment)
-        }
-        //const new_cmts=old.comments.concat(new_comment)
-        console.log("new comment:",new_cmts)
-        fdb.collection('requests').doc(ref.id).update({
-            comments:new_cmts
-          });
+          if( doc.data().comments==null  || doc.data().comments.length==0){
+            new_cmts=[new_comment]
+          }else{
 
-        //console.log(old.comments)
-    } else {
-        // doc.data() will be undefined in this case
-        console.log("No such document!");
-    }
+            new_cmts = doc.data().comments.concat(new_comment)
+          }
+          //const new_cmts=old.comments.concat(new_comment)
+          console.log("new comment:",new_cmts)
+          // this.setState({
+          //   temp_comments:new_cmts,
+          // })
+          this.setState({
+              post_list: this.state.post_list.map(el => (el.id === ref.id ? {...el, comments:new_cmts} : el))
+            });
+          fdb.collection('requests').doc(ref.id).update({
+              comments:new_cmts
+            });
+
+          //console.log(old.comments)
+      // } else {
+      //     // doc.data() will be undefined in this case
+      //     console.log("No such document!");
+      // }
     }).catch(function(error) {
     console.log("Error getting document:", error);
     });
+    // this.setState({
+    //     post_list: this.state.post_list.map(el => (el.id === ref.id ? {...el, new_cmts} : el))
+    //   });
+    //  console.log("after setstate:",this.state.post_list)
+    return
 
-  return  this.update_post(new_cmts,ref)
 
 
 
@@ -418,7 +455,7 @@ class Posts extends Component {
                         >
 
                         <Tooltip title = {item.nickname}>
-                          <Avatar size="small" src={this.get_url(item.email)}/>
+                          <Avatar size="small" src=""/>
                         </Tooltip>
 
                         <Typography variant="h6" component="p" color="textSecondary">
@@ -426,11 +463,11 @@ class Posts extends Component {
                           <br />
                         </Typography>
                         {(this.props.Email == post.borrower) && (this.props.Email!=item.email)&&
-                           (<Button size="small" right>Lend from {item.nickname}</Button>
+                           (<Button size="small" onClick={()=>this.onclickLend(post)}>Lend from {item.nickname}</Button>
                          )}
 
                          {(this.props.Email==item.email)&&
-                            (<Button size="small" onClick={()=>this.delete_Comment(item.content,item.email)} >Delete above comment</Button>
+                            (<Button size="small" onClick={()=>this.delete_Comment(item.content,item.email,post.id)} >Delete above comment</Button>
                           )}
 
                            </Box>
@@ -449,7 +486,7 @@ class Posts extends Component {
                 </Grommet>
                 </CardContent>
                 <CardActions>
-                  <Button size="small" onClick={this.onClick_Close}>Lend</Button>
+                  <Button size="small" onClick={this.print_data}>Lend</Button>
                   <Button size="small" onClick={this.onClick_Open}>Comments</Button>
                   <Button size="small" onClick={this.add_Comment}>Add Comments</Button>
                 </CardActions>

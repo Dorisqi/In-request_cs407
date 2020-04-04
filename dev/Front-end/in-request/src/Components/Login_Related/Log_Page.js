@@ -153,12 +153,12 @@ class Login extends React.Component {
                   })
                 }
                 const data = doc.data()
-
+                console.log("log_page",doc.data().nickname)
                 this.props.history.push({
                   pathname:"/posts",
                   state:{
                     Email:this.state.Email,
-                    Nickname:data.nickname,
+                    Nickname:doc.data().nickname,
                     auth:this.auth,
                     url:url,
                     hasPhoto:data.photostate
@@ -173,7 +173,7 @@ class Login extends React.Component {
                 pathname:"/posts",
                 state:{
                   Email:this.state.Email,
-                  Nickname:data.nickname,
+                  Nickname:doc.data().Nickname,
                   auth:this.auth,
                   url:null,
                   hasPhoto:data.photostate
