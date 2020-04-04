@@ -64,10 +64,8 @@ class Posts extends Component {
       add_cmt:0,
       content:"",
       photo_map:[],
-      temp_comments:[],
       user_email:this.props.Email,
       user_nickname:this.props.Nickname,
-      control_comment_map:[]
     };
     this.handleClick1 = this.handleClick1.bind(this);
     this.handleClick2 = this.handleClick2.bind(this);
@@ -467,7 +465,7 @@ class Posts extends Component {
                   </Typography>
                   <Box height="auto" overflow="auto">
 
-                    {(post.comment_flag) && (<InfiniteScroll items={post.comments}>
+                  {(post.comment_flag) && (<InfiniteScroll items={post.comments}>
 
                       {item => (
                         <Box
@@ -497,7 +495,11 @@ class Posts extends Component {
 
                     </InfiniteScroll>)}
                   </Box>
-
+                {((post.comments.length==0)) && (
+                  <Typography variant= "h5" >
+                    No Comments Yet!
+                  </Typography>
+                )}
                 {(post.addcmt_flag)&&(<Grommet theme={grommet}>
 
                 <FormField >
@@ -509,7 +511,7 @@ class Posts extends Component {
                 </CardContent>
                 <CardActions>
 
-                  <Button size="small" onClick={()=>this.onClick_Open_Comment(post.id)}>Comments</Button>
+                  <Button size="small" onClick={()=>this.onClick_Open_Comment(post.id)}>Open Comments</Button>
                   <Button size="small" onClick={()=>this.onClick_Open_Addcmt(post.id)}>Add Comments</Button>
                 </CardActions>
             </Card>
