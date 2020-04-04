@@ -83,19 +83,93 @@ class SideBar extends React.Component {
     }
     // this.handleDrawerToggle = this.handleDrawerToggle.bind(this)
     this.Logout= this.Logout.bind(this)
+    var user = auth.currentUser;
+    if(user){
+
+    //**************************************************************this part is for checking if past due**********************************
+        setInterval(function(){
+            let que = fdb.collection("requests").where("borrower", "==", user.email);
+            que.get().then(function(qss){
+                qss.forEach(function(doc){
+                    var curtime = Date.now()/600000;
+                    var duetime = doc.data().estReturn.seconds;
+                    var diff = duetime - curtime;
+                    if(diff < 0 && doc.data().status == "active"){
+                        alert("its not active anymore" + doc.data().title + "this is the doc id " + doc.id);
+                        var upd = fdb.collection("requests").doc(doc.id);
+                        upd.update({
+                            status:"archived",
+                            msfinished: true
+                        })
+                    }
+                });
+            });
+        },3000);
+  //**************************************************************this part is for checking if past due**********************************
+
+//**************************************************************this part is for alerting borrower about lender************************
+    let query = fdb.collection("requests").where("borrower", "==", user.email).where("msnone", "==", true);
+    let liste = query.onSnapshot(docSnapshot => {
+        docSnapshot.docChanges().forEach(function(change){
+            if(change.doc.data().msoffered == true && change.doc.data().msaccepted == false && change.doc.data().status != "archived"){
+                alert("someone decided to lend you an item on title" + change.doc.data().title);
+            }
+
+        });
+    });
+//**************************************************************this part is for alerting borrower about lender************************
+
+
+//**************************************************************this part is for let lender confirm status ****************************
+
+    let query2 = fdb.collection("requests").where("lender", "==", user.email).where("msoffered", "==", true);
+    let liste2 = query2.onSnapshot(docSnapshot => {
+        docSnapshot.docChanges().forEach(function(change2){
+            if(change2.doc.data().lender == user.email && change2.doc.data().msaccepted == true){
+                var action = window.confirm(change2.doc.data().borrower + "decided to borrow your item\n" + change2.doc.data().lender + " now is the lender" + "\n title is" + change2.doc.data().title + "\n the id is" +  change2.doc.id);
+                if(action == true){
+                    alert("true, accepted");
+                    var upd = fdb.collection("requests").doc(change2.doc.id);
+                    upd.update({
+                        msaccepted: true,
+
+                    })
+                    //in here, should change the msaccepted as true, as well as noticing other lenders that they dont need to worry about the post.
+                }
+                else{alert("false, denied");}
+            };
+
+        });
+    });
+
+}else{}
+
   }
-  // handleDrawerToggle = () => {
-  //   const value = this.state.
-  //   this.setState({
-  //     mobileOpen:
-  //   })
-  //   setMobileOpen(!this.mobileOpen);
-  // }
+
 
   Logout=event=>{
     //const loc = useLocation();
     //console.log(this.props.location.state.Email)
     // console.log(prevProps.Email)
+    const email = this.props.location.state.Email
+    const history = this.props.history
+    auth.signOut().then(function() {
+  // log-out successful.
+      //const email = this.props.location.state.Email
+      const ref = fdb.collection('users').doc(email);
+      ref.update({
+        LoginState: false
+      }).then(() => {
+        console.log('logout successful');
+        history.push("/login");
+      });
+    }).catch(err => {
+      // An error happened.
+      console.log('Error logging out', err);
+    });
+  }
+
+  componentWillUnmount(){
     const email = this.props.location.state.Email
     const history = this.props.history
     auth.signOut().then(function() {
