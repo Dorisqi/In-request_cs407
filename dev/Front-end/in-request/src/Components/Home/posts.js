@@ -66,7 +66,8 @@ class Posts extends Component {
       photo_map:[],
       temp_comments:[],
       user_email:this.props.Email,
-      user_nickname:this.props.Nickname
+      user_nickname:this.props.Nickname,
+      control_comment_map:[]
     };
     this.handleClick1 = this.handleClick1.bind(this);
     this.handleClick2 = this.handleClick2.bind(this);
@@ -79,9 +80,9 @@ class Posts extends Component {
     this.handleClick9 = this.handleClick9.bind(this);
     this.handleClick11 = this.handleClick11.bind(this);
     this.handleClick12 = this.handleClick12.bind(this);
-    this.onClick_Open = this.onClick_Open.bind(this);
+    this.onClick_Open_Comment = this.onClick_Open_Comment.bind(this);
     this.get_url=this.get_url.bind(this)
-    this.add_Comment=this.add_Comment.bind(this)
+    this.onClick_Open_Addcmt=this.onClick_Open_Addcmt.bind(this)
     this.on_Submit=this.on_Submit.bind(this)
     this.on_Change_content=this.on_Change_content.bind(this)
     this.delete_Comment=this.delete_Comment.bind(this)
@@ -97,9 +98,11 @@ class Posts extends Component {
           const new_item = item
           new_item['id']=doc.id
           //console.log(new_item)
-
+          new_item['comment_flag']=false
+          new_item['addcmt_flag']=false
           this.setState({
               post_list: [...this.state.post_list, new_item],
+
           });
         });
       }).catch(err => {
@@ -109,7 +112,7 @@ class Posts extends Component {
       //store all image info:
       let photo_dic={}
       let user_collection = fdb.collection('users');
-      let all_user = user_collection.get().then(snapshot => {
+      fdb.collection('users').where('photostate','==',true).get().then(snapshot => {
           snapshot.forEach(doc => {
             const item = doc.data();
             const email = item.email
@@ -132,11 +135,17 @@ class Posts extends Component {
 
   }
 
-  onClick_Open=value=>{
-    console.log(value)
-    const status = this.state.open == 0? 1:0
-    this.setState({open:status})
+  onClick_Open_Comment(postid){
+    const post = this.state.post_list.filter(obj =>(obj.id.includes(postid)))[0]
+    const status = post.comment_flag==true ? false:true
+    this.setState({post_list:this.state.post_list.map(el => (el.id === postid ? {...el, comment_flag:status} : el))})
   }
+  onClick_Open_Addcmt(postid){
+    const post = this.state.post_list.filter(obj =>(obj.id.includes(postid)))[0]
+    const status = post.addcmt_flag==true ? false:true
+    this.setState({post_list:this.state.post_list.map(el => (el.id === postid ? {...el, addcmt_flag:status} : el))})
+  }
+
 
   print_data=event=>{
     console.log(this.state.post_list)
@@ -458,7 +467,7 @@ class Posts extends Component {
                   </Typography>
                   <Box height="auto" overflow="auto">
 
-                    {post.comments!=null && (<InfiniteScroll items={post.comments}>
+                    {(post.comment_flag) && (<InfiniteScroll items={post.comments}>
 
                       {item => (
                         <Box
@@ -489,19 +498,19 @@ class Posts extends Component {
                     </InfiniteScroll>)}
                   </Box>
 
-                <Grommet theme={grommet}>
+                {(post.addcmt_flag)&&(<Grommet theme={grommet}>
 
                 <FormField >
                   <TextInput onChange={this.on_Change_content} placeholder="Add Comments here:" />
                 </FormField>
                 <Button size="small" onClick={()=>this.on_Submit(post)}>Submit</Button>
 
-                </Grommet>
+                </Grommet>)}
                 </CardContent>
                 <CardActions>
-                  <Button size="small" onClick={this.print_data}>Lend</Button>
-                  <Button size="small" onClick={this.onClick_Open}>Comments</Button>
-                  <Button size="small" onClick={this.add_Comment}>Add Comments</Button>
+
+                  <Button size="small" onClick={()=>this.onClick_Open_Comment(post.id)}>Comments</Button>
+                  <Button size="small" onClick={()=>this.onClick_Open_Addcmt(post.id)}>Add Comments</Button>
                 </CardActions>
             </Card>
           </Grid>
