@@ -63,7 +63,7 @@ class Posts extends Component {
       url:"",
       add_cmt:0,
       content:"",
-      photo_map:{},
+      photo_map:[],
       temp_comments:[],
       user_email:this.props.Email,
       user_nickname:this.props.Nickname
@@ -90,14 +90,13 @@ class Posts extends Component {
   }
   componentDidMount() {
     let requests_collection = fdb.collection('requests');
-
     let all_requests = requests_collection.where('status', '==', 'active').get()
       .then(snapshot => {
         snapshot.forEach(doc => {
           const item = doc.data();
           const new_item = item
           new_item['id']=doc.id
-          console.log(new_item)
+          //console.log(new_item)
 
           this.setState({
               post_list: [...this.state.post_list, new_item],
@@ -106,6 +105,29 @@ class Posts extends Component {
       }).catch(err => {
         console.log('Error getting documents', err);
       });
+
+      //store all image info:
+      let photo_dic={}
+      let user_collection = fdb.collection('users');
+      let all_user = user_collection.get().then(snapshot => {
+          snapshot.forEach(doc => {
+            const item = doc.data();
+            const email = item.email
+            //get url from firebase storage by user email
+            storage.ref('images').child(email).getDownloadURL().then(url => {
+                photo_dic[email]=url
+                this.setState({photo_map:photo_dic})
+            }).catch(err => {
+              console.log('Error getting image', err);
+              photo_dic[email]=""
+            });
+
+            ////////geting url finish
+
+          });
+        }).catch(err => {
+          console.log('Error getting documents', err);
+        });
 
 
   }
@@ -446,7 +468,7 @@ class Posts extends Component {
                         >
 
                         <Tooltip title = {item.nickname}>
-                          <Avatar size="small" src=""/>
+                          <Avatar size="small" src={this.state.photo_map[item.email]}/>
                         </Tooltip>
 
                         <Typography variant="h6" component="p" color="textSecondary">

@@ -204,13 +204,7 @@ class Login extends React.Component {
       // An error happened.
       alert(error)
       console.log('Error logging in', error);
-      //console.log(error)
-      // alert(error)
-      // this.setState(state => ({
-      //   success_open:true
-      // }))
-      // console.log(error.message)
-      //this.props.history.push("/login");
+
     });
   }).catch(err => {
     // An error happened.
@@ -221,16 +215,16 @@ class Login extends React.Component {
 
   on_Signup=event =>{
     //console.log(this.state.Email)
-    const email = this.state.Email
+    const Email = this.state.Email
     const ps = this.state.Password
-    const nickname=this.state.Nickname
+    const Nickname=this.state.Nickname
     console.log("in signuup")
 
-    auth.createUserWithEmailAndPassword(email, ps).then(error => {
+    auth.createUserWithEmailAndPassword(Email, ps).then(error => {
   // log-in successful.
-    const ref = fdb.collection('users').doc(email);
+    const ref = fdb.collection('users').doc(Email);
       ref.set({
-        nickname: nickname, email: email,
+        nickname: Nickname, email: Email,
         LoginState: true, photostate: false
       });
       var user = auth.currentUser;
