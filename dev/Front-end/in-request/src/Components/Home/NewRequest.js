@@ -202,7 +202,7 @@ class NewRequest extends Component {
       borrower: this.props.Email,
       comments:[],
       msnone:true,
-      msoffered:false,
+      msoffered:0,
       msaccepted: false,
       msstarted: false,
       msfinished: false,

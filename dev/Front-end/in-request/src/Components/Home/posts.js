@@ -239,7 +239,7 @@ class Posts extends Component {
             if (doc.exists) {
               if(doc.data().borrower != useremail){
                 fdb.collection('requests').doc(ref.id).update({
-                  msoffered: true
+                  msoffered: 1,
                 });
               }
             }
