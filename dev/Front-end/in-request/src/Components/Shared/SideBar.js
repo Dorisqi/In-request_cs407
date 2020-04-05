@@ -99,12 +99,13 @@ class SideBar extends React.Component {
                         var upd = fdb.collection("requests").doc(doc.id);
                         upd.update({
                             status:"archived",
-                            msfinished: true
+                            msfinished: true,
                         })
                     }
                 });
             });
-        },3000);
+            //alert("checking");
+        },60000);//60000 == 1min
   //**************************************************************this part is for checking if past due**********************************
 
 //**************************************************************this part is for alerting borrower about lender************************
@@ -125,10 +126,9 @@ class SideBar extends React.Component {
     let query2 = fdb.collection("requests").where("lender", "==", user.email).where("msoffered", "==", true);
     let liste2 = query2.onSnapshot(docSnapshot => {
         docSnapshot.docChanges().forEach(function(change2){
-            if(change2.doc.data().lender == user.email && change2.doc.data().msaccepted == true){
-                var action = window.confirm(change2.doc.data().borrower + "decided to borrow your item\n" + change2.doc.data().lender + " now is the lender" + "\n title is" + change2.doc.data().title + "\n the id is" +  change2.doc.id);
+            if(change2.doc.data().lender == user.email && change2.doc.data().msaccepted == true && change2.doc.data().msstarted == false){
+                var action = window.confirm(change2.doc.data().borrower + "decided to borrow your item\n" + change2.doc.data().lender + " now is the lender" + "\ntitle is <" + change2.doc.data().title + ">");
                 if(action == true){
-                    alert("true, accepted");
                     var upd = fdb.collection("requests").doc(change2.doc.id);
                     upd.update({
                         msaccepted: true,
@@ -136,7 +136,6 @@ class SideBar extends React.Component {
                     })
                     //in here, should change the msaccepted as true, as well as noticing other lenders that they dont need to worry about the post.
                 }
-                else{alert("false, denied");}
             };
 
         });

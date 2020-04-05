@@ -40,23 +40,27 @@ class ActiveTransaction extends Component {
   }
   componentDidMount() {
     let request_collection = fdb.collection('requests')
-    let query = request_collection.where('borrower', '==', this.props.curUser).where('msnone', '==', true).get()
+    let query = request_collection.where('borrower', '==', this.props.curUser).where('msnone', '==', true).where('msfinished', '==', false).get()
       .then(snapshot => {
         snapshot.forEach(doc => {
           const item = doc.data();
+          const new_item = item;
+          new_item['id'] = doc.id;
           this.setState({
-              active_br_post: [...this.state.active_br_post, item],
+              active_br_post: [...this.state.active_br_post, new_item],
           });
         });
       }).catch(err => {
         console.log('Error getting borrowing documents', err);
       });
-    let len_query = request_collection.where('lender', '==', this.props.curUser).where('msaccepted','==',true).get()
+    let len_query = request_collection.where('lender', '==', this.props.curUser).where('msaccepted','==',true).where('msfinished', '==', false).get()
       .then(snapshot => {
         snapshot.forEach(doc => {
           const item = doc.data();
+          const new_item = item;
+          new_item['id'] = doc.id;
           this.setState({
-              active_ld_post: [...this.state.active_ld_post, item],
+              active_ld_post: [...this.state.active_ld_post, new_item],
           });
         });
       }).catch(err => {
@@ -64,6 +68,34 @@ class ActiveTransaction extends Component {
       });
 
   }
+
+    handleStart(post){
+        alert("start button is pushed, the post id is " + post.id);
+        var upd = fdb.collection("requests").doc(post.id);
+        upd.update({
+            msstarted:true,
+            status:"pending"
+        })
+    }
+
+    handleFinish(post){
+        alert("Finish button is pushed, the post id is " + post.id);
+        var upd = fdb.collection("requests").doc(post.id);
+        upd.update({
+            msfinished:true,
+            status:"archived"
+        })
+    }
+
+    handleCancel(post){
+        alert("you have cancelled your post : " + post.title);
+        var upd = fdb.collection("requests").doc(post.id);
+        upd.update({
+            msfinished:true,
+            status:"archived"
+        })
+    }
+
   render() {
     const{classes} = this.props
     const{active_br_post, active_ld_post} = this.state
@@ -93,7 +125,7 @@ class ActiveTransaction extends Component {
                       <CardActions>
                         <Button size="small" disabled>Start</Button>
                         <Button size="small" disabled>Finish</Button>
-                        <Button size="small" color="primary">Cancel</Button>
+                        <Button size="small" color="primary" onClick={()=>this.handleCancel(post)}>Cancel</Button>
                       </CardActions>
                     :
                     [
@@ -105,7 +137,7 @@ class ActiveTransaction extends Component {
                           <br />
                           </Typography>
                           <CardActions>
-                            <Button size="small" color="primary">Start</Button>
+                            <Button size="small" color="primary" onClick={()=>this.handleStart(post)}>Start</Button>
                             <Button size="small" disabled>Finish</Button>
                             <Button size="small" disabled>Cancel</Button>
                           </CardActions>
@@ -118,7 +150,7 @@ class ActiveTransaction extends Component {
                           </Typography>
                           <CardActions>
                             <Button size="small" color="primary" disabled>Start</Button>
-                            <Button size="small">Finish</Button>
+                            <Button size="small" onClick={()=>this.handleFinish(post)}>Finish</Button>
                             <Button size="small" disabled>Cancel</Button>
                           </CardActions>
                         </div>

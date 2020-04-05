@@ -149,12 +149,12 @@ class Posts extends Component {
     console.log(this.state.post_list)
   }
 
-  onclickLend(post){
+  onclickLend(post, item){
   var user = auth.currentUser;
   var upd = fdb.collection("requests").doc(post.id);
   upd.update({
     msaccepted:true,
-    lender: user,
+    lender: item.email,
   })
 }
 
@@ -231,8 +231,20 @@ class Posts extends Component {
             });
 
           fdb.collection('requests').doc(ref.id).update({
-              comments:new_cmts
-            });
+              comments:new_cmts,
+              //msoffered: true
+          });
+          var useremail = auth.currentUser.email;
+          fdb.collection('requests').doc(ref.id).get().then(function(doc) {
+            if (doc.exists) {
+              if(doc.data().borrower != useremail){
+                fdb.collection('requests').doc(ref.id).update({
+                  msoffered: true
+                });
+              }
+            }
+          });
+
 
     }).catch(function(error) {
       console.log("Error getting document:", error);
@@ -483,7 +495,7 @@ class Posts extends Component {
                           <br />
                         </Typography>
                         {(this.props.Email == post.borrower) && (this.props.Email!=item.email)&&
-                           (<Button size="small" onClick={()=>this.onclickLend(post)}>Lend from {item.nickname}</Button>
+                           (<Button size="small" onClick={()=>this.onclickLend(post, item)}>Borrow from {item.nickname}</Button>
                          )}
 
                          {(this.props.Email==item.email)&&
@@ -507,7 +519,7 @@ class Posts extends Component {
                 </CardContent>
                 <CardActions>
 
-                  <Button size="small" onClick={()=>this.onClick_Open_Comment(post.id)}>Open Comments</Button>
+                  <Button size="small" onClick={()=>this.onClick_Open_Comment(post.id)}>Open/Close Comments</Button>
                   <Button size="small" onClick={()=>this.onClick_Open_Addcmt(post.id)}>Add Comments</Button>
                 </CardActions>
             </Card>

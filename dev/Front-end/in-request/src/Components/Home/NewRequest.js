@@ -201,6 +201,16 @@ class NewRequest extends Component {
       taglist: listoftags,
       borrower: this.props.Email,
       comments:[],
+      msnone:true,
+      msoffered:false,
+      msaccepted: false,
+      msstarted: false,
+      msfinished: false,
+      startb: false,
+      startl:false,
+      endb:false,
+      endl:false,
+      lender:"",
       status:"active"
     }).then(ref =>{
       console.log('Added document with ID: ', ref.id);
@@ -350,7 +360,7 @@ class NewRequest extends Component {
                fullWidth
                value = {this.state.itemName}
                onChange = {this.handleNameChange}
-               / >
+               />
               </Grid>
           </Grid>
           <br />
