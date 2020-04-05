@@ -136,11 +136,11 @@ class SideBar extends React.Component {
 
 
 //***************************************************************this part is for alerting the borrower about lender's declineness******
-    let queuery = fdb.collection("requests").where("borrower", "==", user.email).where("msaccepted", "==", false);
+    let queuery = fdb.collection("requests").where("borrower", "==", user.email);
     var checker = true;
     let liste3 = queuery.onSnapshot(docSnapshot => {
         docSnapshot.docChanges().forEach(function(change){
-            if(change.doc.data().lender != "" && checker==true){
+            if(change.doc.data().lender != "" && checker==true && change.doc.data().msaccepted == false){
                 checker = false;
                 alert("The lender declined your invitation, please choose another lender.");
                 var upd = fdb.collection("requests").doc(change.doc.id);
