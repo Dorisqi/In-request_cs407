@@ -85,17 +85,32 @@ class SideBar extends React.Component {
     this.Logout= this.Logout.bind(this)
     var user = auth.currentUser;
     if(user){
-
+        let que = fdb.collection("requests").where("borrower", "==", user.email);
+        que.get().then(function(qss){
+            qss.forEach(function(doc){
+                var curtime = Date.now()/1000;
+                var duetime = doc.data().estReturn.seconds;
+                var diff = duetime - curtime;
+                if(diff < 0 && doc.data().status == "active"){
+                    alert("Your post <" + doc.data().title + "> is not active anymore");
+                    var upd = fdb.collection("requests").doc(doc.id);
+                    upd.update({
+                        status:"archived",
+                        msfinished: true,
+                    })
+                }
+            });
+        });
     //**************************************************************this part is for checking if past due**********************************
         setInterval(function(){
             let que = fdb.collection("requests").where("borrower", "==", user.email);
             que.get().then(function(qss){
                 qss.forEach(function(doc){
-                    var curtime = Date.now()/600000;
+                    var curtime = Date.now()/1000;
                     var duetime = doc.data().estReturn.seconds;
                     var diff = duetime - curtime;
                     if(diff < 0 && doc.data().status == "active"){
-                        alert("its not active anymore" + doc.data().title + "this is the doc id " + doc.id);
+                        alert("Your post <" + doc.data().title + "> is not active anymore");
                         var upd = fdb.collection("requests").doc(doc.id);
                         upd.update({
                             status:"archived",
@@ -104,7 +119,6 @@ class SideBar extends React.Component {
                     }
                 });
             });
-            //alert("checking");
         },60000);//60000 == 1min
   //**************************************************************this part is for checking if past due**********************************
 
@@ -113,12 +127,33 @@ class SideBar extends React.Component {
     let liste = query.onSnapshot(docSnapshot => {
         docSnapshot.docChanges().forEach(function(change){
             if(change.doc.data().msoffered == true && change.doc.data().msaccepted == false && change.doc.data().status != "archived"){
-                alert("someone decided to lend you an item on title" + change.doc.data().title);
+                alert("someone decided to lend you an item on title <" + change.doc.data().title + ">");
             }
-
         });
     });
+
 //**************************************************************this part is for alerting borrower about lender************************
+
+
+//***************************************************************this part is for alerting the borrower about lender's declineness******
+    let queuery = fdb.collection("requests").where("borrower", "==", user.email).where("msaccepted", "==", false);
+    var checker = true;
+    let liste3 = queuery.onSnapshot(docSnapshot => {
+        docSnapshot.docChanges().forEach(function(change){
+            if(change.doc.data().lender != "" && checker == true){
+                checker = false;
+                alert("The lender declined your invitation, please choose another lender.");
+                var upd = fdb.collection("requests").doc(change.doc.id);
+                upd.update({
+                    //msaccepted: false,
+                    lender: '',
+                })
+            }
+        });
+    });
+
+
+//***************************************************************this part is for alerting the borrower about lender's declineness*******
 
 
 //**************************************************************this part is for let lender confirm status ****************************
@@ -127,14 +162,22 @@ class SideBar extends React.Component {
     let liste2 = query2.onSnapshot(docSnapshot => {
         docSnapshot.docChanges().forEach(function(change2){
             if(change2.doc.data().lender == user.email && change2.doc.data().msaccepted == true && change2.doc.data().msstarted == false){
-                var action = window.confirm(change2.doc.data().borrower + "decided to borrow your item\n" + change2.doc.data().lender + " now is the lender" + "\ntitle is <" + change2.doc.data().title + ">");
+                var action = window.confirm(change2.doc.data().borrower + " decided to borrow your item,\n" + change2.doc.data().lender + " now is the lender," + "\ntitle is <" + change2.doc.data().title + ">");
                 if(action == true){
+                    alert("you decided to lend your stuff")
                     var upd = fdb.collection("requests").doc(change2.doc.id);
                     upd.update({
                         msaccepted: true,
-
                     })
                     //in here, should change the msaccepted as true, as well as noticing other lenders that they dont need to worry about the post.
+                }
+                else{
+                    alert("you decided not to lend your stuff")
+                    var upd = fdb.collection("requests").doc(change2.doc.id);
+                    upd.update({
+                        msaccepted: false,
+                        //lender: '',
+                    })
                 }
             };
 
