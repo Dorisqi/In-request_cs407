@@ -118,7 +118,6 @@ class Posts extends Component {
             storage.ref('images').child(email).getDownloadURL().then(url => {
                 photo_dic[email]=url
                 this.setState({photo_map:photo_dic})
-                print(photo_map)
             }).catch(err => {
               console.log('Error getting image', err);
               photo_dic[email]=""
