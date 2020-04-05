@@ -123,6 +123,7 @@ class SideBar extends React.Component {
   //**************************************************************this part is for checking if past due**********************************
 
 //**************************************************************this part is for alerting borrower about lender************************
+
     let query = fdb.collection("requests").where("borrower", "==", user.email).where("msnone", "==", true);
     let liste = query.onSnapshot(docSnapshot => {
         docSnapshot.docChanges().forEach(function(change){
@@ -136,12 +137,10 @@ class SideBar extends React.Component {
 
 
 //***************************************************************this part is for alerting the borrower about lender's declineness******
-    let queuery = fdb.collection("requests").where("borrower", "==", user.email).where("msaccepted", "==", false);
-    var checker = true;
+    let queuery = fdb.collection("requests").where("borrower", "==", user.email);
     let liste3 = queuery.onSnapshot(docSnapshot => {
         docSnapshot.docChanges().forEach(function(change){
-            if(change.doc.data().lender != "" && checker == true){
-                checker = false;
+            if(change.doc.data().lender != "" && change.doc.data().msaccepted == false){
                 alert("The lender declined your invitation, please choose another lender.");
                 var upd = fdb.collection("requests").doc(change.doc.id);
                 upd.update({
@@ -168,6 +167,7 @@ class SideBar extends React.Component {
                     var upd = fdb.collection("requests").doc(change2.doc.id);
                     upd.update({
                         msaccepted: true,
+                        status: "pending",
                     })
                     //in here, should change the msaccepted as true, as well as noticing other lenders that they dont need to worry about the post.
                 }
