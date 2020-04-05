@@ -153,7 +153,7 @@ class Login extends React.Component {
                   })
                 }
                 const data = doc.data()
-                console.log("log_page",doc.data().nickname)
+                //console.log("log_page",doc.data())
                 this.props.history.push({
                   pathname:"/posts",
                   state:{
