@@ -140,13 +140,14 @@ class SideBar extends React.Component {
     var checker = true;
     let liste3 = queuery.onSnapshot(docSnapshot => {
         docSnapshot.docChanges().forEach(function(change){
-            if(change.doc.data().lender != "" && checker == true){
+            if(change.doc.data().lender != "" && checker==true){
                 checker = false;
                 alert("The lender declined your invitation, please choose another lender.");
                 var upd = fdb.collection("requests").doc(change.doc.id);
                 upd.update({
                     //msaccepted: false,
-                    lender: '',
+                    lender: "",
+
                 })
             }
         });
@@ -168,6 +169,7 @@ class SideBar extends React.Component {
                     var upd = fdb.collection("requests").doc(change2.doc.id);
                     upd.update({
                         msaccepted: true,
+                        status:"pending"
                     })
                     //in here, should change the msaccepted as true, as well as noticing other lenders that they dont need to worry about the post.
                 }
