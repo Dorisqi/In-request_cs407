@@ -507,7 +507,7 @@ class Posts extends Component {
 
                     </InfiniteScroll>)}
                   </Box>
-              
+
                 {(post.addcmt_flag)&&(<Grommet theme={grommet}>
 
                 <FormField >
