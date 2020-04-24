@@ -25,6 +25,7 @@ import './NewRequest.css'
 import {fdb} from "../../firebase";
 import AppsIcon from '@material-ui/icons/Apps';
 import TimerIcon from '@material-ui/icons/Timer';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 
 const styles = theme => ({
   container: {
@@ -50,9 +51,11 @@ class NewRequest extends Component {
   constructor(props) {
       super(props)
       this.state = {
+        curUser: this.props.Email,
         itemName: "",
         description: "",
         estimateVal: "",
+        guarantor:"",
         returnDate: new Date(),
         durationTime: new Date(),
         tagList: [],
@@ -87,6 +90,8 @@ class NewRequest extends Component {
       this.handleClick11 = this.handleClick11.bind(this);
       this.handleClick12 = this.handleClick12.bind(this);
       this.onSubmitRequest = this.onSubmitRequest.bind(this);
+      this.handleGuarantor = this.handleGuarantor.bind(this);
+      this.onSubmitGuarantor = this.onSubmitGuarantor.bind(this);
   }
   handleNameChange = event => {
     const name_val = event.target.value;
@@ -103,7 +108,13 @@ class NewRequest extends Component {
     this.setState(state =>({
       description: description_val
     }));
+  }
 
+  handleGuarantor = event => {
+    const guarantor_email = event.target.value;
+    this.setState(state => ({
+      guarantor: guarantor_email
+    }));
   }
 
   handleValue = event => {
@@ -130,6 +141,31 @@ class NewRequest extends Component {
     e.preventDefault();
     console.log(this.state.returnDate)
   }
+
+  onSubmitGuarantor = event => {
+      const fromP = this.state.curUser;
+      const ref  = fdb.collection('users').doc(this.state.guarantor);
+        ref.get().then(function(doc) {
+          if(doc.exists) {
+            //send invitaiton to this user
+            let msgRef = ref.collection('msgBox').add({
+                fromWho: fromP,
+                isRead: false,
+                msgContent: fromP + " would like to invite you as a guarantor",
+                needConfirm: true,
+                isAccepted: false,
+            }).then(ref =>{
+              alert("Successfully sent invitation!")
+            }).catch(err => {
+              // An error happened.
+              console.log('Error send invitation', err);
+            });
+          }else{
+            alert("No such user exists!");
+          }
+        })
+  }
+
   onSubmitRequest = event => {
     //console.log(this.state.Email)
     const ref = fdb.collection('users').doc(this.props.Email);
@@ -224,21 +260,20 @@ class NewRequest extends Component {
     const value = (this.state.color1 ==1 )? 0:1
     this.setState({color1: value})
   }
-  handleClick2=event=>{
+  handleClick2 = event=>{
     const value = (this.state.color2 ==1)? 0:1
     this.setState({ color2: value})
   }
-  handleClick3=event=>{
-
+  handleClick3 =event=>{
     const value = (this.state.color3 ==1)? 0:1
     this.setState({ color3: value})
   }
-  handleClick4=event=>{
+  handleClick4 = event =>{
 
     const value = this.state.color4 ==1? 0:1
     this.setState({ color4: value})
   }
-  handleClick5=event=>{
+  handleClick5 = event =>{
 
     const value = this.state.color5==1? 0:1
     this.setState({
@@ -400,6 +435,26 @@ class NewRequest extends Component {
                 onChange = {this.handleValue}
                 rows={1}
               />
+            </Grid>
+            <Grid item>
+              <AccountCircle/>
+            </Grid>
+            <Grid item xs={1.5}>
+              <TextField
+                required
+                id="guarantor_email"
+                name="guarantor"
+                label="Add guarantor..."
+                value = {this.state.guarantor}
+                onChange = {this.handleGuarantor}
+              />
+            </Grid>
+            <Grid item>
+              <Button variant="contained"
+                onClick={this.onSubmitGuarantor}
+              >
+                Add
+              </Button>
             </Grid>
           </Grid>
           <br />

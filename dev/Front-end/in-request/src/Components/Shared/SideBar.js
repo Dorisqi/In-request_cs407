@@ -18,7 +18,7 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar'
 import { Switch, Route, Link, BrowserRouter } from "react-router-dom";
-import Profile from '../Home/profile';
+import Profile from '../Home/Profile';
 import Posts from '../Home/Posts.js';
 import NewRequest from '../Home/NewRequest';
 import Upload from '../Home/uploadimg';
@@ -299,7 +299,7 @@ class SideBar extends React.Component {
               <Route exact path="/posts">
                 <Posts Email={this.props.location.state.Email} Nickname={this.props.location.state.Nickname}/>
               </Route>
-              <Route path="/profile">
+              <Route path="/Profile">
 
               </Route>
               <Route path="/NewRequest">
