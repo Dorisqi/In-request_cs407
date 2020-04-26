@@ -26,7 +26,11 @@ import {fdb} from "../../firebase";
 import AppsIcon from '@material-ui/icons/Apps';
 import TimerIcon from '@material-ui/icons/Timer';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 const styles = theme => ({
   container: {
     display: 'flex',
@@ -70,6 +74,7 @@ class NewRequest extends Component {
         color9:0,
         color11:0,
         color12:0,
+        open: false,
       };
       // This binding is necessary to make `this` work in the callback
       this.handleNameChange = this.handleNameChange.bind(this);
@@ -92,6 +97,7 @@ class NewRequest extends Component {
       this.onSubmitRequest = this.onSubmitRequest.bind(this);
       this.handleGuarantor = this.handleGuarantor.bind(this);
       this.onSubmitGuarantor = this.onSubmitGuarantor.bind(this);
+      this.handleClose = this.handleClose.bind(this);
   }
   handleNameChange = event => {
     const name_val = event.target.value;
@@ -168,7 +174,6 @@ class NewRequest extends Component {
   }
 
   onSubmitRequest = event => {
-    //console.log(this.state.Email)
     const ref = fdb.collection('users').doc(this.props.Email);
       ref.get().then(function(doc) {
       if (doc.exists) {
@@ -177,9 +182,7 @@ class NewRequest extends Component {
             alert("Please upload ID photo first!")
             return;
           }
-          //console.log(old.comments)
       } else {
-          // doc.data() will be undefined in this case
           console.log("No such document!");
       }
       }).catch(function(error) {
@@ -225,8 +228,7 @@ class NewRequest extends Component {
       this.state.tagList.push("Sports")
     }
     if(estimateVal > 50) {
-      alert("Currently unable to borrow property more than 50 dollars");
-      return;
+      this.setState({open: true})
     }
     const listoftags = this.state.tagList
     let addDoc = fdb.collection('requests').add({
@@ -316,7 +318,10 @@ class NewRequest extends Component {
     const value = this.state.color12==1?0:1
     this.setState({color12: value})
   }
-
+  handleClose = event => {
+    const value = this.state.setOpen
+    this.setState({open: false})
+  }
   render() {
     const { classes } = this.props;
     return (
@@ -437,26 +442,6 @@ class NewRequest extends Component {
                 rows={1}
               />
             </Grid>
-            <Grid item>
-              <AccountCircle/>
-            </Grid>
-            <Grid item xs={1.5}>
-              <TextField
-                required
-                id="guarantor_email"
-                name="guarantor"
-                label="Add guarantor..."
-                value = {this.state.guarantor}
-                onChange = {this.handleGuarantor}
-              />
-            </Grid>
-            <Grid item>
-              <Button variant="contained"
-                onClick={this.onSubmitGuarantor}
-              >
-                Add
-              </Button>
-            </Grid>
           </Grid>
           <br />
           <br />
@@ -506,13 +491,38 @@ class NewRequest extends Component {
             <Grid item>
               <Button variant="contained"
                 onClick={this.onSubmitRequest}
-                disabled={!this.state.itemName || !this.state.description || !this.state.estimateVal}
+                disabled={!this.state.itemName || !this.state.description}
               >
                 SUBMIT!
               </Button>
             </Grid>
           </Grid>
         </Container>
+        <Dialog open={this.state.open} onClose={this.state.handleClose} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              To subscribe to this website, please enter your email address here. We will send updates
+              occasionally.
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
+              label="Email Address"
+              type="email"
+              fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.state.handleClose} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={this.state.handleClose} color="primary">
+              Subscribe
+            </Button>
+          </DialogActions>
+      </Dialog>
       </Fragment>
     );
   }
