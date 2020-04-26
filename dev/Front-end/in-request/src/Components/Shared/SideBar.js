@@ -19,6 +19,7 @@ import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar'
 import { Switch, Route, Link, BrowserRouter } from "react-router-dom";
 import Profile from '../Home/Profile';
+import MessageBox from '../Home/MessageBox';
 import Posts from '../Home/Posts.js';
 import NewRequest from '../Home/NewRequest';
 import Upload from '../Home/uploadimg';
@@ -280,8 +281,8 @@ class SideBar extends React.Component {
                 </List>
                 <Divider />
                 <List>
-                  {['Profile', 'Log Out'].map((text, index) => (
-                    <ListItem button onClick={this.Logout} key={text} component={Link} to={"/" + text.replace(/\s/g,'')}>
+                  {['Profile', 'Message Box','Log Out'].map((text, index) => (
+                    <ListItem button key={text} component={Link} to={"/" + text.replace(/\s/g,'')}>
                       <ListItemIcon>
                         {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                       </ListItemIcon>
@@ -300,7 +301,9 @@ class SideBar extends React.Component {
                 <Posts Email={this.props.location.state.Email} Nickname={this.props.location.state.Nickname}/>
               </Route>
               <Route path="/Profile">
-
+              </Route>
+              <Route path="/MessageBox">
+                <MessageBox curUser={this.props.location.state.Email}/>
               </Route>
               <Route path="/NewRequest">
                 <NewRequest hasPhoto={this.props.location.state.hasPhoto} Email={this.props.location.state.Email}/>

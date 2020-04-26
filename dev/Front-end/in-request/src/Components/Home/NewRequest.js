@@ -155,6 +155,7 @@ class NewRequest extends Component {
                 needConfirm: true,
                 isAccepted: false,
             }).then(ref =>{
+              console.log("added document with id: " + ref.id);
               alert("Successfully sent invitation!")
             }).catch(err => {
               // An error happened.
