@@ -25,7 +25,12 @@ import './NewRequest.css'
 import {fdb} from "../../firebase";
 import AppsIcon from '@material-ui/icons/Apps';
 import TimerIcon from '@material-ui/icons/Timer';
-
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 const styles = theme => ({
   container: {
     display: 'flex',
@@ -50,9 +55,12 @@ class NewRequest extends Component {
   constructor(props) {
       super(props)
       this.state = {
+        requestID:"",
+        curUser: this.props.Email,
         itemName: "",
         description: "",
         estimateVal: "",
+        guarantor:"",
         returnDate: new Date(),
         durationTime: new Date(),
         tagList: [],
@@ -67,6 +75,7 @@ class NewRequest extends Component {
         color9:0,
         color11:0,
         color12:0,
+        open: false,
       };
       // This binding is necessary to make `this` work in the callback
       this.handleNameChange = this.handleNameChange.bind(this);
@@ -87,6 +96,9 @@ class NewRequest extends Component {
       this.handleClick11 = this.handleClick11.bind(this);
       this.handleClick12 = this.handleClick12.bind(this);
       this.onSubmitRequest = this.onSubmitRequest.bind(this);
+      this.handleGuarantor = this.handleGuarantor.bind(this);
+      this.onSubmitGuarantor = this.onSubmitGuarantor.bind(this);
+      this.handleClose = this.handleClose.bind(this);
   }
   handleNameChange = event => {
     const name_val = event.target.value;
@@ -103,7 +115,13 @@ class NewRequest extends Component {
     this.setState(state =>({
       description: description_val
     }));
+  }
 
+  handleGuarantor = event => {
+    const guarantor_email = event.target.value;
+    this.setState(state => ({
+      guarantor: guarantor_email
+    }));
   }
 
   handleValue = event => {
@@ -130,8 +148,35 @@ class NewRequest extends Component {
     e.preventDefault();
     console.log(this.state.returnDate)
   }
+
+  onSubmitGuarantor = event => {
+      const fromP = this.state.curUser;
+      const ref  = fdb.collection('users').doc(this.state.guarantor);
+        ref.get().then(function(doc) {
+          if(doc.exists) {
+            //send invitaiton to this user
+            let msgRef = ref.collection('msgBox').add({
+                fromWho: fromP,
+                isRead: false,
+                msgContent: fromP + " would like to invite you as a guarantor",
+                needConfirm: true,
+                isAccepted: false,
+            }).then(ref =>{
+              console.log("added document with id: " + ref.id);
+              alert("Successfully sent invitation!")
+            }).catch(err => {
+              // An error happened.
+              console.log('Error send invitation', err);
+            });
+          }else{
+            alert("No such user exists!");
+          }
+        })
+        let reqRef = fdb.collection('requests').doc(this.state.requestID);
+        let updateGuarantor = reqRef.update({guarantor: this.state.guarantor});
+  }
+
   onSubmitRequest = event => {
-    //console.log(this.state.Email)
     const ref = fdb.collection('users').doc(this.props.Email);
       ref.get().then(function(doc) {
       if (doc.exists) {
@@ -140,9 +185,7 @@ class NewRequest extends Component {
             alert("Please upload ID photo first!")
             return;
           }
-          //console.log(old.comments)
       } else {
-          // doc.data() will be undefined in this case
           console.log("No such document!");
       }
       }).catch(function(error) {
@@ -188,8 +231,7 @@ class NewRequest extends Component {
       this.state.tagList.push("Sports")
     }
     if(estimateVal > 50) {
-      alert("Currently unable to borrow property more than 50 dollars");
-      return;
+      this.setState({open: true})
     }
     const listoftags = this.state.tagList
     let addDoc = fdb.collection('requests').add({
@@ -211,9 +253,11 @@ class NewRequest extends Component {
       endb:false,
       endl:false,
       lender:"",
-      status:"active"
+      status:"active",
+      guarantor:"",
     }).then(ref =>{
       console.log('Added document with ID: ', ref.id);
+      this.setState({requestID: ref.id});
       alert("Add new request successful")
     }).catch(err => {
       // An error happened.
@@ -224,21 +268,20 @@ class NewRequest extends Component {
     const value = (this.state.color1 ==1 )? 0:1
     this.setState({color1: value})
   }
-  handleClick2=event=>{
+  handleClick2 = event=>{
     const value = (this.state.color2 ==1)? 0:1
     this.setState({ color2: value})
   }
-  handleClick3=event=>{
-
+  handleClick3 =event=>{
     const value = (this.state.color3 ==1)? 0:1
     this.setState({ color3: value})
   }
-  handleClick4=event=>{
+  handleClick4 = event =>{
 
     const value = this.state.color4 ==1? 0:1
     this.setState({ color4: value})
   }
-  handleClick5=event=>{
+  handleClick5 = event =>{
 
     const value = this.state.color5==1? 0:1
     this.setState({
@@ -280,7 +323,11 @@ class NewRequest extends Component {
     const value = this.state.color12==1?0:1
     this.setState({color12: value})
   }
-
+  handleClose = event => {
+    console.log("here")
+    this.setState({open: false})
+    console.log(this.state.open)
+  }
   render() {
     const { classes } = this.props;
     return (
@@ -450,13 +497,47 @@ class NewRequest extends Component {
             <Grid item>
               <Button variant="contained"
                 onClick={this.onSubmitRequest}
-                disabled={!this.state.itemName || !this.state.description || !this.state.estimateVal}
+                disabled={!this.state.itemName || !this.state.description}
               >
                 SUBMIT!
               </Button>
             </Grid>
           </Grid>
         </Container>
+        <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">Guarantor</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Your item values more than 50$. To prove your reliability and increase the possibility
+              of lending from others, we encourage you to add a gurantor to this transaction.
+            </DialogContentText>
+            <Grid container alignItems="flex-end">
+              <Grid item xs={1}>
+                <AccountCircle/>
+              </Grid>
+              <Grid item xs={true}>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="guarantor_email"
+                  name="guarantor"
+                  label="Add guarantor..."
+                  fullWidth
+                  value = {this.state.guarantor}
+                  onChange = {this.handleGuarantor}
+                />
+              </Grid>
+            </Grid>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={this.onSubmitGuarantor} color="primary">
+              Add
+            </Button>
+          </DialogActions>
+      </Dialog>
       </Fragment>
     );
   }

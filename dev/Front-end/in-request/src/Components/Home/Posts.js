@@ -100,7 +100,6 @@ class Posts extends Component {
           new_item['addcmt_flag']=false
           this.setState({
               post_list: [...this.state.post_list, new_item],
-
           });
         });
       }).catch(err => {

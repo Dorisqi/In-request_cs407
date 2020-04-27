@@ -88,6 +88,8 @@ class ActiveTransaction extends Component {
     }
 
     handleCancel(post){
+      console.log(post)
+      console.log(post.id)
         alert("you have cancelled your post : " + post.title);
         var upd = fdb.collection("requests").doc(post.id);
         upd.update({
