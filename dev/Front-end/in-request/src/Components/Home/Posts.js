@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {fdb,auth,storage} from "../../firebase";
 import { withStyles, makeStyles, ThemeProvider } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
@@ -15,6 +16,8 @@ import AppsIcon from '@material-ui/icons/Apps';
 import { grommet,Grommet,FormField,TextInput,InfiniteScroll,Box,Text} from "grommet";
 import Tooltip from '@material-ui/core/Tooltip';
 import Avatar from "@material-ui/core/Avatar";
+import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
+import Icon from '@material-ui/core/Icon';
 
 
 
@@ -39,6 +42,7 @@ const styles = theme => ({
     fontSize:8,
   }
 });
+
 
 class Posts extends Component {
   constructor(props) {
@@ -455,22 +459,28 @@ class Posts extends Component {
         {filtered.map(post=>
           <Grid item xs={4}>
             <Card background={"#f5edf1"}>
+              <CardHeader
+                title={post.title}
+                subheader={post.borrower}
+                action={
+                  post.guarantor
+                  ?
+                  <Icon fontSize="large">
+                    <VerifiedUserIcon style={{fill: "green"}}/>
+                  </Icon>
+                  :
+                  null
+                }
+              />
                 <CardContent>
-                  <Typography variant="h4" component="h2">
-                    {post.title}
-                  </Typography>
-                  <Typography variant= "h5" >
-                    {post.content}
-                  </Typography>
-                  <Typography variant="h6" component="p" color="textSecondary">
-                    Borrower: {post.borrower}
-                    <br />
+                  <Typography variant= "h6" component="p">
+                    Description: {post.content}
                   </Typography>
                   <Typography variant="body1" component="p" color="textSecondary">
                     Estimated Value: {post.price} $
                     <br />
                   </Typography>
-                  <Typography variant="h6" component="p" color="textSecondary">
+                  <Typography variant="body1" component="p" color="textSecondary">
                     Guranrtor: {post.guarantor}
                     <br />
                   </Typography>
