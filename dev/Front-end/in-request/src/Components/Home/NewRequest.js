@@ -55,6 +55,7 @@ class NewRequest extends Component {
   constructor(props) {
       super(props)
       this.state = {
+        requestID:"",
         curUser: this.props.Email,
         itemName: "",
         description: "",
@@ -171,6 +172,8 @@ class NewRequest extends Component {
             alert("No such user exists!");
           }
         })
+        let reqRef = fdb.collection('requests').doc(this.state.requestID);
+        let updateGuarantor = reqRef.update({guarantor: this.state.guarantor});
   }
 
   onSubmitRequest = event => {
@@ -250,9 +253,11 @@ class NewRequest extends Component {
       endb:false,
       endl:false,
       lender:"",
-      status:"active"
+      status:"active",
+      guarantor:"",
     }).then(ref =>{
       console.log('Added document with ID: ', ref.id);
+      this.setState({requestID: ref.id});
       alert("Add new request successful")
     }).catch(err => {
       // An error happened.
@@ -319,8 +324,9 @@ class NewRequest extends Component {
     this.setState({color12: value})
   }
   handleClose = event => {
-    const value = this.state.setOpen
+    console.log("here")
     this.setState({open: false})
+    console.log(this.state.open)
   }
   render() {
     const { classes } = this.props;
@@ -498,28 +504,37 @@ class NewRequest extends Component {
             </Grid>
           </Grid>
         </Container>
-        <Dialog open={this.state.open} onClose={this.state.handleClose} aria-labelledby="form-dialog-title">
-          <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+        <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">Guarantor</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              To subscribe to this website, please enter your email address here. We will send updates
-              occasionally.
+              Your item values more than 50$. To prove your reliability and increase the possibility
+              of lending from others, we encourage you to add a gurantor to this transaction.
             </DialogContentText>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="name"
-              label="Email Address"
-              type="email"
-              fullWidth
-            />
+            <Grid container alignItems="flex-end">
+              <Grid item xs={1}>
+                <AccountCircle/>
+              </Grid>
+              <Grid item xs={true}>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="guarantor_email"
+                  name="guarantor"
+                  label="Add guarantor..."
+                  fullWidth
+                  value = {this.state.guarantor}
+                  onChange = {this.handleGuarantor}
+                />
+              </Grid>
+            </Grid>
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.state.handleClose} color="primary">
+            <Button onClick={this.handleClose} color="primary">
               Cancel
             </Button>
-            <Button onClick={this.state.handleClose} color="primary">
-              Subscribe
+            <Button onClick={this.onSubmitGuarantor} color="primary">
+              Add
             </Button>
           </DialogActions>
       </Dialog>
