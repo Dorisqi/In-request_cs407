@@ -46,6 +46,7 @@ class MessageBox extends React.Component {
         snapshot.forEach(doc => {
           const item = doc.data();
           const new_item = item;
+          new_item['id'] = doc.id
           this.setState({
             msgList:[...this.state.msgList, new_item],
           });
@@ -54,19 +55,22 @@ class MessageBox extends React.Component {
         console.log("Error getting messages", err);
       });
   }
-  handleAccept(msgId){
+  handleAccept(msgId, postId){
     var userMsg = fdb.collection('users').doc(this.props.curUser).collection('msgBox').doc(msgId);
     userMsg.update({
       needConfirm: false,
       isAccepted: "accepted",
     });
+    console.log(postId)
+    let reqRef = fdb.collection('requests').doc(postId);
+    let updateGuarantor = reqRef.update({guarantor: this.props.curUser});
   }
-  handleDecline(msgId){
+  handleDecline(msgId, postId){
     var userMsg = fdb.collection('users').doc(this.props.curUser).collection('msgBox').doc(msgId);
     userMsg.update({
       needConfirm: false,
       isAccepted: "declined",
-    })
+    });
   }
   render() {
     const {msgList} = this.state;
@@ -87,12 +91,12 @@ class MessageBox extends React.Component {
                   ?
                   <CardActions>
                   <Button size="small" color="primary"
-                    onClick={()=>this.handleAccept(msg.id)}
+                    onClick={()=>this.handleAccept(msg.id,msg.postId)}
                   >
                     Accept
                   </Button>
                   <Button size="small" color="primary"
-                    onClick={()=>this.handleDecline(msg.id)}
+                    onClick={()=>this.handleDecline(msg.id, msg.postId)}
                   >
                     Decline
                   </Button>

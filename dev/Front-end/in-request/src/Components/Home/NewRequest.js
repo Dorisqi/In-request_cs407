@@ -151,11 +151,13 @@ class NewRequest extends Component {
 
   onSubmitGuarantor = event => {
       const fromP = this.state.curUser;
+      const postid = this.state.requestID;
       const ref  = fdb.collection('users').doc(this.state.guarantor);
         ref.get().then(function(doc) {
           if(doc.exists) {
             //send invitaiton to this user
             let msgRef = ref.collection('msgBox').add({
+                postId: postid,
                 fromWho: fromP,
                 isRead: false,
                 msgContent: fromP + " would like to invite you as a guarantor",
@@ -172,8 +174,6 @@ class NewRequest extends Component {
             alert("No such user exists!");
           }
         })
-        let reqRef = fdb.collection('requests').doc(this.state.requestID);
-        let updateGuarantor = reqRef.update({guarantor: this.state.guarantor});
   }
 
   onSubmitRequest = event => {
@@ -324,9 +324,7 @@ class NewRequest extends Component {
     this.setState({color12: value})
   }
   handleClose = event => {
-    console.log("here")
     this.setState({open: false})
-    console.log(this.state.open)
   }
   render() {
     const { classes } = this.props;

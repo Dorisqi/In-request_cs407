@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Fragment, Component } from 'react';
 import {fdb,auth,storage} from "../../firebase";
 import { withStyles, makeStyles, ThemeProvider } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -18,7 +18,13 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Avatar from "@material-ui/core/Avatar";
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import Icon from '@material-ui/core/Icon';
-
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import TextField from '@material-ui/core/TextField';
 
 
 /* ---  THIS FILE CONTAINS ALL THE POSTS --- */
@@ -48,6 +54,9 @@ class Posts extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      curPost:"",
+      open: false,
+      guarantor: "",
       filterList:[],
       post_list: [],
       comment_list:{},
@@ -90,6 +99,10 @@ class Posts extends Component {
     this.delete_Comment=this.delete_Comment.bind(this)
     this.onclickLend=this.onclickLend.bind(this)
     this.print_data=this.print_data.bind(this)
+    this.handleGuarantor = this.handleGuarantor.bind(this);
+    this.onSubmitGuarantor = this.onSubmitGuarantor.bind(this)
+    this.handleClose = this.handleClose.bind(this);
+    this.handleClickOpen = this.handleClickOpen.bind(this);
   }
   componentDidMount() {
     let requests_collection = fdb.collection('requests');
@@ -146,7 +159,49 @@ class Posts extends Component {
     const status = post.addcmt_flag==true ? false:true
     this.setState({post_list:this.state.post_list.map(el => (el.id === postid ? {...el, addcmt_flag:status} : el))})
   }
+  handleClose = event => {
+    this.setState({open: false})
+  }
+  handleClickOpen(postId){
+    this.setState({
+      open: true,
+      curPost: postId,
+    })
 
+  }
+  handleGuarantor = event => {
+    const guarantor_email = event.target.value;
+    this.setState(state => ({
+      guarantor: guarantor_email
+    }));
+  }
+  onSubmitGuarantor = event => {
+      const postid = this.state.curPost;
+      console.log("180: " + postid)
+      const fromP = this.props.Email;
+      const ref  = fdb.collection('users').doc(this.state.guarantor);
+        ref.get().then(function(doc) {
+          if(doc.exists) {
+            //send invitaiton to this user
+            let msgRef = ref.collection('msgBox').add({
+                postId: postid,
+                fromWho: fromP,
+                isRead: false,
+                msgContent: fromP + " would like to invite you as a guarantor",
+                needConfirm: true,
+                isAccepted: false,
+            }).then(ref =>{
+              console.log("added document with id: " + ref.id);
+              alert("Successfully sent invitation!")
+            }).catch(err => {
+              // An error happened.
+              console.log('Error send invitation', err);
+            });
+          }else{
+            alert("No such user exists!");
+          }
+        })
+  }
 
   print_data=event=>{
     console.log(this.state.post_list)
@@ -457,82 +512,122 @@ class Posts extends Component {
         <br />
         <Grid container xs={12} spacing={3}>
         {filtered.map(post=>
-          <Grid item xs={4}>
-            <Card background={"#f5edf1"}>
-              <CardHeader
-                title={post.title}
-                subheader={post.borrower}
-                action={
-                  post.guarantor
-                  ?
-                  <Icon fontSize="large">
-                    <VerifiedUserIcon style={{fill: "green"}}/>
-                  </Icon>
-                  :
-                  null
-                }
-              />
-                <CardContent>
-                  <Typography variant= "h6" component="p">
-                    Description: {post.content}
-                  </Typography>
-                  <Typography variant="body1" component="p" color="textSecondary">
-                    Estimated Value: {post.price} $
-                    <br />
-                  </Typography>
-                  <Typography variant="body1" component="p" color="textSecondary">
-                    Guranrtor: {post.guarantor}
-                    <br />
-                  </Typography>
-                  <Box height="auto" overflow="auto">
+          <Fragment>
+            <Grid item xs={4}>
+              <Card background={"#f5edf1"}>
+                <CardHeader
+                  title={post.title}
+                  subheader={post.borrower}
+                  action={
+                    post.guarantor
+                    ?
+                    <Icon fontSize="large">
+                      <VerifiedUserIcon style={{fill: "green"}}/>
+                    </Icon>
+                    :
+                    null
+                  }
+                />
+                  <CardContent>
+                    <Typography variant= "h6" component="p">
+                      Description: {post.content}
+                    </Typography>
+                    <Typography variant="body1" component="p" color="textSecondary">
+                      Estimated Value: {post.price} $
+                      <br />
+                    </Typography>
+                    <Typography variant="body1" component="p" color="textSecondary">
+                      Guranrtor: {post.guarantor}
+                      <br />
+                    </Typography>
+                    <Box height="auto" overflow="auto">
 
-                  {(post.comment_flag) && (<InfiniteScroll items={post.comments}>
+                    {(post.comment_flag) && (<InfiniteScroll items={post.comments}>
 
-                      {item => (
-                        <Box
-                          flex={false}
-                          pad="small"
-                          background={"#f5edf1"}
-                        >
+                        {item => (
+                          <Box
+                            flex={false}
+                            pad="small"
+                            background={"#f5edf1"}
+                          >
 
-                        <Tooltip title = {item.nickname}>
-                          <Avatar size="small" src={this.state.photo_map[item.email]}/>
-                        </Tooltip>
+                          <Tooltip title = {item.nickname}>
+                            <Avatar size="small" src={this.state.photo_map[item.email]}/>
+                          </Tooltip>
 
-                        <Typography variant="h6" component="p" color="textSecondary">
-                          {item.nickname} : {item.content}
-                          <br />
-                        </Typography>
-                        {(this.props.Email == post.borrower) && (this.props.Email!=item.email)&&
-                           (<Button size="small" onClick={()=>this.onclickLend(post, item)}>Borrow from {item.nickname}</Button>
-                         )}
+                          <Typography variant="h6" component="p" color="textSecondary">
+                            {item.nickname} : {item.content}
+                            <br />
+                          </Typography>
+                          {(this.props.Email == post.borrower) && (this.props.Email!=item.email)&&
+                             (<Button size="small" onClick={()=>this.onclickLend(post, item)}>Borrow from {item.nickname}</Button>
+                           )}
 
-                         {(this.props.Email==item.email)&&
+                          {(this.props.Email==item.email)&&
                             (<Button size="small" onClick={()=>this.delete_Comment(item.content,item.email,post.id)} >Delete above comment</Button>
                           )}
+                          </Box>
+                        )}
 
-                           </Box>
-                      )}
+                      </InfiniteScroll>)}
+                    </Box>
 
-                    </InfiniteScroll>)}
-                  </Box>
+                  {(post.addcmt_flag)&&(<Grommet theme={grommet}>
 
-                {(post.addcmt_flag)&&(<Grommet theme={grommet}>
+                  <FormField >
+                    <TextInput onChange={this.on_Change_content} placeholder="Add Comments here:" />
+                  </FormField>
+                  <Button size="small" onClick={()=>this.on_Submit(post)}>Submit</Button>
 
-                <FormField >
-                  <TextInput onChange={this.on_Change_content} placeholder="Add Comments here:" />
-                </FormField>
-                <Button size="small" onClick={()=>this.on_Submit(post)}>Submit</Button>
+                  </Grommet>)}
+                  </CardContent>
+                  <CardActions>
 
-                </Grommet>)}
-                </CardContent>
-                <CardActions>
-
-                  <Button size="small" onClick={()=>this.onClick_Open_Comment(post.id)}>Open/Close Comments</Button>
-                  <Button size="small" onClick={()=>this.onClick_Open_Addcmt(post.id)}>Add Comments</Button>
-                </CardActions>
-            </Card>
-          </Grid>
+                    <Button size="small" onClick={()=>this.onClick_Open_Comment(post.id)}>Open/Close Comments</Button>
+                    <Button size="small" onClick={()=>this.onClick_Open_Addcmt(post.id)}>Add Comments</Button>
+                    {(this.props.Email == post.borrower) && (!post.guarantor)
+                      ?
+                      <Button size="small" onClick={()=>this.handleClickOpen(post.id)}> Add guarantor</Button>
+                      :
+                      null
+                    }
+                  </CardActions>
+              </Card>
+            </Grid>
+            <Dialog open={this.state.open} onClose={this.handleClose}>
+              <DialogTitle id="form-dialog-title">Guarantor</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  You do not have any guarantors at this point. To add one, please fill out a valid user email below.
+                </DialogContentText>
+                <Grid container alignItems="flex-end">
+                  <Grid item xs={1}>
+                    <AccountCircle/>
+                  </Grid>
+                  <Grid item xs={true}>
+                    <TextField
+                      autoFocus
+                      margin="dense"
+                      id="guarantor_email"
+                      name="guarantor"
+                      label="Add guarantor..."
+                      fullWidth
+                      value = {this.state.guarantor}
+                      onChange = {this.handleGuarantor}
+                    />
+                  </Grid>
+                </Grid>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={this.handleClose} color="primary">
+                  Cancel
+                </Button>
+                <Button onClick={this.onSubmitGuarantor} color="primary">
+                  Add
+                </Button>
+              </DialogActions>
+          </Dialog>
+          </Fragment>
         )}
         </Grid>
       </div>
