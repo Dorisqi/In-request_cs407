@@ -1,1 +1,13 @@
-{ "presets": ["@babel/preset-env"] }
+// { "presets": ["@babel/preset-env"] }
+{
+    "env": {
+        "test": {
+            "presets": ["@babel/preset-env", "@babel/preset-react"],
+            "plugins": ["@babel/plugin-proposal-class-properties", "transform-export-extensions"],
+            "only": [
+              "./**/*.js",
+              "node_modules/jest-runtime"
+            ]
+        }
+    }
+  }
