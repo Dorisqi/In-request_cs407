@@ -12,9 +12,14 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 import FlashOnIcon from '@material-ui/icons/FlashOn';
 import Container from '@material-ui/core/Container';
 import AppsIcon from '@material-ui/icons/Apps';
-import { grommet,Grommet,FormField,TextInput,InfiniteScroll,Box,Text} from "grommet";
+import { grommet,RadioButtonGroup,Grommet,FormField,TextInput,InfiniteScroll,Box,Text} from "grommet";
 import Tooltip from '@material-ui/core/Tooltip';
 import Avatar from "@material-ui/core/Avatar";
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
 
 
 
@@ -66,6 +71,7 @@ class Posts extends Component {
       photo_map:[],
       user_email:this.props.Email,
       user_nickname:this.props.Nickname,
+      visibility:'public'
     };
     this.handleClick1 = this.handleClick1.bind(this);
     this.handleClick2 = this.handleClick2.bind(this);
@@ -86,6 +92,7 @@ class Posts extends Component {
     this.delete_Comment=this.delete_Comment.bind(this)
     this.onclickLend=this.onclickLend.bind(this)
     this.print_data=this.print_data.bind(this)
+    this.set_Visibility=this.set_Visibility.bind(this)
   }
   componentDidMount() {
     let requests_collection = fdb.collection('requests');
@@ -98,6 +105,7 @@ class Posts extends Component {
           //console.log(new_item)
           new_item['comment_flag']=false
           new_item['addcmt_flag']=false
+          new_item['is_public'] = true
           this.setState({
               post_list: [...this.state.post_list, new_item],
 
@@ -178,6 +186,7 @@ class Posts extends Component {
     let new_comment_list=[];
     const post = this.state.post_list.filter(obj =>(obj.id.includes(postid)));
     const old_comments=post[0].comments;
+
     let new_comments=[];
     let i = 0
     while(i < old_comments.length){
@@ -205,10 +214,12 @@ class Posts extends Component {
     //console.log(ref)
     //let document =
     let old=""
+    const converted_visibility= ref.is_public
     let new_comment={
       email:this.props.Email,
       nickname:this.props.Nickname,
-      content:this.state.content
+      content:this.state.content,
+      is_public:converted_visibility
     }
     let new_cmts=[]
     //const component = this
@@ -229,7 +240,7 @@ class Posts extends Component {
           this.setState({
               post_list: this.state.post_list.map(el => (el.id === ref.id ? {...el, comments:new_cmts} : el))
             });
-
+          console.log(new_cmts);
           fdb.collection('requests').doc(ref.id).update({
               comments:new_cmts,
               //msoffered: true
@@ -257,6 +268,16 @@ class Posts extends Component {
     const value= event.target.value
     console.log(value)
     this.setState({content:value})
+  }
+
+  set_Visibility(postid,newvalue){
+    const new_value=newvalue =='public'? true : false
+    console.log(new_value);
+    this.setState({
+        post_list: this.state.post_list.map(el => (el.id === postid ? {...el, is_public:new_value} : el))
+      });
+    this.setState({visibility:new_value})
+
   }
 
   add_Comment=event=>{
@@ -344,7 +365,8 @@ class Posts extends Component {
   render() {
     const{classes} = this.props
     const {post_list, color1,color2,color3,color4,color5,color6,color7,color8,color9,color11,color12} = this.state
-
+    const Email=this.props.Email
+    const Nickname=this.props.Nickname
     let buffer = []
     let filtered = []
 
@@ -480,7 +502,10 @@ class Posts extends Component {
                   {(post.comment_flag) && (<InfiniteScroll items={post.comments}>
 
                       {item => (
-                        <Box
+
+                         (item.is_public ||
+                           ((!item.is_public)&& (item.email==post.borrower||item.email==Email)))&&
+                           (<Box
                           flex={false}
                           pad="small"
                           background={"#f5edf1"}
@@ -502,7 +527,7 @@ class Posts extends Component {
                             (<Button size="small" onClick={()=>this.delete_Comment(item.content,item.email,post.id)} >Delete above comment</Button>
                           )}
 
-                           </Box>
+                           </Box>)
                       )}
 
                     </InfiniteScroll>)}
@@ -513,6 +538,13 @@ class Posts extends Component {
                 <FormField >
                   <TextInput onChange={this.on_Change_content} placeholder="Add Comments here:" />
                 </FormField>
+
+                <FormControl component="fieldset">
+                  <RadioGroup row aria-label="visibility" name="visibility" value={post.is_public==true ? 'public':'private' } onChange={(event) => this.set_Visibility(post.id,event.target.value)}>
+                    <FormControlLabel value="public" control={<Radio />} label="Public" />
+                    <FormControlLabel value="private" control={<Radio />} label="Private" />
+                  </RadioGroup>
+                </FormControl>
                 <Button size="small" onClick={()=>this.on_Submit(post)}>Submit</Button>
 
                 </Grommet>)}
