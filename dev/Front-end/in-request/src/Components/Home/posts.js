@@ -504,7 +504,7 @@ class Posts extends Component {
                       {item => (
 
                          (item.is_public ||
-                           ((!item.is_public)&& (item.email==post.borrower||item.email==Email)))&&
+                           (!item.is_public && (item.email==post.borrower||item.email==Email)))&&
                            (<Box
                           flex={false}
                           pad="small"

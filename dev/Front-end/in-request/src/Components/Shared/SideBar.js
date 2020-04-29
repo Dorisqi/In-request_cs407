@@ -201,6 +201,7 @@ class SideBar extends React.Component {
     //const loc = useLocation();
     //console.log(this.props.location.state.Email)
     // console.log(prevProps.Email)
+    console.log(event.key)
     const email = this.props.location.state.Email
     const history = this.props.history
     auth.signOut().then(function() {
@@ -236,7 +237,7 @@ class SideBar extends React.Component {
   //     // An error happened.
   //     console.log('Error logging out', err);
   //   });
-  // }
+  }
   render(){
     const {classes} = this.props;
     const theme = useTheme;
