@@ -211,7 +211,9 @@ class NewRequest extends Component {
       endb:false,
       endl:false,
       lender:"",
-      status:"active"
+      status:"active",
+      is_brwRated:false,
+      is_ldrRated:false
     }).then(ref =>{
       console.log('Added document with ID: ', ref.id);
       alert("Add new request successful")

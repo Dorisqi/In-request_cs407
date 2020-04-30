@@ -112,7 +112,7 @@ class Log_in_Box extends React.Component {
             <FormFieldLabel name="Email" label="E-mail" onChange={this.on_Change_email} required />
             <FormFieldLabel name="Password" type="password" label="Password" onChange={this.on_Change_pw} required />
             <Grommet>
-              <Button left type="submit" color="#f5edef" label="Log in" primary onClick={this.on_Submit}/>
+              <Button left type="submit" color="#f5edef" label="Log In" primary onClick={this.on_Submit}/>
               <Button plain size="xsmall" color="#8a6e79" label="forget password?" hoverIndicator="true"
                     onClick={this.onOpen}/>
 

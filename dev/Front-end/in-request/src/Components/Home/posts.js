@@ -504,7 +504,8 @@ class Posts extends Component {
                       {item => (
 
                          (item.is_public ||
-                           (!item.is_public && (item.email==post.borrower||item.email==Email)))&&
+                           (!item.is_public && (item.email==post.borrower||item.email==Email)))
+                           ?
                            (<Box
                           flex={false}
                           pad="small"
@@ -527,7 +528,7 @@ class Posts extends Component {
                             (<Button size="small" onClick={()=>this.delete_Comment(item.content,item.email,post.id)} >Delete above comment</Button>
                           )}
 
-                           </Box>)
+                           </Box>):(<Box/>)
                       )}
 
                     </InfiniteScroll>)}
