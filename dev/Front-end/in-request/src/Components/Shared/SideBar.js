@@ -16,7 +16,6 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import Avatar from '@material-ui/core/Avatar'
 import { Switch, Route, Link, BrowserRouter } from "react-router-dom";
 import Profile from '../Home/Profile';
 import MessageBox from '../Home/MessageBox';
@@ -302,6 +301,7 @@ class SideBar extends React.Component {
                 <Posts Email={this.props.location.state.Email} Nickname={this.props.location.state.Nickname}/>
               </Route>
               <Route path="/Profile">
+                <Profile curUser={this.props.location.state.Email} url={this.props.location.state.url}/>
               </Route>
               <Route path="/MessageBox">
                 <MessageBox curUser={this.props.location.state.Email}/>
