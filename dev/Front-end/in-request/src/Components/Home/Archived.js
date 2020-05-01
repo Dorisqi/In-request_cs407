@@ -147,7 +147,7 @@ class Archived extends Component {
           archived_ld_posts: this.state.archived_ld_posts.map(el => (el.id === ref.id ? {...el, is_ldrRated:true,ldr_review:review_info} : el))
         });
 
-        fdb.collection('users').doc(ref.lender).get().then(doc=> {
+        fdb.collection('users').doc(ref.borrower).get().then(doc=> {
               const item = doc.data();
               const new_total=item.total_ldr_rating+1
               const new_good_brw=item.good_brw
@@ -184,6 +184,7 @@ class Archived extends Component {
     //1.change brw/ldr state,2.add rate to user, comment to post
   }
   on_Click_rating(post,status){
+    console.log(status)
     this.setState({
       Open:true,
       postofRating:post,
@@ -273,7 +274,7 @@ class Archived extends Component {
                     ?
 
                       <CardActions>
-                        <Button1 size="medium" color="textSecondary" onClick={()=>this.on_Click_rating(post),false}>Rating\/Review</Button1>
+                        <Button1 size="medium" color="textSecondary" onClick={()=>this.on_Click_rating(post,false)}>Rating\/Review</Button1>
                       </CardActions>
 
                     :
@@ -329,7 +330,7 @@ class Archived extends Component {
               </Box>
               <FormField >
               <TextArea
-                  placeholder="Write comments to lender:"
+                  placeholder="Write comments:"
                   value={this.state.review}
                   onChange={event => this.on_Change(event.target.value)}
                 />
