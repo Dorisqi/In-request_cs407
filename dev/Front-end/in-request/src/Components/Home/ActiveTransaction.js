@@ -157,7 +157,6 @@ class ActiveTransaction extends Component {
                                                         </Typography>
                                                         <CardActions>
                                                             <Button size="small" color="primary" onClick={()=>this.handleStartb(post)}>Start</Button>
-                                                            <Button size="small" disabled>Finish</Button>
                                                             <Button size="small" disabled>Cancel</Button>
                                                         </CardActions>
                                                     </div>
@@ -169,7 +168,6 @@ class ActiveTransaction extends Component {
                                                         </Typography>
                                                         <CardActions>
                                                             <Button size="small" color="primary" disabled>Start</Button>
-                                                            <Button size="small" disabled>Finish</Button>
                                                             <Button size="small" disabled>Cancel</Button>
                                                         </CardActions>
                                                     </div>

@@ -596,41 +596,41 @@ class Posts extends Component {
         {filtered.map(post=>
           <Fragment>
             <Grid item xs={4}>
-              <Card background={"#f5edf1"}>
-                  <CardHeader
-                    title={post.title}
-                    subheader={post.borrower}
-                    action={
-                      post.guarantor
-                      ?
-                      <Icon fontSize="large">
-                        <VerifiedUserIcon style={{fill: "green", fontSize: 22}}/>
-                      </Icon>
-                      :
-                      null
-                    }
-                  />
-                  <CardContent>
-                    <Typography variant="h6" component="p" color="textSecondary">
-                      Borrower: {post.borrower}
-                      <br />
-                    </Typography>
-                    <Typography variant="body1" component="p" color="textSecondary">
-                      Estimated Value: {post.price} $
-                      <br />
-                    </Typography>
-                    <Typography variant="h6" component="p" color="textSecondary">
-                      Guranrtor: {post.guarantor}
-                      <br />
-                    </Typography>
-                    <Box height="auto" overflow="auto">
+            <Card background={"#f5edf1"}>
+              <CardHeader
+                title={post.title}
+                subheader={post.borrower}
+                action={
+                  post.guarantor
+                  ?
+                  <Icon fontSize="large">
+                    <VerifiedUserIcon style={{fill: "green"}}/>
+                  </Icon>
+                  :
+                  null
+                }
+              />
+                <CardContent>
+                  <Typography variant= "h6" component="p">
+                    Description: {post.content}
+                  </Typography>
+                  <Typography variant="body1" component="p" color="textSecondary">
+                    Estimated Value: {post.price} $
+                    <br />
+                  </Typography>
+                  <Typography variant="body1" component="p" color="textSecondary">
+                    Guranrtor: {post.guarantor}
+                    <br />
+                  </Typography>
+                  <Box height="auto" overflow="auto">
 
                     {(post.comment_flag) && (<InfiniteScroll items={post.comments}>
 
                         {item => (
 
                            (item.is_public ||
-                             (!item.is_public && (item.email==post.borrower||item.email==Email)))
+                             item.email==post.borrower||
+                             item.email==this.props.Email)
                              ?
                              (<Box
                             flex={false}
