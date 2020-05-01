@@ -115,7 +115,6 @@ class Login extends React.Component {
 
 
     }
-
     this.on_Login=this.on_Login.bind(this)
     this.on_Signup=this.on_Signup.bind(this)
     this.update_Pw=this.update_Pw.bind(this)
@@ -224,8 +223,15 @@ class Login extends React.Component {
   // log-in successful.
     const ref = fdb.collection('users').doc(Email);
       ref.set({
-        nickname: Nickname, email: Email,
-        LoginState: true, photostate: false
+        nickname: Nickname,
+        email: Email,
+        LoginState: true,
+        photostate: false,
+        total_brw_rating:0,
+        total_ldr_rating:0,
+        good_brw:0,
+        good_ldr:0
+
       });
       var user = auth.currentUser;
       user.sendEmailVerification().then(function() {
@@ -308,8 +314,6 @@ onClose=event=>{
   render() {
     return (
       <Grommet theme={deepMerge(grommet, customFormFieldTheme)}>
-
-
         <Box
           direction="column"
           pad="fill"

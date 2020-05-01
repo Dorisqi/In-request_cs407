@@ -255,6 +255,8 @@ class NewRequest extends Component {
       lender:"",
       status:"active",
       guarantor:"",
+      is_brwRated:false,
+      is_ldrRated:false
     }).then(ref =>{
       console.log('Added document with ID: ', ref.id);
       this.setState({requestID: ref.id});
