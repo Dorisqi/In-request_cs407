@@ -18,7 +18,7 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar'
 import { Switch, Route, Link, BrowserRouter } from "react-router-dom";
-import Profile from '../Home/Profile';
+import Profile from '../Home/profile';
 import MessageBox from '../Home/MessageBox';
 import Posts from '../Home/Posts.js';
 import NewRequest from '../Home/NewRequest';
@@ -31,6 +31,7 @@ import { useLocation } from "react-router-dom";
 import {withRouter } from "react-router-dom";
 import ActiveTransaction from "../Home/ActiveTransaction"
 import Archived from "../Home/Archived"
+import ThumbUpAltOutlinedIcon from '@material-ui/icons/ThumbUpAltOutlined';
 
 const drawerWidth = 240;
 const styles = theme => ({
@@ -77,6 +78,7 @@ class SideBar extends React.Component {
       auth: this.auth,
       fdb: this.fdb,
       name:"",
+      user_list:[]
 
 
 
@@ -214,6 +216,21 @@ class SideBar extends React.Component {
 
   }
 
+  componentDidMount() {
+    fdb.collection('users').get()
+        .then(snapshot =>{
+          snapshot.forEach(doc => {
+            const item = doc.data()
+            const new_item = item
+            new_item['ldr_rating']=item.good_ldr/item.total_ldr_rating*100
+            new_item['brw_rating']=item.good_brw/item.total_brw_rating*100
+            this.setState({user_list: [...this.state.user_list, new_item]});
+          });
+        }).catch(err => {
+          console.log('Error getting documents', err);
+        });
+  }
+
 
   Logout=event=>{
     //const loc = useLocation();
@@ -286,6 +303,27 @@ class SideBar extends React.Component {
                 </Grid>
                 <br />
                 <br />
+                {
+                    this.state.user_list && this.state.user_list.map(user =>(
+                        (user.email == this.props.location.state.Email)
+                          ?
+                          (
+                            <div>
+                            <Button style={{justifyContent: 'center'}, {color: '#e07e77'}}>
+                            <ThumbUpAltOutlinedIcon fontSize="small"/>
+                              Lender Rating: {user.ldr_rating} % ({user.total_ldr_rating})
+                            </Button>
+                            <br/>
+                            <Button style={{justifyContent: 'center'}, {color: '#95e077'}} >
+                              <ThumbUpAltOutlinedIcon fontSize="small"/>
+                              Borrower Rating: {user.brw_rating} % ({user.total_brw_rating})
+                            </Button>
+                          </div> )
+                          : null
+                      ))
+                      
+                    }
+
                 <Divider />
                 <List>
                   {['Posts', 'New Request', 'Active Transaction', 'Archived'].map((text, index) => (
