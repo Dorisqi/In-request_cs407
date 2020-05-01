@@ -233,7 +233,6 @@ class Archived extends Component {
                 </CardContent>
                 {((post.is_brwRated == false && post.lender!="")
                   ?
-
                     <CardActions>
                       <Button1 size="medium" color="textSecondary" onClick={()=>this.on_Click_rating(post,true)}>Rating/Review</Button1>
                     </CardActions>

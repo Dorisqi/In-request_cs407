@@ -224,20 +224,20 @@ class SideBar extends React.Component {
   componentWillUnmount(){
     const email = this.props.location.state.Email
     const history = this.props.history
-  //   auth.signOut().then(function() {
-  // // log-out successful.
-  //     //const email = this.props.location.state.Email
-  //     const ref = fdb.collection('users').doc(email);
-  //     ref.update({
-  //       LoginState: false
-  //     }).then(() => {
-  //       console.log('logout successful');
-  //       history.push("/login");
-  //     });
-  //   }).catch(err => {
-  //     // An error happened.
-  //     console.log('Error logging out', err);
-  //   });
+    auth.signOut().then(function() {
+  // log-out successful.
+      //const email = this.props.location.state.Email
+      const ref = fdb.collection('users').doc(email);
+      ref.update({
+        LoginState: false
+      }).then(() => {
+        console.log('logout successful');
+        history.push("/login");
+      });
+    }).catch(err => {
+      // An error happened.
+      console.log('Error logging out', err);
+    });
   }
   render(){
     const {classes} = this.props;
