@@ -548,7 +548,7 @@ class Posts extends Component {
                       post.guarantor
                       ?
                       <Icon fontSize="large">
-                        <VerifiedUserIcon style={{fill: "green", fontSize: 25}}/>
+                        <VerifiedUserIcon style={{fill: "green", fontSize: 22}}/>
                       </Icon>
                       :
                       null
