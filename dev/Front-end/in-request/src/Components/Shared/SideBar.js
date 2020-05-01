@@ -123,6 +123,23 @@ class SideBar extends React.Component {
         },60000);//60000 == 1min
   //**************************************************************this part is for checking if past due**********************************
 
+        var docRef3 = fdb.collection("users").doc(user.email);
+        docRef3.get().then(function(doc) {
+            if (doc.exists) {
+                console.log("Document data:" + doc.data());
+                if(doc.data().banned == true){
+                    alert("you are reported for the following behavior: " + doc.data().content + "\nThis message will show for the rest of the day.");
+                }
+            } else {
+                // doc.data() will be undefined in this case
+                console.log("No such document!");
+            }
+        }).catch(function(error) {
+            console.log("Error getting document:", error);
+        });
+
+
+
 //**************************************************************this part is for alerting borrower about lender************************
 
     let query = fdb.collection("requests").where("borrower", "==", user.email).where("msnone", "==", true);

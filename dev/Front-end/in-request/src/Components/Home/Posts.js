@@ -77,14 +77,17 @@ class Posts extends Component {
       color9:0,
       color11:0,
       color12:0,
-      open:false,
       url:"",
       add_cmt:0,
       content:"",
       photo_map:[],
       user_email:this.props.Email,
       user_nickname:this.props.Nickname,
-      visibility:'public'
+      visibility:'public',
+      reportopen: false,
+      violator: "",
+      violatornickname: "",
+      reportcontent: "",
     };
     this.handleClick1 = this.handleClick1.bind(this);
     this.handleClick2 = this.handleClick2.bind(this);
@@ -110,6 +113,10 @@ class Posts extends Component {
     this.handleClose = this.handleClose.bind(this);
     this.handleClickOpen = this.handleClickOpen.bind(this);
     this.set_Visibility=this.set_Visibility.bind(this)
+    this.onChangeReport = this.onChangeReport.bind(this)
+    this.onclickReport=this.onclickReport.bind(this)
+    this.handleReportClose = this.handleReportClose.bind(this);
+    this.onSubmitReport = this.onSubmitReport.bind(this)
   }
   componentDidMount() {
     let requests_collection = fdb.collection('requests');
@@ -170,6 +177,20 @@ class Posts extends Component {
   handleClose = event => {
     this.setState({open: false})
   }
+
+  handleReportClose = event =>{
+    this.setState({
+      reportopen:false,
+      violator: "",
+      violatornickname: "",
+    })
+  }
+
+  onChangeReport = e =>{
+    const value= e.target.value;
+    this.setState({reportcontent:value})
+  }
+
   handleClickOpen(postId){
     this.setState({
       open: true,
@@ -215,6 +236,33 @@ class Posts extends Component {
         })
   }
 
+
+  onSubmitReport = event => {
+    if(this.state.reportcontent == ""){
+      alert("The reason for report is required");
+    }
+    else{
+      fdb.collection("reports").add({
+        reporter: auth.currentUser.email,
+        violator: this.state.violator,
+        content: this.state.reportcontent,
+      })
+          .then(function(docRef) {
+            console.log("Document written with ID: ", docRef.id);
+          })
+          .catch(function(error) {
+            console.error("Error adding document: ", error);
+          });
+      this.setState({
+        reportopen: false,
+        violator: "",
+        violatornickname: "",
+        reportcontent: "",
+      })
+      alert("report submission successfully.");
+    }
+  }
+
   print_data=event=>{
     console.log(this.state.post_list)
   }
@@ -227,6 +275,14 @@ class Posts extends Component {
     lender: item.email,
   })
 }
+
+  onclickReport(item){
+    this.setState({
+      reportopen: true,
+      violator: item.email,
+      violatornickname: item.nickname,
+    })
+  }
 
   // update_post(ref){
   //   console.log("update_post id",ref.id);
@@ -596,7 +652,7 @@ class Posts extends Component {
 
                            {(this.props.Email==item.email)&&
                               (<Button size="small" onClick={()=>this.delete_Comment(item.content,item.email,post.id)} >Delete above comment</Button>
-                            )}
+                            )||(<Button size="small" onClick={()=>this.onclickReport(item)}>Report {item.nickname}</Button>)}
 
                              </Box>):(<Box/>)
                         )}
@@ -666,6 +722,41 @@ class Posts extends Component {
                 </Button>
               </DialogActions>
           </Dialog>
+
+            <Dialog open={this.state.reportopen} onClose={this.handleReportClose}>
+              <DialogTitle id="form-dialog-title">Report</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  You are about to report: {this.state.violatornickname}
+                </DialogContentText>
+                <DialogContentText>
+                  Please state the reason for report clearly. Your report will be processed shortly after submission.
+                </DialogContentText>
+                <Grid container alignItems="flex-end">
+                  <Grid item xs={1}>
+                    <AccountCircle/>
+                  </Grid>
+                  <Grid item xs={true}>
+                    <TextInput
+                        autoFocus
+                        margin="dense"
+                        fullWidth
+                        onChange={this.onChangeReport}
+                        placeholder="Add Comments here:"
+                    />
+                  </Grid>
+                </Grid>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={this.handleReportClose} color="primary">
+                  Cancel
+                </Button>
+                <Button onClick={this.onSubmitReport} color="primary">
+                  Report
+                </Button>
+              </DialogActions>
+            </Dialog>
+
           </Fragment>
           )}
         </Grid>
