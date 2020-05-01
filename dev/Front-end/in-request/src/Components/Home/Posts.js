@@ -662,7 +662,7 @@ class Posts extends Component {
                         {item => (
 
                            (item.is_public ||
-                             item.email==post.borrower||
+                             this.props.Email==post.borrower||
                              item.email==this.props.Email)
                              ?
                              (<Box
