@@ -184,6 +184,10 @@ class Posts extends Component {
     }));
   }
   onSubmitGuarantor = event => {
+    if (this.state.guarantor== this.props.Email) {
+      alert("Cannot add yourself as guarantor.")
+      return;
+    }
       const postid = this.state.curPost;
       console.log("180: " + postid)
       const fromP = this.props.Email;
@@ -537,13 +541,20 @@ class Posts extends Component {
           <Fragment>
             <Grid item xs={4}>
               <Card background={"#f5edf1"}>
+                  <CardHeader
+                    title={post.title}
+                    subheader={post.borrower}
+                    action={
+                      post.guarantor
+                      ?
+                      <Icon fontSize="large">
+                        <VerifiedUserIcon style={{fill: "green", fontSize: 25}}/>
+                      </Icon>
+                      :
+                      null
+                    }
+                  />
                   <CardContent>
-                    <Typography variant="h4" component="h2">
-                      {post.title}
-                    </Typography>
-                    <Typography variant= "h5" >
-                      {post.content}
-                    </Typography>
                     <Typography variant="h6" component="p" color="textSecondary">
                       Borrower: {post.borrower}
                       <br />
@@ -613,6 +624,12 @@ class Posts extends Component {
 
                     <Button size="small" onClick={()=>this.onClick_Open_Comment(post.id)}>Open/Close Comments</Button>
                     <Button size="small" onClick={()=>this.onClick_Open_Addcmt(post.id)}>Add Comments</Button>
+                    {(this.props.Email == post.borrower) && (!post.guarantor)
+                      ?
+                      <Button size="small" onClick={()=>this.handleClickOpen(post.id)}> Add guarantor</Button>
+                      :
+                      null
+                    }
                   </CardActions>
               </Card>
             </Grid>

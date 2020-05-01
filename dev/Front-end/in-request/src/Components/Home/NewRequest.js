@@ -150,6 +150,10 @@ class NewRequest extends Component {
   }
 
   onSubmitGuarantor = event => {
+      if (this.state.guarantor== this.props.Email) {
+        alert("Cannot add yourself as guarantor.")
+        return;
+      }
       const fromP = this.state.curUser;
       const postid = this.state.requestID;
       const ref  = fdb.collection('users').doc(this.state.guarantor);
