@@ -30,6 +30,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
+import ThumbUpAltOutlinedIcon from '@material-ui/icons/ThumbUpAltOutlined';
 
 
 /* ---  THIS FILE CONTAINS ALL THE POSTS --- */
@@ -64,6 +65,7 @@ class Posts extends Component {
       guarantor: "",
       filterList:[],
       post_list: [],
+      user_list: [],
       comment_list:{},
       storage:storage,
       color1:0,
@@ -137,6 +139,19 @@ class Posts extends Component {
       }).catch(err => {
         console.log('Error getting documents', err);
       });
+
+      fdb.collection('users').get()
+        .then(snapshot =>{
+          snapshot.forEach(doc => {
+            const item = doc.data()
+            const new_item = item
+            new_item['ldr_rating']=item.good_ldr/item.total_ldr_rating*100
+            new_item['brw_rating']=item.good_brw/item.total_brw_rating*100
+            this.setState({user_list: [...this.state.user_list, new_item]});
+          });
+        }).catch(err => {
+          console.log('Error getting documents', err);
+        });
 
       //store all image info:
       let photo_dic={}
@@ -610,6 +625,24 @@ class Posts extends Component {
                       null
                     }
                   />
+                  {
+                    this.state.user_list && this.state.user_list.map(user =>(
+                      (user.email == post.borrower)
+                        ?
+                        (
+                        <div>
+                          <Button style={{color: '#e07e77'}}>
+                          <ThumbUpAltOutlinedIcon fontSize="small"/>
+                            Lender Rating: {user.ldr_rating} % ({user.total_ldr_rating})
+                          </Button>
+                          <Button style={{color: '#95e077'}}>
+                            <ThumbUpAltOutlinedIcon fontSize="small"/>
+                            Borrower Rating: {user.brw_rating} % ({user.total_brw_rating})
+                          </Button>
+                        </div> )
+                        : null
+                    ))
+                  }
                   <CardContent>
                     <Typography variant="h6" component="p" color="textSecondary">
                       Borrower: {post.borrower}
