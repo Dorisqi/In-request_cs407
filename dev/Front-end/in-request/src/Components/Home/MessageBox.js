@@ -61,9 +61,12 @@ class MessageBox extends React.Component {
       needConfirm: false,
       isAccepted: "accepted",
     });
-    console.log(postId)
+    console.log(msgId)
     let reqRef = fdb.collection('requests').doc(postId);
     let updateGuarantor = reqRef.update({guarantor: this.props.curUser});
+    return this.setState({
+        msgList: this.state.msgList.map(el => (el.id === msgId? {...el, isAccepted: "accepted",needConfirm:false} : el))
+      })
   }
   handleDecline(msgId, postId){
     var userMsg = fdb.collection('users').doc(this.props.curUser).collection('msgBox').doc(msgId);
@@ -71,6 +74,10 @@ class MessageBox extends React.Component {
       needConfirm: false,
       isAccepted: "declined",
     });
+
+    return this.setState({
+        msgList: this.state.msgList.map(el => (el.id === msgId? {...el, isAccepted: "declined",needConfirm:false} : el))
+      })
   }
   render() {
     const {msgList} = this.state;
