@@ -230,7 +230,7 @@ class Archived extends Component {
                     <br />
                   </Typography>
                 </CardContent>
-                {(post.is_brwRated == false
+                {((post.is_brwRated == false && post.lender!="")
                   ?
 
                     <CardActions>
@@ -269,7 +269,7 @@ class Archived extends Component {
                     Estimated Return Date: {post.estReturn.toDate().toString()}
                     <br />
                   </Typography>
-                  {(post.is_ldrRated == false
+                  {((post.is_ldrRated == false)
                     ?
 
                       <CardActions>
